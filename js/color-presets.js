@@ -91,6 +91,7 @@
         manifest.groups.forEach(function (group) {
             var card = el('button', 'cp-group');
             card.setAttribute('data-group', group.id);
+            card.setAttribute('aria-label', group.name);
             card.title = group.name + ' · ' + group.items.length + ' màu';
             var icon = el('img');
             icon.src = group.icon;
@@ -99,7 +100,6 @@
             check.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 8.5l3 3 5-6"/></svg>';
             card.appendChild(check);
             card.appendChild(icon);
-            card.appendChild(el('span', '', group.name));
             card.onclick = function () { selectGroup(group); };
             groupGrid.appendChild(card);
         });

@@ -166,7 +166,7 @@ Thẻ **Đồng hành cùng SCCTLM**; mã QR ủng hộ chính thức đang ch�
 <details>
 <summary>🗑️ Chức năng đã gỡ khỏi giao diện</summary>
 
-Bản đầu có 24 nút trên một trang; giao diện hiện tại giữ lại 10 nút Retouch. Các nút **Tuỳ chỉnh, Hàng loạt, Chữ / Logo, Làm mịn, Màu tổng, Màu Da, Bóng Mắt, Hào Quang, Làm nét, Hạt thô, Chấm, Camera Raw** không còn trên panel (một số module `jsx/` tương ứng vẫn nằm trong mã nguồn). Trước đó đã gỡ hoàn toàn 31 chức năng cũ: Tần số 8/16, Lấy mẫu, Chọn Mắt, Mặt nạ da, Sửa mắt, Khử Vàng, Nền trắng/ấm, Cổ điển, Vải dệt, Hoa mai, Hoa Sen, Gộp lớp, Lật ngang… cùng thanh công cụ icon.
+Bản đầu có 24 nút trên một trang; giao diện hiện tại có 21 nút Retouch (10 nút đầu + Tuỳ chỉnh, Hàng loạt, Chữ / Logo, Làm mịn, Màu tổng, Màu da, Bóng mắt, Hào quang, Làm nét, Hạt thô, Chấm). Các nút **Camera Raw** không còn trên panel (một số module `jsx/` tương ứng vẫn nằm trong mã nguồn). Trước đó đã gỡ hoàn toàn 31 chức năng cũ: Tần số 8/16, Lấy mẫu, Chọn Mắt, Mặt nạ da, Sửa mắt, Khử Vàng, Nền trắng/ấm, Cổ điển, Vải dệt, Hoa mai, Hoa Sen, Gộp lớp, Lật ngang… cùng thanh công cụ icon.
 
 </details>
 

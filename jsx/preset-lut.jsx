@@ -65,6 +65,13 @@
         }
     }
 
+    // Convert the active layer to a Smart Object so the filter applied next stays editable (Smart Filter)
+    // and the layer keeps its transparency instead of being baked into pixels.
+    function toSmartObject() {
+        executeAction(S('newPlacedLayer'), new ActionDescriptor(), DialogModes.NO);
+        return app.activeDocument.activeLayer;
+    }
+
     // Keep a copy of a hand-picked preset in Camera Raw's own preset list.
     // Failure only loses that convenience, so it is logged instead of thrown.
     function installXmpToCameraRaw(file) {
@@ -98,7 +105,7 @@
     }
 
     // Apply Camera Raw Preset (.xmp)
-    function applyPresetXMP(fileOrPath, withDialog) {
+    function applyPresetXMP(fileOrPath, withDialog, asSmartObject) {
         document();
         var picked = resolveFile(fileOrPath, 'Chon Preset Camera Raw (.xmp)',
             'Camera Raw Preset:*.xmp,All Files:*.*', new Folder($.dr7Base + '/presets'));
@@ -111,6 +118,7 @@
         // Raw never triggers the Unsupported Edits prompt on a local build.
         var acrPayload = sanitizeAcrXmp(xmpPayload);
         var layer = stamp('Preset - ' + displayName(file, /\.xmp$/i));
+        if (asSmartObject) layer = toSmartObject();
 
         // XMPp ("XMPParameters" in Camera Raw's scripting dictionary) carries
         // the whole settings block, so the filter renders it without a dialog.
@@ -161,6 +169,7 @@
 
     $.dr7ApplyPresetXMP = applyPresetXMP;
     $.dr7StampVisible = stamp;
+    $.dr7ToSmartObject = toSmartObject;
     $.dr7ApplyBundledXmp = applyBundledXmp;
     $.dr7SanitizeAcrXmp = sanitizeAcrXmp;
 }());

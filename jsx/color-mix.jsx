@@ -34,8 +34,9 @@
         try { return ACR_SETTINGS.test(xmp.read()); } finally { xmp.close(); }
     }
 
-    // Colour Lookup adjustment on top of the current layer, merged down so the result is pixels again.
-    function bakeLookTable(icc) {
+    // Colour Lookup adjustment clipped to the Smart Object below it. It stays a live adjustment layer
+    // (no merge), so the stamped pixels keep their transparency and the look can be tuned later.
+    function addLookTable(icc) {
         var S = stringIDToTypeID, doc = app.activeDocument;
         icc.encoding = 'BINARY';
         if (!icc.open('r')) throw new Error('Cannot open file: ' + icc.fsName);
@@ -54,28 +55,48 @@
         desc.putReference(S('null'), ref);
         desc.putObject(S('using'), S('adjustmentLayer'), adjustment);
         executeAction(S('make'), desc, DialogModes.NO);
-        if (doc.layers.length !== before + 1) throw new Error('Colour lookup layer was not created');
-        executeAction(charIDToTypeID('Mrg2'), new ActionDescriptor(), DialogModes.NO);
+        var layer = doc.activeLayer;
+        if (layer.kind !== LayerKind.COLORLOOKUP) throw new Error('Colour lookup layer was not created');
+        layer.grouped = true;
+        return layer;
     }
 
+    // Stamped Smart Object (+ clipped Look table) wrapped in one group named after the preset, so the
+    // opacity slider and the mix work on a single unit. Returns the layer the caller names / fades.
     function applyOne(id) {
+        var doc = app.activeDocument;
         var xmp = new File($.dr7Base + '/presets/colors/' + id + '.xmp');
         var icc = new File($.dr7Base + '/presets/colors/' + id + '.icc');
         if (!xmp.exists) throw new Error('Missing colour preset: ' + id);
-        if (!icc.exists) { $.dr7ApplyPresetXMP(xmp, false); return; }
-        if (needsAcr(xmp)) $.dr7ApplyPresetXMP(xmp, false);
-        else $.dr7StampVisible('Preset - ' + id);
-        bakeLookTable(icc);
+        if (!icc.exists) { $.dr7ApplyPresetXMP(xmp, false, true); return doc.activeLayer; }
+        if (needsAcr(xmp)) {
+            $.dr7ApplyPresetXMP(xmp, false, true);
+        } else {
+            $.dr7StampVisible('Preset - ' + id);
+            $.dr7ToSmartObject();
+        }
+        var base = doc.activeLayer;
+        var group = doc.layerSets.add();
+        try {
+            base.move(group, ElementPlacement.INSIDE);
+            doc.activeLayer = base;
+            var look = addLookTable(icc);
+            look.name = 'Look ' + id.replace('/', ' ');
+        } catch (error) {
+            try { group.remove(); } catch (eClean) { $.writeln('DR7: colour group cleanup failed: ' + eClean); }
+            throw error;
+        }
+        doc.activeLayer = group;
+        return group;
     }
 
     function applyColorMix(spec) {
-        if (typeof $.dr7ApplyPresetXMP !== 'function' || typeof $.dr7StampVisible !== 'function') throw new Error('Missing command: preset engine');
+        if (typeof $.dr7ApplyPresetXMP !== 'function' || typeof $.dr7StampVisible !== 'function' || typeof $.dr7ToSmartObject !== 'function') throw new Error('Missing command: preset engine');
         var items = parse(spec), made = [];
         try {
             for (var i = 0; i < items.length; i++) {
                 for (var h = 0; h < made.length; h++) made[h].visible = false;
-                applyOne(items[i].id);
-                var layer = app.activeDocument.activeLayer;
+                var layer = applyOne(items[i].id);
                 layer.name = 'Color ' + items[i].id.replace('/', ' ');
                 layer.opacity = items[i].opacity;
                 made.push(layer);

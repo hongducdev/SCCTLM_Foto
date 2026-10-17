@@ -137,7 +137,7 @@ Gồm các nhóm có thể thu gọn: **Retouch**, **Brush Lab**, **Rim Light** 
 
 - **6 bộ màu MHK (165 màu)** dạng thẻ icon: Fuji (71), Dazz (34), Kodak (12), Leica (7), Ricoh (7), Hồng Kông (34). Bấm thẻ để xem các màu nhỏ, bấm 1 màu là áp ngay (100%) thành layer `Color <bộ> <số>`.
 - **Mix màu**: bật công tắc, chọn tối đa 4 màu, mỗi màu có thanh độ mờ riêng; **Áp dụng Mix** tạo mỗi màu một layer (render từ ảnh gốc) rồi hạ opacity để pha thành màu mới.
-- **Look LUT**: bộ lọc Camera Raw bỏ qua bảng Look nên các màu dùng `crs:RGBTable` được áp bằng lớp Color Lookup (ICC device-link trong `presets/colors/<bộ>/NNN.icc`) rồi gộp xuống layer ảnh — cả 165 màu đều đổi màu khi áp (`jsx/color-mix.jsx`).
+- **Look LUT**: bộ lọc Camera Raw bỏ qua bảng Look nên các màu dùng `crs:RGBTable` được áp bằng lớp Color Lookup (ICC device-link trong `presets/colors/<bộ>/NNN.icc`) đặt trên một Smart Object (ảnh gốc giữ nguyên vùng trong suốt, không bị nền đen; mở lại Camera Raw hoặc chỉnh Color Lookup để tinh chỉnh) — cả 165 màu đều đổi màu khi áp (`jsx/color-mix.jsx`).
 - **Preset `.xmp` riêng:** chép file vào `presets/` của plugin (`%APPDATA%\Adobe\CEP\extensions\SCCTLM_Foto\presets`) rồi bấm **↻**; mỗi file thành một nút áp 1 click, render lên lớp gộp riêng `Preset - [tên]`, không phá huỷ ảnh gốc (`dr7ApplyPreset(file)`).
 
 > 📌 Tên file preset chỉ dùng chữ không dấu, số, khoảng trắng, `-`, `_`, `(`, `)`; tên khác bị bỏ qua để an toàn. Nhiệt độ màu Kelvin của sidecar RAW bị bỏ qua khi áp lên ảnh thường.

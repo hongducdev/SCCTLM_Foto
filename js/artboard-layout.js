@@ -14,10 +14,10 @@
     var NAME_MAX = 60;
 
     function box(w, h) { return { w: w, h: h }; }
-    var SQUARE = box(1080, 1080), WIDE = box(1200, 630);
 
     function single(id, name, w, h) { return { id: id, name: name, w: w, h: h, rows: [[box(w, h)]] }; }
-    function set(id, name, rows) { return { id: id, name: name, rows: rows }; }
+
+    var ALBUMS = root.dr7ArtboardAlbums || [];
 
     var SECTIONS = [
         { id: 'favorites', title: 'Hay dùng', tags: [], cards: [
@@ -25,25 +25,18 @@
             single('portrait', 'Bài dọc', 1080, 1350),
             single('story', 'Story / Reels', 1080, 1920)
         ] },
-        { id: 'facebook', title: 'Facebook', tags: ['facebook'], cards: [
-            single('fb-wide', 'Bài ngang', 1200, 630),
-            single('fb-page-cover', 'Cover Trang', 851, 315),
-            single('fb-group-cover', 'Cover Nhóm', 1640, 856)
-        ] },
+    ].concat(ALBUMS.map(function (group) {
+        return { id: group.id, title: group.title, tags: ['album'], cards: group.cards };
+    }), [
         { id: 'youtube', title: 'YouTube', tags: ['youtube'], cards: [
             single('yt-thumbnail', 'Thumbnail', 1280, 720),
             single('yt-banner', 'Banner kênh', 2560, 1440),
             single('yt-shorts', 'Shorts', 1080, 1920)
-        ] },
-        { id: 'sets', title: 'Bộ nhiều ảnh', tags: [], cards: [
-            set('set-2-square', 'Hai ảnh vuông', [[SQUARE, SQUARE]]),
-            set('set-3-square', 'Ba ảnh vuông', [[SQUARE, SQUARE, SQUARE]]),
-            set('set-1-wide-2-square', '1 ngang + 2 vuông', [[WIDE], [SQUARE, SQUARE]]),
-            set('set-1-wide-3-square', '1 ngang + 3 vuông', [[WIDE], [SQUARE, SQUARE, SQUARE]])
         ] }
-    ];
+    ]);
 
     function countBoards(template) {
+        if (template.boards) return template.boards.length;
         return template.rows.reduce(function (sum, row) { return sum + row.length; }, 0);
     }
 
@@ -60,10 +53,31 @@
         return total > 1 ? template.name + ' ' + (index + 1) : template.name;
     }
 
+    function pad2(number) { return ('0' + number).slice(-2); }
+
+    // Album: NN_Anh_WxH[_Bo-sung] như artboard trong PSD của gói MHK (tên ASCII, xuất file đúng thứ tự đăng);
+    // thêm tiền tố <mã>_ khi tài liệu có thể chứa nhiều album để tên không trùng
+    function albumBoardName(template, board, index, prefix) {
+        return (prefix ? template.code + '_' : '') + pad2(index + 1) + '_Anh_' + board.w + 'x' + board.h + (board.extra ? '_Bo-sung' : '');
+    }
+
     // Xếp các mẫu thành danh sách artboard {name, x, y, w, h}, gốc (0,0) là góc trên trái artboard đầu tiên
-    function layout(templates, gap) {
+    // options.prefix: có tiền tố mã album trong tên artboard (mặc định khi xếp từ 2 mẫu trở lên)
+    function layout(templates, gap, options) {
         var boards = [], y = 0;
+        var prefix = options && typeof options.prefix === 'boolean' ? options.prefix : templates.length > 1;
         templates.forEach(function (template) {
+            if (template.boards) {
+                var albumHeight = 0;
+                template.boards.forEach(function (item, at) {
+                    var placed = { name: albumBoardName(template, item, at, prefix), x: item.x, y: y + item.y, w: item.w, h: item.h, scaffold: true };
+                    if (item.extra) placed.extra = true;
+                    boards.push(placed);
+                    albumHeight = Math.max(albumHeight, item.y + item.h);
+                });
+                y += albumHeight + gap;
+                return;
+            }
             var total = countBoards(template), index = 0, blockHeight = 0;
             template.rows.forEach(function (row, rowIndex) {
                 var x = 0, rowHeight = 0;
@@ -78,6 +92,13 @@
             y += blockHeight + gap;
         });
         return boards;
+    }
+
+    // Khối bao ngoài của một mẫu (px), gốc (0,0)
+    function extentOf(template) {
+        var width = 0, height = 0;
+        layout([template], 0).forEach(function (b) { width = Math.max(width, b.x + b.w); height = Math.max(height, b.y + b.h); });
+        return { w: width, h: height };
     }
 
     function isSize(value) {
@@ -103,13 +124,14 @@
             if (typeof spec.guides !== 'boolean') return false;
             if (!Array.isArray(spec.boards) || spec.boards.length < 1 || spec.boards.length > MAX_BOARDS) return false;
             return spec.boards.every(function (board) {
-                return board && isName(board.name) && isCoordinate(board.x) && isCoordinate(board.y) && isSize(board.w) && isSize(board.h);
+                return board && isName(board.name) && isCoordinate(board.x) && isCoordinate(board.y) && isSize(board.w) && isSize(board.h) &&
+                    (board.scaffold === undefined || board.scaffold === true);
             });
         }
     };
 
     root.dr7Artboard = {
-        SECTIONS: SECTIONS, MAX_SIZE: MAX_SIZE, MAX_GAP: MAX_GAP, NAME_MAX: NAME_MAX,
-        countBoards: countBoards, pick: pick, layout: layout, isSize: isSize, spec: validator
+        SECTIONS: SECTIONS, MAX_SIZE: MAX_SIZE, MAX_GAP: MAX_GAP, MAX_BOARDS: MAX_BOARDS, NAME_MAX: NAME_MAX,
+        countBoards: countBoards, extentOf: extentOf, pick: pick, layout: layout, isSize: isSize, spec: validator
     };
 }(typeof window !== 'undefined' ? window : this));

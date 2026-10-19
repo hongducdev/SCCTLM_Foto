@@ -52,6 +52,10 @@
 .ab-shape { position: relative; display: block; }
 .ab-shape i { position: absolute; box-sizing: border-box; border: 1.5px solid #ffffff; border-radius: 1px; }
 .ab-card.is-selected .ab-shape i { border-color: #fff; }
+/* Ảnh bổ sung (06 trở đi) tô tím như bảng bố cục của gói MHK */
+.ab-shape i.is-extra, .ab-card.is-selected .ab-shape i.is-extra { border-color: #b69cf0; background: rgba(182, 156, 240, .35); }
+.artboard .ab-card em + em { margin-top: -1px; }
+.ab-code { margin-right: 2px; color: #6ea8fe; font-weight: 700; }
 .ab-card-art.is-dashed { width: 46px; height: 30px; margin: 0 auto 5px; border: 1.5px dashed #d3d3d7; border-radius: 12px; color: #ffffff; font: 300 22px/26px "Segoe UI", Tahoma, sans-serif; }
 .ab-card strong { display: block; max-width: 100%; overflow: hidden; color: #ffffff; font: 500 11px/15px "Segoe UI", Tahoma, sans-serif; text-overflow: ellipsis; }
 .ab-card em { display: block; max-width: 100%; overflow: hidden; color: var(--muted-foreground); font: normal 9.5px/13px "Segoe UI", Tahoma, sans-serif; text-overflow: ellipsis; }
@@ -64,7 +68,8 @@
 }
 .artboard .ab-custom-row input { flex: 1; min-width: 0; }
 .artboard input:focus, .artboard select:focus { border-color: var(--ring); outline: none; }
-.artboard input[type="number"]::-webkit-inner-spin-button { opacity: .5; }
+/* Ô số nhập tay, không có nút tăng/giảm */
+.artboard input[type="number"]::-webkit-inner-spin-button, .artboard input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 
 .ab-segment { display: flex; padding: 3px; border-radius: 999px; background: var(--muted); }
 .artboard .ab-mode { flex: 1; height: 30px; border-radius: 999px; color: var(--muted-foreground); font: 500 11px/30px "Segoe UI", Tahoma, sans-serif; transition: background 140ms, color 140ms; }

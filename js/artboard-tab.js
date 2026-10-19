@@ -1,5 +1,5 @@
 /*
- * Tab Artboard: chọn khổ (nhiều mẫu cùng lúc), tìm kiếm, lọc theo chip, thiết lập rồi tạo artboard trong Photoshop.
+ * Tab Artboard: chọn một khổ, tìm kiếm, lọc theo chip, thiết lập rồi tạo artboard trong Photoshop.
  * Dữ liệu mẫu và cách xếp nằm ở js/artboard-layout.js; phần tạo thật ở jsx/artboard-create.jsx (qua window.dr7RunArtboard).
  */
 (function () {
@@ -11,7 +11,7 @@
     var STATUS_MS = 3000;
 
     var data = window.dr7Artboard;
-    var state = { selected: ['square'], filter: 'all', query: '', mode: 'new', customW: 1080, customH: 1080 };
+    var state = { selected: ['square'], filter: 'all', query: '', mode: 'new', customW: 1080, customH: 1080, nameEdited: false };
     var el = {};
 
     function plain(text) {
@@ -30,8 +30,9 @@
     }
 
     function sizeLabel(template) {
-        var count = data.countBoards(template);
-        return count > 1 ? count + ' artboard' : template.rows[0][0].w + ' × ' + template.rows[0][0].h;
+        var count = data.countBoards(template), size = data.extentOf(template);
+        if (template.boards) return count > 1 ? count + ' ảnh · ' + size.w + ' × ' + size.h : size.w + ' × ' + size.h;
+        return count > 1 ? count + ' artboard' : size.w + ' × ' + size.h;
     }
 
     // Hình thu nhỏ khổ giấy: vẽ lại đúng bố cục xếp thật, co vừa khung icon
@@ -45,11 +46,23 @@
             var rect = document.createElement('i');
             rect.style.cssText = 'left:' + Math.round(b.x * scale) + 'px;top:' + Math.round(b.y * scale) + 'px;width:' +
                 Math.max(2, Math.round(b.w * scale)) + 'px;height:' + Math.max(2, Math.round(b.h * scale)) + 'px';
+            if (b.extra) rect.className = 'is-extra';
             icon.appendChild(rect);
         });
         icon.style.width = Math.round(width * scale) + 'px';
         icon.style.height = Math.round(height * scale) + 'px';
         return icon;
+    }
+
+    // Dòng chú thích dưới thẻ: album ghi "5 ô đầu + N bổ sung" rồi tới kích thước khối ghép, như bảng bố cục của gói MHK
+    function cardLines(template, isCustom) {
+        if (isCustom) return ['Nhập kích thước'];
+        if (!template.boards) return [sizeLabel(template)];
+        var size = data.extentOf(template), extras = template.boards.filter(function (b) { return b.extra; }).length;
+        var lines = [size.w + ' × ' + size.h + ' px'];
+        if (extras) lines.unshift(template.boards.length - extras + ' ô đầu + ' + extras + ' bổ sung');
+        else if (template.boards.length > 1) lines.unshift(template.boards.length + ' ảnh');
+        return lines;
     }
 
     function cardFor(template) {
@@ -62,18 +75,28 @@
         frame.className = 'ab-card-art';
         if (isCustom) { frame.className += ' is-dashed'; frame.textContent = '+'; } else frame.appendChild(shapeIcon(template));
         var name = document.createElement('strong');
-        name.textContent = template.name;
-        var size = document.createElement('em');
-        size.textContent = isCustom ? 'Nhập kích thước' : sizeLabel(template);
+        if (template.code) {
+            var code = document.createElement('span');
+            code.className = 'ab-code';
+            code.textContent = template.code;
+            name.appendChild(code);
+            name.appendChild(document.createTextNode(' ' + template.name));
+            card.title = template.code + ' · ' + template.name + ' · ' + sizeLabel(template);
+        } else name.textContent = template.name;
         card.appendChild(frame);
         card.appendChild(name);
-        card.appendChild(size);
+        cardLines(template, isCustom).forEach(function (line) {
+            var size = document.createElement('em');
+            size.textContent = line;
+            card.appendChild(size);
+        });
         return card;
     }
 
     function matches(template) {
         if (!state.query) return true;
-        var haystack = plain(template.name + ' ' + (template.rows[0][0] ? template.rows[0][0].w + 'x' + template.rows[0][0].h : ''));
+        var size = data.extentOf(template);
+        var haystack = plain((template.code || '') + ' ' + template.name + ' ' + size.w + 'x' + size.h + ' ' + data.countBoards(template) + ' anh');
         return haystack.indexOf(plain(state.query)) !== -1;
     }
 
@@ -84,10 +107,9 @@
             var show = state.filter === 'all' ? true : section.tags.indexOf(state.filter) !== -1;
             if (!show) return;
             var cards = section.cards.slice();
-            if (section.id === 'facebook') cards.push(customCard);
             list.push({ id: section.id, title: section.title, cards: cards });
         });
-        if (state.filter === 'custom') list.push({ id: 'custom', title: 'Tùy chỉnh', cards: [customCard] });
+        if (state.filter === 'all' || state.filter === 'custom') list.push({ id: 'custom', title: 'Tùy chỉnh', cards: [customCard] });
         return list;
     }
 
@@ -133,16 +155,19 @@
         el.customGroup.hidden = !customOn;
         var chosen = chosenTemplates();
         var boards = chosen.reduce(function (sum, template) { return sum + data.countBoards(template); }, 0);
-        el.summary.textContent = chosen.length ? 'Đã chọn ' + chosen.length + ' mẫu · ' + boards + ' artboard' : 'Chưa chọn mẫu nào';
+        var tooMany = boards > data.MAX_BOARDS;
+        el.summary.textContent = tooMany ? 'Tối đa ' + data.MAX_BOARDS + ' artboard mỗi lần (đang chọn ' + boards + ')' :
+            chosen.length ? 'Đã chọn ' + chosen.length + ' mẫu · ' + boards + ' artboard' : 'Chưa chọn mẫu nào';
         el.create.textContent = boards ? 'Tạo ' + boards + ' artboard' : 'Tạo artboard';
-        el.create.disabled = !boards;
-        el.summaryIcon.classList.toggle('is-empty', !boards);
+        el.create.disabled = !boards || tooMany;
+        el.summaryIcon.classList.toggle('is-empty', !boards || tooMany);
+        if (!state.nameEdited) el.name.value = chosen.length === 1 && chosen[0].code ? 'MHK_FB_' + chosen[0].code : DEFAULT_NAME;
         if (window.dr7FitHeight) window.dr7FitHeight();
     }
 
+    // Chỉ một mẫu được chọn mỗi lần; bấm lại mẫu đang chọn thì bỏ chọn
     function toggle(id) {
-        var at = state.selected.indexOf(id);
-        if (at === -1) state.selected.push(id); else state.selected.splice(at, 1);
+        state.selected = state.selected[0] === id ? [] : [id];
         refreshSelection();
     }
 
@@ -168,7 +193,7 @@
             gap: gap,
             background: el.background.value,
             guides: el.guides.checked,
-            boards: data.layout(templates, gap)
+            boards: data.layout(templates, gap, { prefix: templates.length > 1 || state.mode === 'current' })
         };
         el.create.disabled = true;
         window.dr7RunArtboard(spec, function (res) {
@@ -219,6 +244,7 @@
         Array.prototype.forEach.call(el.modes, function (button) {
             button.addEventListener('click', function () { setMode(button.getAttribute('data-mode')); });
         });
+        el.name.addEventListener('input', function () { state.nameEdited = true; });
         el.create.addEventListener('click', create);
         setMode('new');
         renderSections();

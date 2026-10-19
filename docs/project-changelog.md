@@ -1,5 +1,14 @@
 # Changelog
 
+## Chưa phát hành — Album Facebook MHK trong tab Artboard
+
+- Thêm 27 mẫu album Facebook (01A–11B, 121 artboard) thay cho 4 mẫu "Bộ nhiều ảnh": tọa độ tuyệt đối, ghép sát, ảnh bổ sung (06+) tách bên phải; thẻ hiện mã, số ảnh, khối ghép, ô bổ sung tô tím.
+- Tên artboard như PSD của gói: `NN_Anh_WxH[_Bo-sung]` (thêm tiền tố `<mã>_` khi chọn nhiều mẫu hoặc dùng File hiện tại); tên bộ gợi ý `MHK_FB_<mã>`. Mỗi artboard album có thêm lớp trống "ĐẶT ẢNH / THIẾT KẾ TẠI ĐÂY"; lớp nền đổi tên "NỀN TRẮNG" / "NỀN ĐEN". Chip lọc **Album**; thẻ album hiện "5 ô đầu + N bổ sung" và kích thước khối ghép.
+- Chỉ chọn một mẫu mỗi lần (bấm lại để bỏ chọn); bỏ nhóm và chip Facebook (Bài ngang, Cover Trang, Cover Nhóm); thứ tự nhóm: Hay dùng, Album, YouTube, Tùy chỉnh.
+- Nút Tạo bị khóa và báo rõ khi chọn quá 40 artboard.
+- Lớp ẩn "HƯỚNG DẪN" của gói chưa làm: Photoshop chỉ cho đổi lớp thành chữ (`layer.kind = TEXT`) trong artboard đầu tiên, các artboard sau báo "The layer cannot contain text".
+- File: `js/artboard-facebook-album-presets.js`; sửa `js/artboard-layout.js`, `js/artboard-tab.js`, `css/artboard.css`; test đối chiếu `tests/fixtures/facebook-album-layouts.json` (parse từ danh sách của gói).
+
 ## v0.1.4 — Bộ màu MHK và Mix màu
 
 - Nhóm **Màu & Preset** có 6 bộ màu dạng thẻ icon (Fuji 71, Dazz 34, Kodak 12, Leica 7, Ricoh 7, Hồng Kông 34 màu); bấm thẻ để xem các màu nhỏ bên dưới, bấm 1 màu là áp ngay (100%) thành layer `Color <bộ> <số>`.

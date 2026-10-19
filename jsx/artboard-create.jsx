@@ -5,10 +5,13 @@
  *     boards: [{ name, x, y, w, h }] }  - x/y/w/h in px, relative to the top-left of the first artboard.
  * 'new' opens one document sized to all artboards; 'current' appends them to the right of everything already in
  * the active document so nothing is covered. Photoshop's Make command cannot set an artboard's background, so
- * white/black are real "Nen" solid-colour layers inside each artboard. Returns the number of artboards made.
+ * white/black are real solid-colour layers (NEN TRANG / NEN DEN) inside each artboard. A board with scaffold: true
+ * (album templates) also gets the MHK pack's empty drop layer. Returns the number of artboards made.
  */
 $._ext_ARTBOARD = {
     FILL: { white: [255, 255, 255], black: [0, 0, 0] },
+    FILL_NAME: { white: 'NỀN TRẮNG', black: 'NỀN ĐEN' },
+    DROP_NAME: 'ĐẶT ẢNH / THIẾT KẾ TẠI ĐÂY',
     SAFE_MARGIN: 0.05,
 
     make: function (board) {
@@ -27,8 +30,8 @@ $._ext_ARTBOARD = {
         app.activeDocument.activeLayer.name = board.name;
     },
 
-    // Solid-colour layer named "Nen" inside the active artboard
-    fill: function (rgbValues) {
+    // Solid-colour layer inside the active artboard, named after the colour
+    fill: function (rgbValues, layerName) {
         var rgb = new ActionDescriptor();
         rgb.putDouble(charIDToTypeID('Rd  '), rgbValues[0]);
         rgb.putDouble(charIDToTypeID('Grn '), rgbValues[1]);
@@ -43,7 +46,15 @@ $._ext_ARTBOARD = {
         desc.putReference(charIDToTypeID('null'), ref);
         desc.putObject(charIDToTypeID('Usng'), stringIDToTypeID('contentLayer'), layer);
         executeAction(charIDToTypeID('Mk  '), desc, DialogModes.NO);
-        app.activeDocument.activeLayer.name = 'N\u1EC1n';
+        app.activeDocument.activeLayer.name = layerName;
+    },
+
+    // Empty layer inside the active artboard, so Place Embedded / painting lands in the board
+    // (doc.artLayers.add() would land at the document's top level, so it is added through the artboard set)
+    addEmptyLayer: function (artboard, layerName) {
+        var layer = artboard.artLayers.add();
+        layer.name = layerName;
+        return layer;
     },
 
     // Four guides inset from each artboard edge: the safe area for text and faces
@@ -61,7 +72,9 @@ $._ext_ARTBOARD = {
         if (spec.wrap) self.make(spec.wrap);
         for (i = 0; i < spec.boards.length; i += 1) {
             self.make(spec.boards[i]);
-            if (self.FILL[spec.background]) self.fill(self.FILL[spec.background]);
+            var artboard = doc.activeLayer;
+            if (self.FILL[spec.background]) self.fill(self.FILL[spec.background], self.FILL_NAME[spec.background]);
+            if (spec.boards[i].scaffold) self.addEmptyLayer(artboard, self.DROP_NAME);
             if (spec.guides) self.addGuides(doc, spec.boards[i]);
         }
     },
@@ -91,7 +104,8 @@ $._ext_ARTBOARD = {
     shift: function (boards, dx) {
         var moved = [], i;
         for (i = 0; i < boards.length; i += 1) {
-            moved.push({ name: boards[i].name, x: boards[i].x + dx, y: boards[i].y, w: boards[i].w, h: boards[i].h });
+            moved.push({ name: boards[i].name, x: boards[i].x + dx, y: boards[i].y, w: boards[i].w, h: boards[i].h,
+                scaffold: boards[i].scaffold });
         }
         return moved;
     },

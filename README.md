@@ -43,7 +43,7 @@
 | ⌨️ | **Phím tắt Action** | Gán F2–F12 (kèm Shift/Ctrl) để Play bất kỳ Action nào. |
 | 🖌️ | **Brush Lab** | Bật Shape Dynamics + Pen Pressure bằng một nút; xem trước nét cọ, chỉnh Cỡ / Cứng ngay trên panel. |
 | 🎨 | **Bộ màu & Mix màu** | 6 bộ màu MHK (165 màu): bấm 1 màu để áp ngay, hoặc bật Mix để chọn tối đa 4 màu, chỉnh độ mờ từng layer và pha thành màu mới. |
-| 🧱 | **Artboard** | Tạo hàng loạt artboard theo khổ Facebook / YouTube / bộ nhiều ảnh / khổ tuỳ chỉnh, kèm guide vùng an toàn. |
+| 🧱 | **Artboard** | Tạo bộ artboard theo 27 mẫu album Facebook MHK / khổ YouTube / khổ tuỳ chỉnh, kèm guide vùng an toàn. |
 | 🧭 | **Khám phá** | Xem playlist YouTube SCCTLM và link cộng đồng ngay trong panel. |
 | 🎞️ | **Preset & kết cấu** | Preset Camera Raw `.xmp` đặt vào `presets/` tự thành nút; hoa văn Hạt phim có sẵn. |
 | 🔒 | **Chạy cục bộ** | Adobe CEP + ExtendScript, không gửi dữ liệu qua mạng. |
@@ -144,16 +144,16 @@ Gồm các nhóm có thể thu gọn: **Retouch**, **Brush Lab**, **Rim Light** 
 
 ### 🧱 Tab Artboard
 
-**Tạo artboard**: tìm khổ, lọc theo chip *Tất cả / Facebook / YouTube / Tuỳ chỉnh*, chọn nhiều thẻ khổ (Hay dùng, Facebook, YouTube, Bộ nhiều ảnh, khổ tuỳ chỉnh).
+**Tạo artboard**: tìm khổ, lọc theo chip *Tất cả / Album / YouTube / Tuỳ chỉnh*, chọn **một** thẻ mỗi lần (Hay dùng, album, YouTube, khổ tuỳ chỉnh); album là **27 mẫu Facebook MHK** chia 4 nhóm (1 ảnh & Story, 2–3, 4–5, 6–10 ảnh). Mỗi thẻ có mã (05A, 08B…), hình khối ghép; ảnh bổ sung từ 06 trở đi tô tím và nằm tách bên phải khối 5 ô đầu.
 
 | Thiết lập | Ý nghĩa |
 |---|---|
 | **Tài liệu mới / File hiện tại** | Mở tài liệu mới chứa các artboard, hoặc thêm artboard vào bên phải tài liệu đang mở (nội dung cũ được gói vào artboard "Tài liệu gốc"). |
 | **Tên bộ**, **Khoảng cách** | Đặt tên bộ artboard và khoảng cách `gap` (px) giữa các artboard. |
-| **Nền** | Trắng / đen là lớp màu "Nền" nằm trong artboard (Photoshop không cho đặt nền artboard qua script); "Trong suốt" không thêm lớp. |
+| **Nền** | Trắng / đen là lớp màu "NỀN TRẮNG" / "NỀN ĐEN" nằm trong artboard (Photoshop không cho đặt nền artboard qua script); "Trong suốt" không thêm lớp. |
 | **Guide vùng an toàn** | Thêm guide lề 5%. |
 
-Nút **Tạo N artboard** xếp các mẫu chồng dọc, mỗi mẫu xếp ngang theo hàng; cả lệnh là một bước History.
+Nút **Tạo N artboard** tạo cả mẫu đang chọn; ở File hiện tại cả lệnh là một bước History. Mẫu album ghép sát nhau (không có khe), mỗi artboard có thêm lớp trống "ĐẶT ẢNH / THIẾT KẾ TẠI ĐÂY" và đặt tên như PSD của gói: `NN_Anh_WxH` (ảnh bổ sung thêm `_Bo-sung`), vd `06_Anh_1200x1200_Bo-sung`; tên bộ tự gợi ý `MHK_FB_<mã>` khi chọn album, và khi thêm vào File hiện tại artboard có tiền tố mã (`05A_01_Anh_1800x1800`). Số pixel là cỡ làm việc của bộ mẫu, không phải thông số Meta; Facebook có thể cắt hoặc đổi cách hiển thị.
 
 ### 🧭 Tab Khám phá
 
@@ -281,6 +281,7 @@ SCCTLM_Foto/
 │   ├── brush-setup-controls.js  # Brush Lab: Thiết lập cọ / Về mặc định
 │   ├── brush-controls.js        # Brush Lab: xem trước nét cọ, thanh Cỡ / Cứng
 │   ├── color-presets.js         # Bộ màu MHK: thẻ bộ màu, áp 1 màu, giỏ Mix
+│   ├── artboard-facebook-album-presets.js # Artboard: 27 mẫu album Facebook MHK
 │   ├── artboard-layout.js       # Artboard: dữ liệu khổ, thuật toán xếp, kiểm tra
 │   ├── artboard-tab.js          # Artboard: giao diện tab
 │   ├── explore-feed.js          # Khám phá: tải & parse RSS playlist YouTube

@@ -1,7 +1,7 @@
 /*
  * BRUSH - read / write Size (px) and Hardness (%) of the current brush tool, for the panel's sliders.
  * Reuses $._ext_BPP.readToolOptions / writeToolOptions (jsx/brush-pen-pressure.jsx).
- * getColor / setColor read / write the Foreground color (the stroke color of the Stroke Brush Path action).
+ * getOpacity / setOpacity: brush Opacity (the panel's Do sang slider). getColor / setColor read / write the Foreground color (the stroke color of the Stroke Brush Path action).
  * Tools without a brush (Move, Marquee...) report "none"; set() switches to the Brush tool first.
  */
 $._ext_BRUSH = {
@@ -31,6 +31,27 @@ $._ext_BRUSH = {
         brush.putUnitDouble(self.DIAMETER_KEY, charIDToTypeID('#Pxl'), Math.max(1, Math.min(5000, Number(size))));
         brush.putUnitDouble(self.HARDNESS_KEY, charIDToTypeID('#Prc'), Math.max(0, Math.min(100, Number(hardness))));
         options.putObject(self.BRUSH_KEY, options.getObjectType(self.BRUSH_KEY), brush);
+        $._ext_BPP.writeToolOptions(options);
+        return 'ok';
+    },
+
+    OPACITY_KEY: stringIDToTypeID('opacity'),
+
+    // Opacity (0-100) of the current brush tool, or "none" when the tool has no Opacity option
+    getOpacity: function () {
+        var options = $._ext_BPP.readToolOptions();
+        if (!options.hasKey($._ext_BRUSH.OPACITY_KEY)) return 'none';
+        return String(Math.round(options.getInteger($._ext_BRUSH.OPACITY_KEY)));
+    },
+
+    setOpacity: function (value) {
+        var key = $._ext_BRUSH.OPACITY_KEY;
+        var options = $._ext_BPP.readToolOptions();
+        if (!options.hasKey(key)) {
+            app.currentTool = 'paintbrushTool';
+            options = $._ext_BPP.readToolOptions();
+        }
+        options.putInteger(key, Math.round(Math.max(0, Math.min(100, Number(value)))));
         $._ext_BPP.writeToolOptions(options);
         return 'ok';
     },

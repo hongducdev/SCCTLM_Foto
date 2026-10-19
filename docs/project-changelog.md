@@ -1,6 +1,12 @@
 # Changelog
 
-## Chưa phát hành — Album Facebook MHK trong tab Artboard
+## v0.1.5 — Màu cọ cho Brush Lab và Album Facebook MHK
+
+- **Brush Lab**: thêm ô màu dạng viên thuốc (icon bảng màu căn trái), mã hex, hút màu Foreground, 9 màu mẫu và thanh **Độ sáng**. Chọn màu là đặt Foreground của Photoshop, Độ sáng là Opacity của cọ; cả hai là thứ action *Stroke Brush Path* dùng để tô nét, và được đọc lại khi quay lại panel.
+- **Rim Light** đổi sang cùng kiểu viên thuốc, dùng chung CSS với Brush Lab.
+- File: `js/brush-color-controls.js` (mới), `jsx/brush-size-hardness.jsx` (`getColor` / `setColor` / `getOpacity` / `setOpacity`), `js/rim-color-controls.js`, `css/layout.css`.
+
+### Album Facebook MHK trong tab Artboard
 
 - Thêm 27 mẫu album Facebook (01A–11B, 121 artboard) thay cho 4 mẫu "Bộ nhiều ảnh": tọa độ tuyệt đối, ghép sát, ảnh bổ sung (06+) tách bên phải; thẻ hiện mã, số ảnh, khối ghép, ô bổ sung tô tím.
 - Tên artboard như PSD của gói: `NN_Anh_WxH[_Bo-sung]` (thêm tiền tố `<mã>_` khi chọn nhiều mẫu hoặc dùng File hiện tại); tên bộ gợi ý `MHK_FB_<mã>`. Mỗi artboard album có thêm lớp trống "ĐẶT ẢNH / THIẾT KẾ TẠI ĐÂY"; lớp nền đổi tên "NỀN TRẮNG" / "NỀN ĐEN". Chip lọc **Album**; thẻ album hiện "5 ô đầu + N bổ sung" và kích thước khối ghép.

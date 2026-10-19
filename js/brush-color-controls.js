@@ -1,8 +1,9 @@
 /*
- * Nhóm Brush Lab: ô màu dạng viên thuốc + mã hex + hút màu Foreground + màu mẫu, chỉnh màu nét của action Stroke Brush Path.
- * Action tô nét bằng màu Foreground của Photoshop nên đổi màu ở đây là đặt Foreground
- * ($._ext_BRUSH.setColor, xem jsx/brush-size-hardness.jsx); không cần mở ảnh. Quay lại panel thì đọc lại
- * Foreground, vì đổi màu trong Photoshop làm đổi màu đang hiện.
+ * Nhóm Brush Lab: ô màu dạng viên thuốc + mã hex + hút màu Foreground + màu mẫu + thanh Độ sáng.
+ * Action Stroke Brush Path tô nét bằng Foreground và Opacity của cọ, nên đổi màu ở đây là đặt Foreground
+ * ($._ext_BRUSH.setColor) và kéo Độ sáng là đặt Opacity của cọ ($._ext_BRUSH.setOpacity), xem
+ * jsx/brush-size-hardness.jsx; không cần mở ảnh. Quay lại panel thì đọc lại cả hai, vì đổi trong Photoshop
+ * làm đổi giá trị đang hiện.
  */
 (function () {
     'use strict';
@@ -10,7 +11,10 @@
     var HEX = /^#[0-9a-f]{6}$/i;
 
     var cs = new CSInterface();
-    var picker = null, hexInput = null, pill = null;
+    var WRITE_DELAY_MS = 120;
+
+    var picker = null, hexInput = null, pill = null, slider = null, sliderValue = null;
+    var writeTimer = 0;
 
     function setColor(hex) {
         picker.value = hex.toLowerCase();
@@ -35,18 +39,36 @@
         });
     }
 
+    function paintTrack() {
+        slider.style.setProperty('--fill', slider.value + '%');
+        sliderValue.textContent = slider.value + '%';
+    }
+
+    function writeOpacity() {
+        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.setOpacity(' + Math.round(Number(slider.value)) + '):"DR7_MISSING"', function (res) {
+            if (res !== 'ok') console.warn('DR7: không đặt được Opacity cho cọ', res);
+        });
+    }
+
     function refresh() {
-        if (document.activeElement === hexInput) return;
-        readForeground(setColor);
+        if (document.activeElement !== hexInput) readForeground(setColor);
+        if (document.activeElement === slider) return;
+        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.getOpacity():"DR7_MISSING"', function (res) {
+            if (!/^\d{1,3}$/.test(res)) return;           // "none": công cụ hiện tại không có Opacity, giữ giá trị đang hiện
+            slider.value = Math.min(100, Number(res));
+            paintTrack();
+        });
     }
 
     window.dr7InitBrushColor = function () {
         picker = document.querySelector('.brush-color-input');
         hexInput = document.querySelector('.brush-hex');
         pill = document.querySelector('.brush-pill');
+        slider = document.querySelector('.brush-opacity');
+        sliderValue = document.querySelector('.brush-opacity-value');
         var eyedropper = document.querySelector('.brush-eyedropper');
         var swatches = document.querySelectorAll('.brush-swatch');
-        if (!picker || !hexInput || !pill || !eyedropper) return;
+        if (!picker || !hexInput || !pill || !slider || !sliderValue || !eyedropper) return;
 
         picker.addEventListener('change', function () { pickColor(picker.value); });
         hexInput.addEventListener('input', function () {
@@ -62,7 +84,13 @@
             swatch.addEventListener('click', function () { pickColor(swatch.getAttribute('data-color')); });
         });
         eyedropper.addEventListener('click', function () { readForeground(setColor); });
+        slider.addEventListener('input', function () {
+            paintTrack();
+            clearTimeout(writeTimer);
+            writeTimer = setTimeout(writeOpacity, WRITE_DELAY_MS);
+        });
         window.addEventListener('focus', refresh);
+        paintTrack();
         refresh();
     };
 }());

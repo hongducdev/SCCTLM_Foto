@@ -1,5 +1,5 @@
 /*
- * Nhóm Rim Light: ô màu tròn + mã hex + hút màu Foreground + 7 màu mẫu + thanh Cường độ.
+ * Nhóm Rim Light: ô màu dạng viên thuốc + mã hex + hút màu Foreground + 7 màu mẫu + thanh Cường độ.
  *
  * Nhóm chỉ hiện khi ảnh đang mở có nhóm "Rim Light" chứa lớp "Color" ($._ext_RIMCOLOR.available(),
  * xem jsx/rim-light-color.jsx); Photoshop không báo khi đổi ảnh hay chạy Action nên panel hỏi lại khi quay
@@ -14,7 +14,7 @@
     var HEX = /^#[0-9a-f]{6}$/i;
 
     var cs = new CSInterface();
-    var group = null, picker = null, hexInput = null, slider = null, sliderValue = null;
+    var group = null, pill = null, picker = null, hexInput = null, slider = null, sliderValue = null;
     var exists = false;
     var pending = false;                                // chưa nhận kết quả lần hỏi trước thì không hỏi thêm
     var opacityTimer = 0;
@@ -30,6 +30,9 @@
     function setColor(hex) {
         picker.value = hex.toLowerCase();
         hexInput.value = hex.toUpperCase();
+        pill.style.background = hex;
+        var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16);
+        pill.style.color = (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? '#1a1a1a' : '#ffffff';   // icon luôn đọc được trên màu nền
         hexInput.classList.remove('is-invalid');
     }
 
@@ -74,13 +77,14 @@
 
     window.dr7InitRimColor = function () {
         group = document.querySelector('.group-rim');
+        pill = document.querySelector('.rim-pill');
         picker = document.querySelector('.rim-color-input');
         hexInput = document.querySelector('.rim-hex');
         slider = document.querySelector('.rim-intensity');
         sliderValue = document.querySelector('.rim-intensity-value');
         var eyedropper = document.querySelector('.rim-eyedropper');
         var swatches = document.querySelectorAll('.rim-swatch');
-        if (!group || !picker || !hexInput || !slider || !sliderValue || !eyedropper) return;
+        if (!group || !pill || !picker || !hexInput || !slider || !sliderValue || !eyedropper) return;
 
         picker.addEventListener('change', function () { pickColor(picker.value); });
         hexInput.addEventListener('input', function () {

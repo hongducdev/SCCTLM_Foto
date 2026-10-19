@@ -132,7 +132,7 @@ Gồm các nhóm có thể thu gọn: **Retouch**, **Brush Lab**, **Rim Light** 
 | **Thiết lập cọ** | `BPP` | Bật Shape Dynamics cho cọ hiện tại và đặt Control của Size / Angle / Roundness Jitter về **Pen Pressure** (đang cầm công cụ khác thì tự chuyển sang Brush). Không cần mở ảnh. Xong thì nút thành **Cọ đã bật** (viền xanh) và hiện nút **Về mặc định** cùng hàng; trạng thái đọc lại từ cọ mỗi khi quay lại panel. |
 | **Về mặc định** | `BPPRESET` | Trả cọ về mặc định: mọi Control = Off, tắt Shape Dynamics. |
 | **Xem trước / Cỡ / Cứng** | `BRUSH` | Hai thanh trượt đọc và ghi trực tiếp Size (1–500 px) và Hardness (0–100%) của cọ hiện tại (`jsx/brush-size-hardness.jsx`); khung xem trước vẽ lại theo giá trị. Đọc lại khi quay lại panel. |
-| **Màu cọ** | `BRUSH` | Ô màu tròn, mã hex, nút hút Foreground và 9 màu mẫu: chọn màu là đặt Foreground của Photoshop — màu mà action *Stroke Brush Path* dùng để tô nét. Đọc lại Foreground khi quay lại panel. |
+| **Màu cọ** | `BRUSH` | Ô màu dạng viên thuốc, mã hex, nút hút Foreground và 9 màu mẫu: chọn màu là đặt Foreground của Photoshop — màu mà action *Stroke Brush Path* dùng để tô nét. Thanh **Độ sáng** đọc / ghi Opacity (0–100%) của cọ hiện tại (`getOpacity` / `setOpacity`). Đọc lại Foreground và Opacity khi quay lại panel. |
 
 #### Màu & Preset
 

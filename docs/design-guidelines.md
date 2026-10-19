@@ -35,3 +35,4 @@ Defined as CSS variables in `css/layout.css` (`:root`). Brand colours: green `#1
 - Keep full command meaning in `title` when the visible label is shortened.
 - Hide unavailable commands instead of leaving dead controls in the main workflow.
 - Button icons that are not inline SVG use masks in `css/button-icons.css` (class `icon-btn` + `--icon`), so they follow the label colour; never put emoji or symbol characters in button text.
+- Colour pickers (Rim Light, Brush Lab) are one row: a pill filled with the chosen colour and a palette icon aligned left (icon turns dark or white by luminance), a hex input and an eyedropper pill; preset swatches sit below and a slider row (sun icon, "Độ sáng") closes the group. Both groups share the `.rim-*` / `.brush-*` selectors in `css/layout.css`.

@@ -39,9 +39,9 @@
 | 🪄 | **Không phá huỷ** | Mọi thao tác sinh layer, mask hoặc adjustment layer riêng — chỉnh Opacity / Blend Mode / đảo ngược bất cứ lúc nào. |
 | 🌈 | **RGB 8-bit & 16-bit** | Thuật toán màu và kết cấu chạy chính xác trên cả hai. |
 | ⤓ | **Nạp Action 1 click** | Mỗi file `.atn` trong `presets/` thành một nút; không nạp trùng bộ đã có. |
-| 💡 | **Rim Light** | Tự hiện khi ảnh có nhóm `Rim Light` > lớp `Color`: chọn màu (ô tròn, hex, hút Foreground, 7 màu mẫu) và Cường độ. |
+| 💡 | **Rim Light** | Tự hiện khi ảnh có nhóm `Rim Light` > lớp `Color`: chọn màu (ô viên thuốc, hex, hút Foreground, 8 màu mẫu) và Độ sáng. |
 | ⌨️ | **Phím tắt Action** | Gán F2–F12 (kèm Shift/Ctrl) để Play bất kỳ Action nào. |
-| 🖌️ | **Brush Lab** | Bật Shape Dynamics + Pen Pressure bằng một nút; xem trước nét cọ, chỉnh Cỡ / Cứng ngay trên panel. |
+| 🖌️ | **Brush Lab** | Bật Shape Dynamics + Pen Pressure bằng một nút; xem trước nét cọ, chỉnh Cỡ / Cứng, màu cọ (Foreground) và Độ sáng (Opacity) ngay trên panel. |
 | 🎨 | **Bộ màu & Mix màu** | 6 bộ màu MHK (165 màu): bấm 1 màu để áp ngay, hoặc bật Mix để chọn tối đa 4 màu, chỉnh độ mờ từng layer và pha thành màu mới. |
 | 🧱 | **Artboard** | Tạo bộ artboard theo 27 mẫu album Facebook MHK / khổ YouTube / khổ tuỳ chỉnh, kèm guide vùng an toàn. |
 | 🧭 | **Khám phá** | Xem playlist YouTube SCCTLM và link cộng đồng ngay trong panel. |
@@ -190,9 +190,9 @@ Nhóm **Rim Light** chỉ hiện khi ảnh đang mở có nhóm `Rim Light` ch�
 
 | Điều khiển | Tác vụ |
 |---|---|
-| Ô màu tròn / ô hex / 7 màu mẫu | Chọn màu và **tô lại lớp `Color` ngay**: giữ vùng trong suốt (lớp Solid Color thì đổi màu), 1 bước History. |
+| Ô màu viên thuốc / ô hex / 8 màu mẫu | Chọn màu và **tô lại lớp `Color` ngay**: giữ vùng trong suốt (lớp Solid Color thì đổi màu), 1 bước History. |
 | Nút hút màu | Lấy màu **Foreground** của Photoshop rồi tô. |
-| **Cường độ** | Độ mờ (0–100%) của cả nhóm `Rim Light`, áp ngay khi kéo; lấy giá trị thật của nhóm khi nhóm vừa hiện. |
+| **Độ sáng** | Độ mờ (0–100%) của cả nhóm `Rim Light`, áp ngay khi kéo; lấy giá trị thật của nhóm khi nhóm vừa hiện. |
 
 ### ⌨️ Phím tắt Play Action
 
@@ -241,6 +241,7 @@ Nút **⤓** trên thanh tiêu đề lấy GitHub Release mới nhất của `ho
 - Mỗi lần mở panel tự kiểm tra im lặng; có bản mới thì nút hiện **chấm xanh**.
 - Bấm nút → xác nhận → chỉ tải các file runtime đã đổi (`index.html`, `style.css`, `loader.jsx`, `CSXS/manifest.xml`, `js/ css/ jsx/ img/ presets/`), tải xong hết mới ghi đè, rồi tự nạp lại. Lỗi mạng giữa chừng không làm hỏng bản đang cài.
 - `manifest.xml` đổi cấu trúc (không chỉ số phiên bản) → panel báo khởi động lại Photoshop.
+- File đích chỉ-đọc (lỗi `ERR_CANT_WRITE`) được bỏ cờ chỉ-đọc rồi ghi lại một lần; lỗi ghi vẫn hiện kèm tên mã để dễ chẩn đoán.
 - Bản ghi file đã cài: `.dr7-version.json` (bị xoá khi cài lại bằng `.bat` / watcher).
 
 <details>
@@ -289,7 +290,7 @@ SCCTLM_Foto/
 │   ├── explore-feed.js          # Khám phá: tải & parse RSS playlist YouTube
 │   ├── explore-tab.js           # Khám phá: giao diện tab
 │   ├── section-collapse.js      # Thu gọn / mở rộng từng nhóm
-│   └── rim-color-controls.js    # Rim Light: màu, hex, hút màu, Cường độ; ẩn khi ảnh không có Rim Light
+│   └── rim-color-controls.js    # Rim Light: màu, hex, hút màu, Độ sáng; ẩn khi ảnh không có Rim Light
 ├── jsx/
 │   ├── 4.jsxbin                 # Hộp thoại Chữ / Logo (WM, không còn nút trên panel)
 │   ├── main.jsx                 # Hàm lõi: GGXS, TJSH, JMXS, TJYY, FSJH, MBPF, ZCZQ, DKACR

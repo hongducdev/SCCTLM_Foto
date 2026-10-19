@@ -81,15 +81,26 @@
             dir += '/' + parts[i];
             if (fs().stat(dir).err) {
                 var made = fs().makedir(dir);
-                if (made.err) throw new Error('Không tạo được thư mục ' + dir + ' (lỗi ' + made.err + ')');
+                if (made.err) throw new Error('Không tạo được thư mục ' + dir + ' (lỗi ' + errorName(made.err) + ')');
             }
         }
     }
 
     function write(base, path, data, encoding) {
         makeDirs(base, path);
-        var result = fs().writeFile(base + '/' + path, data, encoding);
-        if (result.err) throw new Error('Không ghi được ' + path + ' (lỗi ' + result.err + ')');
+        var target = base + '/' + path;
+        var result = fs().writeFile(target, data, encoding);
+        if (result.err === fs().ERR_CANT_WRITE) {            // file chỉ-đọc (vd chép từ nguồn chỉ-đọc): bỏ cờ rồi ghi lại 1 lần
+            fs().chmod(target, 438);                         // 0o666
+            result = fs().writeFile(target, data, encoding);
+        }
+        if (result.err) throw new Error('Không ghi được ' + path + ' (lỗi ' + errorName(result.err) + ')');
+    }
+
+    // cep.fs.ERR_* theo mã số, để thông báo lỗi đọc được (vd 6 -> ERR_CANT_WRITE)
+    function errorName(code) {
+        var names = Object.keys(fs()).filter(function (key) { return /^ERR_/.test(key) && fs()[key] === code; });
+        return code + (names.length ? ' ' + names[0] : '');
     }
 
     // -> { current, latest: { tag, name, notes, url } | null, available }

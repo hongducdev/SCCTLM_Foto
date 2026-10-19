@@ -790,7 +790,7 @@ button:focus-visible {
 .rim-color-input::-webkit-color-swatch { border: 0; border-radius: 50%; }
 .rim-fields { flex: 1; min-width: 0; }
 .rim-hex-row { display: flex; gap: 6px; }
-.group .rim-hex {
+.group .rim-hex, .group .brush-hex {
     flex: 1;
     min-width: 0;
     height: 34px;
@@ -803,9 +803,9 @@ button:focus-visible {
     font: 500 12px "Segoe UI", Tahoma, sans-serif;
     box-sizing: border-box;
 }
-.group .rim-hex:focus { outline: none; border-color: var(--muted-foreground); }
-.group .rim-hex.is-invalid { border-color: var(--destructive); }
-.group .rim-eyedropper {
+.group .rim-hex:focus, .group .brush-hex:focus { outline: none; border-color: var(--muted-foreground); }
+.group .rim-hex.is-invalid, .group .brush-hex.is-invalid { border-color: var(--destructive); }
+.group .rim-eyedropper, .group .brush-eyedropper {
     float: none;
     flex: 0 0 42px;
     width: 42px;
@@ -818,10 +818,10 @@ button:focus-visible {
     color: #ffffff;
     cursor: pointer;
 }
-.group .rim-eyedropper:hover { background: var(--edge); border-color: var(--muted-2); color: #fff; }
-.rim-eyedropper svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-.rim-swatches { display: flex; justify-content: space-between; margin-top: 12px; }
-.group .rim-swatch {
+.group .rim-eyedropper:hover, .group .brush-eyedropper:hover { background: var(--edge); border-color: var(--muted-2); color: #fff; }
+.rim-eyedropper svg, .brush-eyedropper svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.rim-swatches, .brush-swatches { display: flex; justify-content: space-between; margin-top: 12px; }
+.group .rim-swatch, .group .brush-swatch {
     float: none;
     flex: 0 0 20px;
     width: 20px;
@@ -833,8 +833,29 @@ button:focus-visible {
     cursor: pointer;
     transition: transform 120ms, border-color 120ms;
 }
-.group .rim-swatch:hover { transform: scale(1.18); border-color: rgba(255, 255, 255, .55); }
-.group .rim-swatch:focus { outline: none; }
+.group .rim-swatch:hover, .group .brush-swatch:hover { transform: scale(1.18); border-color: rgba(255, 255, 255, .55); }
+.group .rim-swatch:focus, .group .brush-swatch:focus { outline: none; }
+/* Brush Lab: ô màu dạng viên thuốc có icon bảng màu, mã hex và hút màu cùng một hàng */
+.brush-top { display: flex; align-items: center; gap: 6px; margin-top: 12px; }
+.brush-pill {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 34px;
+    border-radius: 999px;
+    box-shadow: 0 0 0 1px var(--btn-line);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 14px;
+    box-sizing: border-box;
+    cursor: pointer;
+    transition: box-shadow 140ms;
+}
+.brush-pill:hover { box-shadow: 0 0 0 2px var(--ring); }
+.brush-pill svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; pointer-events: none; }
+.group .brush-pill > input.brush-color-input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: 0; cursor: pointer; }
+.group .brush-hex { flex: 0 0 84px; }
 .slider-row > .slider-label { flex: 0 0 52px; }
 .rim-reset {
     display: inline-flex;

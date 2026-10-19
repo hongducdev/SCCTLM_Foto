@@ -239,6 +239,7 @@
         if (window.dr7InitShortcutCapture) window.dr7InitShortcutCapture();
         if (window.dr7InitBrushSetup) window.dr7InitBrushSetup();
         if (window.dr7InitBrushControls) window.dr7InitBrushControls();
+        if (window.dr7InitBrushColor) window.dr7InitBrushColor();
         if (window.dr7InitRimColor) window.dr7InitRimColor();
         fitHeight();
         // Silent check: an offline panel simply shows no badge.

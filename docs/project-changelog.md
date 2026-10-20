@@ -1,7 +1,9 @@
 # Changelog
 
-## Chưa phát hành
+## v0.1.8 — Đánh dấu phím dùng ngoài panel, hộp thoại chung, tách mã Da
 
+- **Phím tắt Action**: thêm nút khoá cạnh nút bàn phím để đánh dấu phím bạn đã gán trực tiếp trong Photoshop; panel chặn gán phím đó cho Action khác (ấn lại phím đã đánh dấu để bỏ). File: `js/shortcut-reserved-keys.js`, `js/shortcut-key-capture.js`.
+- **Hộp thoại chung** (`js/dialog.js`): lỗi từ Photoshop, hỏi cập nhật và thông báo phím dùng cùng một kiểu hộp thoại thay cho `alert`/`confirm` của trình duyệt.
 - **Cấu trúc mã**: tách `jsx/main.jsx` (2.428 dòng) thành `main.jsx` (bọc `$.dr7SkinStep`, bảng lệnh Da) và 8 file `jsx/skin-*.jsx`, mỗi lệnh Da một file, di chuyển nguyên văn. Mỗi file tự đăng ký vào `$.dr7SkinFns`; `loader.jsx` dựng bảng lệnh sau khi nạp xong và báo lỗi nạp nếu thiếu file. Hành vi các lệnh không đổi (đã đối chứng cây layer và histogram trong Photoshop 2022).
 - **Kiểm thử/CI**: thêm GitHub Actions chạy `tests/check-*.js` và tạo release từ tag; test ExtendScript chỉ ASCII; `check-live-reload` bỏ qua khi không có Photoshop (`DR7_LIVE=1` để chạy).
 

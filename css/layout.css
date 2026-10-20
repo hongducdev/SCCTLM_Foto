@@ -856,6 +856,7 @@ button:focus-visible {
     cursor: pointer;
 }
 .group .rim-eyedropper:hover, .group .brush-eyedropper:hover { background: var(--edge); border-color: var(--muted-2); color: #fff; }
+.group .rim-eyedropper.is-picking, .group .brush-eyedropper.is-picking { background: var(--edge); border-color: var(--muted-foreground); }
 .rim-eyedropper svg, .brush-eyedropper svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .rim-swatches, .brush-swatches { display: flex; justify-content: space-between; margin-top: 12px; }
 .group .rim-swatch, .group .brush-swatch {

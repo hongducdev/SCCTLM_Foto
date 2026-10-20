@@ -1,5 +1,5 @@
 /*
- * Nhóm Rim Light: ô màu dạng viên thuốc + mã hex + hút màu Foreground + 7 màu mẫu + thanh Cường độ.
+ * Nhóm Rim Light: ô màu dạng viên thuốc + mã hex + hút màu từ ảnh + 7 màu mẫu + thanh Cường độ.
  *
  * Nhóm chỉ hiện khi ảnh đang mở có nhóm "Rim Light" chứa lớp "Color" ($._ext_RIMCOLOR.available(),
  * xem jsx/rim-light-color.jsx); Photoshop không báo khi đổi ảnh hay chạy Action nên panel hỏi lại khi quay
@@ -99,12 +99,7 @@
         Array.prototype.forEach.call(swatches, function (swatch) {
             swatch.addEventListener('click', function () { pickColor(swatch.getAttribute('data-color')); });
         });
-        eyedropper.addEventListener('click', function () {
-            cs.evalScript('$._ext_RIMCOLOR.foreground()', function (res) {
-                if (HEX.test(res)) pickColor(res);
-                else console.warn('DR7: không đọc được màu Foreground', res);
-            });
-        });
+        eyedropper.addEventListener('click', function () { window.dr7Eyedropper(eyedropper, pickColor); });
         var reset = document.querySelector('.rim-reset');
         if (reset) reset.addEventListener('click', function () {   // về trắng + độ sáng 100%
             slider.value = 100;

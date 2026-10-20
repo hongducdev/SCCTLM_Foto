@@ -191,7 +191,7 @@ Nhóm **Rim Light** chỉ hiện khi ảnh đang mở có nhóm `Rim Light` ch�
 | Điều khiển | Tác vụ |
 |---|---|
 | Ô màu viên thuốc / ô hex / 8 màu mẫu | Chọn màu và **tô lại lớp `Color` ngay**: giữ vùng trong suốt (lớp Solid Color thì đổi màu), 1 bước History. |
-| Nút hút màu | Lấy màu **Foreground** của Photoshop rồi tô. |
+| Nút hút màu | Bật công cụ Eyedropper của Photoshop; bấm vào ảnh để lấy màu rồi tô, công cụ cũ được trả lại. Bấm nút lần nữa để huỷ. |
 | **Độ sáng** | Độ mờ (0–100%) của cả nhóm `Rim Light`, áp ngay khi kéo; lấy giá trị thật của nhóm khi nhóm vừa hiện. |
 
 ### ⌨️ Phím tắt Play Action
@@ -290,6 +290,7 @@ SCCTLM_Foto/
 │   ├── explore-feed.js          # Khám phá: tải & parse RSS playlist YouTube
 │   ├── explore-tab.js           # Khám phá: giao diện tab
 │   ├── section-collapse.js      # Thu gọn / mở rộng từng nhóm
+│   ├── eyedropper-picker.js     # Nút hút màu dùng chung: bật Eyedropper, chờ bấm vào ảnh
 │   └── rim-color-controls.js    # Rim Light: màu, hex, hút màu, Độ sáng; ẩn khi ảnh không có Rim Light
 ├── jsx/
 │   ├── 4.jsxbin                 # Hộp thoại Chữ / Logo (WM, không còn nút trên panel)
@@ -303,6 +304,7 @@ SCCTLM_Foto/
 │   ├── brush-pen-pressure.jsx   # BPP / BPPRESET / trạng thái cọ; chạy được độc lập
 │   ├── action-set-import.jsx    # Nạp bộ Action .atn đóng gói (bỏ qua nếu đã có bộ cùng tên)
 │   ├── brush-size-hardness.jsx  # BRUSH: đọc / ghi Size + Hardness của cọ
+│   ├── eyedropper-tool.jsx      # EYEDROPPER: bật/trả công cụ Eyedropper, đọc Foreground
 │   ├── rim-light-color.jsx      # RIMCOLOR: tô màu lớp Color, đọc/đặt cường độ nhóm Rim Light
 │   ├── action-shortcut-setup.jsx # Liệt kê Action; sinh & nạp bộ "SCCTLM_Foto" (▶ Play Action có phím F)
 │   ├── pj/                      # Tài nguyên cọ (.tpl) và hoa văn (.pat)

@@ -1,5 +1,9 @@
 # Changelog
 
+## Chưa phát hành
+
+- **Nút hút màu** (Rim Light, Brush Lab): không còn tự lấy màu Foreground. Bấm nút thì Photoshop chuyển sang công cụ Eyedropper, bấm vào ảnh để lấy màu rồi công cụ cũ được trả lại; bấm nút lần nữa hoặc chọn công cụ khác để huỷ. File: `js/eyedropper-picker.js`, `jsx/eyedropper-tool.jsx`.
+
 ## v0.1.8 — Đánh dấu phím dùng ngoài panel, hộp thoại chung, tách mã Da
 
 - **Phím tắt Action**: thêm nút khoá cạnh nút bàn phím để đánh dấu phím bạn đã gán trực tiếp trong Photoshop; panel chặn gán phím đó cho Action khác (ấn lại phím đã đánh dấu để bỏ). File: `js/shortcut-reserved-keys.js`, `js/shortcut-key-capture.js`.

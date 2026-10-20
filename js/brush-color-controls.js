@@ -1,5 +1,5 @@
 /*
- * Nhóm Brush Lab: ô màu dạng viên thuốc + mã hex + hút màu Foreground + màu mẫu + thanh Độ sáng.
+ * Nhóm Brush Lab: ô màu dạng viên thuốc + mã hex + hút màu từ ảnh + màu mẫu + thanh Độ sáng.
  * Action Stroke Brush Path tô nét bằng Foreground và Opacity của cọ, nên đổi màu ở đây là đặt Foreground
  * ($._ext_BRUSH.setColor) và kéo Độ sáng là đặt Opacity của cọ ($._ext_BRUSH.setOpacity), xem
  * jsx/brush-size-hardness.jsx; không cần mở ảnh. Quay lại panel thì đọc lại cả hai, vì đổi trong Photoshop
@@ -83,7 +83,7 @@
         Array.prototype.forEach.call(swatches, function (swatch) {
             swatch.addEventListener('click', function () { pickColor(swatch.getAttribute('data-color')); });
         });
-        eyedropper.addEventListener('click', function () { readForeground(setColor); });
+        eyedropper.addEventListener('click', function () { window.dr7Eyedropper(eyedropper, setColor); });
         slider.addEventListener('input', function () {
             paintTrack();
             clearTimeout(writeTimer);

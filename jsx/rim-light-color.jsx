@@ -60,11 +60,6 @@ $._ext_RIMCOLOR = {
         }
     },
 
-    // "#rrggbb" of the Foreground color, for the panel's picker default
-    foreground: function () {
-        return '#' + app.foregroundColor.rgb.hexValue.toLowerCase();
-    },
-
     // hex: "#rrggbb" from the panel; anything else = Foreground color
     run: function (hex) {
         var self = $._ext_RIMCOLOR;

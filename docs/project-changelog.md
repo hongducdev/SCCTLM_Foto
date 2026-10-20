@@ -1,5 +1,10 @@
 # Changelog
 
+## Chưa phát hành
+
+- **Cấu trúc mã**: tách `jsx/main.jsx` (2.428 dòng) thành `main.jsx` (bọc `$.dr7SkinStep`, bảng lệnh Da) và 8 file `jsx/skin-*.jsx`, mỗi lệnh Da một file, di chuyển nguyên văn. Mỗi file tự đăng ký vào `$.dr7SkinFns`; `loader.jsx` dựng bảng lệnh sau khi nạp xong và báo lỗi nạp nếu thiếu file. Hành vi các lệnh không đổi (đã đối chứng cây layer và histogram trong Photoshop 2022).
+- **Kiểm thử/CI**: thêm GitHub Actions chạy `tests/check-*.js` và tạo release từ tag; test ExtendScript chỉ ASCII; `check-live-reload` bỏ qua khi không có Photoshop (`DR7_LIVE=1` để chạy).
+
 ## v0.1.7 — Báo lỗi khi trùng phím tắt Action
 
 - **Phím tắt Action**: gán phím đã dùng cho Action khác giờ hiện popup nêu đúng phím bị trùng và Action/bộ đang giữ phím đó, không còn tự lấy lại phím; nút trong popup dạng viên thuốc. File: `js/shortcut-key-capture.js`, `css/layout.css`.

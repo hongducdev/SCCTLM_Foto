@@ -16,11 +16,13 @@ const panelVersion = /<Extension Id="com\.retouchpanel\.panel" Version="(\d+\.\d
 assert.ok(bundleVersion && panelVersion && bundleVersion[1] === panelVersion[1], 'manifest versions must match (x.y.z)');
 const names = [...new Set([...html.matchAll(/doa\('([^']+)'\)/g)].map(m => m[1]))];
 const main = read('jsx/main.jsx');
-const registered = main.slice(main.lastIndexOf('$.dr7Commands ='));
+const skinFiles = fs.readdirSync(path.join(root, 'jsx')).filter(name => /^skin-.*\.jsx$/.test(name));
+const mainAndSkins = main + skinFiles.map(name => read('jsx/' + name)).join('\n');
+const registered = main.slice(main.indexOf('$.dr7BuildSkinCommands ='));
 const replacements = read('jsx/mhk-replacements.jsx');
 const presetLut = read('jsx/preset-lut.jsx');
 for (const name of names) {
-    assert.ok(new RegExp('\\b' + name + ': (\\$\\.dr7SkinStep\\("[^"]+", )?' + name + '\\b').test(registered) ||
+    assert.ok(new RegExp('\\b' + name + ': (\\$\\.dr7SkinStep\\("[^"]+", )?f\\.' + name + '\\b').test(registered) ||
         new RegExp('\\b' + name + ': function').test(replacements) ||
         new RegExp('\\b' + name + ': ' + name + '\\b').test(presetLut), name + ' must be registered');
 }
@@ -76,9 +78,9 @@ for (const file of ['ls', 'ss', 're', 'db', 'tc']) {
     assert.match(read('jsx/' + file + '.jsx'), /mode!==DocumentMode\.RGB/, file + ' must guard RGB mode');
 }
 // Clear History wiped the user's undo stack (was the tail of MBPF).
-assert.doesNotMatch(main, /clearEvent/, 'no command may clear the document history');
+assert.doesNotMatch(mainAndSkins, /clearEvent/, 'no command may clear the document history');
 // Da commands without a dialog: run the real $.dr7SkinStep from main.jsx against a stub host.
-const skinSource = main.slice(main.indexOf('$.dr7SkinStep = function'), main.indexOf('// evalFile declarations'));
+const skinSource = main.slice(main.indexOf('$.dr7SkinStep = function'), main.indexOf('// Each skin-*.jsx file registers'));
 const skinNotices = [], steps = [];
 const skinDoc = { mode: 'RGB', suspendHistory(title, code) { steps.push(title); vm.runInNewContext(code, skinHost); } };
 const skinHost = { $: {}, DocumentMode: { RGB: 'RGB' }, alert: m => skinNotices.push(m), app: { activeDocument: skinDoc } };
@@ -93,6 +95,36 @@ skinDoc.mode = 'CMYK';
 skinHost.$.dr7SkinStep('DR7 test', () => { skinRan++; })();
 assert.deepEqual([skinRan, skinNotices.length], [1, 1], 'non-RGB must explain and not run');
 assert.match(read('jsx/pfsd2.jsx'), /\$\.dr7SkinStep\("[^"]+", SkinColor\)\(\)/, 'Mau tong must use the skin step');
+// Every skin command lives in its own skin-*.jsx and registers itself; the table is built from that registry.
+const skinNames = ['DKACR', 'FSJH', 'GGXS', 'JMXS', 'MBPF', 'TJSH', 'TJYY', 'ZCZQ'];
+const registeredBy = {};
+for (const name of skinFiles) {
+    const source = read('jsx/' + name);
+    for (const m of source.matchAll(/\$\.dr7SkinFns\.([A-Z]+) = ([A-Z]+);/g)) {
+        assert.equal(m[1], m[2], name + ' must register its own function');
+        assert.match(source, new RegExp('^function ' + m[1] + '\\(\\) \\{', 'm'), name + ' must declare ' + m[1]);
+        registeredBy[m[1]] = name;
+    }
+}
+assert.deepEqual(Object.keys(registeredBy).sort(), skinNames, 'every skin command must be registered by exactly one skin file');
+const buildHost = fns => {
+    const host = { $: { dr7Commands: {}, dr7LoadErrors: [], dr7SkinFns: fns }, DocumentMode: { RGB: 'RGB' }, alert() {}, app: {} };
+    vm.runInNewContext(main, host);
+    host.$.dr7SkinFns = fns;
+    host.$.dr7BuildSkinCommands();
+    return host.$;
+};
+const allFns = Object.fromEntries(skinNames.map(name => [name, () => name]));
+let built = buildHost(allFns);
+assert.deepEqual(Object.keys(built.dr7Commands).sort(), skinNames, 'all skin commands are exposed');
+assert.equal(built.dr7LoadErrors.length, 0);
+assert.equal(built.dr7Commands.TJSH, allFns.TJSH, 'unwrapped commands are the registered function itself');
+const { GGXS: dropped1, TJSH: dropped2, ...partial } = allFns;
+built = buildHost(partial);
+assert.deepEqual(Object.keys(built.dr7Commands).sort(), skinNames.filter(n => n !== 'GGXS' && n !== 'TJSH'),
+    'a skin file that did not load must not leave a broken command behind');
+assert.deepEqual([...built.dr7LoadErrors].sort(), ['skin command not registered: GGXS', 'skin command not registered: TJSH'],
+    'a missing skin file must be reported through dr7LoadErrors');
 for (const name of ['DnB_Brush.tpl', 'DS4_Soft_Brush.tpl', 'dsPickColor.png',
     'dsSelection.png', 'dsTransform.png', 'eyesSelection.png', 'localSmoother.png',
     'maskSamplers.png', 'removerDialog.png', 'removerSelection.png']) {

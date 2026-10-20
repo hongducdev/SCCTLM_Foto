@@ -32,7 +32,8 @@ const disabled = [...html.matchAll(/<button\b([^>]*\bdisabled\b[^>]*)>([^<]*)<\/
     label: m[2], command: (m[1].match(/doa\('([^']+)'\)/) || [])[1] || null,
     reason: (m[1].match(/title="([^"]*)"/) || [])[1]
 }));
-const main = read(path.join(root, 'jsx/main.jsx'));
+const main = ['main.jsx'].concat(fs.readdirSync(path.join(root, 'jsx')).filter(name => /^skin-.*\.jsx$/.test(name)))
+    .map(name => read(path.join(root, 'jsx', name))).join('\n');
 const patternIds = [...new Set([...main.matchAll(/putString\(cTID\("Idnt"\), "([^"]+)"\)/g)].map(m => m[1]))];
 const report = { original, originalCommandCount: oldCommands.length, currentCommandCount: newCommands.length,
     missingCommands, omittedStartupHooks, missingJsx, originalResourceCount: resources.length, missingResources,

@@ -63,12 +63,16 @@ $._ext.evalFiles = function (jsxFolderPath) {
     // Cờ cho các file jsx/ chạy được độc lập (vd brush-pen-pressure.jsx):
     // đang nạp từ loader thì chỉ đăng ký lệnh, không tự chạy.
     $.dr7Loading = true;
+    $.dr7SkinFns = {};                                   // a reload must not keep closures of a skin file that no longer loads
     try {
         $._ext.evalFile(here + '/jsx/4.jsxbin');
         $._ext.evalFiles(here + '/jsx');
     } finally {
         $.dr7Loading = false;
     }
+    // jsx/main.jsx: skin-*.jsx register in $.dr7SkinFns while loading, the command table is built once all are in
+    if (typeof $.dr7BuildSkinCommands === 'function') $.dr7BuildSkinCommands();
+    else $.dr7LoadErrors.push('jsx/main.jsx did not define $.dr7BuildSkinCommands');
     for (var name in $.mhkReplacements) {
         if ($.mhkReplacements.hasOwnProperty(name)) $.dr7Commands[name] = $.mhkReplacements[name];
     }

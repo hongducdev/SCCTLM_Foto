@@ -293,7 +293,8 @@ SCCTLM_Foto/
 │   └── rim-color-controls.js    # Rim Light: màu, hex, hút màu, Độ sáng; ẩn khi ảnh không có Rim Light
 ├── jsx/
 │   ├── 4.jsxbin                 # Hộp thoại Chữ / Logo (WM, không còn nút trên panel)
-│   ├── main.jsx                 # Hàm lõi: GGXS, TJSH, JMXS, TJYY, FSJH, MBPF, ZCZQ, DKACR
+│   ├── main.jsx                 # cTID/sTID, $.dr7SkinStep (1 bước undo, chỉ RGB) và bảng lệnh Da ($.dr7BuildSkinCommands)
+│   ├── skin-*.jsx               # Mỗi lệnh Da một file: GGXS (highlight), TJSH (blusher), JMXS (mascara), TJYY (eyeshadow), FSJH (giảm đỏ), MBPF (trắng da), ZCZQ (môi), DKACR (Camera Raw); tự đăng ký vào $.dr7SkinFns
 │   ├── mhk-replacements.jsx     # Hạt phim, Hào Quang, Hạt thô, Chấm, Chi tiết
 │   ├── Photoshop.jsx            # Tiện ích Crash Bug Fix (chạy khi mở panel)
 │   ├── preset-lut.jsx           # Áp Preset Camera Raw (.xmp)

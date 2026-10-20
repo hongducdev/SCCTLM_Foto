@@ -178,6 +178,33 @@
         });
     }
 
+    // Hộp thông báo phím bị trùng: nêu rõ phím nào và đang gán cho Action nào (bộ nào)
+    function showConflict(key, clash) {
+        var old = document.querySelector('.shortcut-conflict');
+        if (old) old.remove();
+        var overlay = document.createElement('div');
+        overlay.className = 'shortcut-conflict';
+        overlay.setAttribute('role', 'alertdialog');
+        var box = document.createElement('div');
+        box.className = 'shortcut-conflict-box';
+        var title = document.createElement('strong');
+        title.textContent = 'Phím tắt bị trùng';
+        var msg = document.createElement('p');
+        msg.textContent = 'Phím ' + key + ' đã được gán cho Action "' + clash.action + '" (bộ "' + clash.set +
+            '"). Hãy chọn phím khác, hoặc xoá phím đó ở Action kia trước (Backspace).';
+        var ok = document.createElement('button');
+        ok.textContent = 'Đã hiểu';
+        function close() { overlay.remove(); }
+        ok.addEventListener('click', close);
+        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+        box.appendChild(title);
+        box.appendChild(msg);
+        box.appendChild(ok);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+        ok.focus();
+    }
+
     function onKeyDown(event) {
         event.preventDefault();
         event.stopPropagation();
@@ -197,8 +224,14 @@
         if (event.altKey) { showKey('Không dùng Alt…'); return; }
         var key = (event.ctrlKey || event.metaKey ? 'Ctrl+' : '') + (event.shiftKey ? 'Shift+' : '') +
             'F' + (code - KEY_F2 + 2);
-        // 1 phím chỉ Play 1 Action: gán phím đã dùng cho Action khác thì lấy lại phím đó
-        var next = others.filter(function (b) { return b.key !== key; });
+        // 1 phím chỉ Play 1 Action: phím đã dùng cho Action khác thì báo lỗi, không tự lấy lại
+        var clash = others.filter(function (b) { return b.key === key; })[0];
+        if (clash) {
+            stop();
+            showConflict(key, clash);
+            return;
+        }
+        var next = others.slice();
         next.push({ key: key, set: t.set, action: t.action });
         apply(next, 'Đang gán ' + key + '…');
     }

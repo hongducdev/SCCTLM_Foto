@@ -196,29 +196,8 @@
             '"). Hãy chọn phím khác, hoặc xoá phím đó ở Action kia trước (Backspace).');
     }
 
-    function showNotice(titleText, message) {
-        var old = document.querySelector('.shortcut-conflict');
-        if (old) old.remove();
-        var overlay = document.createElement('div');
-        overlay.className = 'shortcut-conflict';
-        overlay.setAttribute('role', 'alertdialog');
-        var box = document.createElement('div');
-        box.className = 'shortcut-conflict-box';
-        var title = document.createElement('strong');
-        title.textContent = titleText;
-        var msg = document.createElement('p');
-        msg.textContent = message;
-        var ok = document.createElement('button');
-        ok.textContent = 'Đã hiểu';
-        function close() { overlay.remove(); }
-        ok.addEventListener('click', close);
-        overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
-        box.appendChild(title);
-        box.appendChild(msg);
-        box.appendChild(ok);
-        overlay.appendChild(box);
-        document.body.appendChild(overlay);
-        ok.focus();
+    function showNotice(title, message) {
+        window.dr7Dialog({ title: title, message: message, tone: 'error' });
     }
 
     function onKeyDown(event) {

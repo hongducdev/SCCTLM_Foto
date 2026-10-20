@@ -7,13 +7,28 @@
     var ready = false;
     var busy = false;
     window.dr7IsBusy = function () { return busy; };
+
+    // Hộp thoại chung (js/dialog.js); alert/confirm của trình duyệt chỉ là đường lui nếu hộp thoại chưa nạp được
+    function notify(title, message) {
+        if (window.dr7Dialog) return window.dr7Dialog({ title: title, message: message, tone: 'error' });
+        alert(title + '\n' + message);
+        return Promise.resolve(true);
+    }
+    function ask(title, message, confirmText, cancelText) {
+        if (window.dr7Dialog) return window.dr7Dialog({ title: title, message: message, confirmText: confirmText, cancelText: cancelText });
+        return Promise.resolve(window.confirm(title + '\n\n' + message));
+    }
     window.dr7Reload = function () {
         if (busy) return false;
         // Máy dev: chép code mới từ thư mục nguồn sang bản cài trước khi nạp lại
         try {
             if (window.dr7SyncDevSource) window.dr7SyncDevSource(base);
         } catch (e) {
-            alert('Không đồng bộ được code từ thư mục nguồn:\n' + e.message);
+            // Nạp lại sau khi người dùng đọc xong thông báo, không thì trang tải lại và hộp thoại biến mất
+            notify('Không đồng bộ được code', 'Không đồng bộ được code từ thư mục nguồn:\n' + e.message).then(function () {
+                window.location.reload(true);
+            });
+            return true;
         }
         window.location.reload(true);
         return true;
@@ -45,7 +60,7 @@
             kind === 'artboard' ? window.dr7Artboard.spec : kind === 'atnpick' ? /^pick$/ : /^[A-Za-z_][A-Za-z0-9_]*$/;
         if (!valid.test(name) || (arg !== undefined && !HEX_COLOR.test(arg))) { if (done) done('DR7_INVALID'); return; }
         if (!ready) {
-            alert('Lõi Photoshop chưa sẵn sàng. Hãy đóng và mở lại panel.');
+            notify('Photoshop chưa sẵn sàng', 'Lõi Photoshop chưa sẵn sàng. Hãy đóng và mở lại panel.');
             if (done) done('DR7_NOT_READY');
             return;
         }
@@ -72,15 +87,15 @@
             cs.evalScript(code, function (res) {
                 busy = false;
                 if (res === 'DR7_NO_DOCUMENT') {
-                    alert('Hãy mở ảnh trong Photoshop trước khi chạy lệnh.');
+                    notify('Chưa mở ảnh', 'Hãy mở ảnh trong Photoshop trước khi chạy lệnh.');
                 } else if (res !== 'DR7_OK' && res !== 'DR7_CANCEL' && res !== 'DR7_EXISTS') {
-                    alert('Photoshop — ' + label + ':\n' + res);
+                    notify('Photoshop — ' + label, res);
                 }
                 if (done) done(res);
             });
         } catch (e) {
             busy = false;
-            alert('Không kết nối được Photoshop:\n' + e);
+            notify('Không kết nối được Photoshop', String(e));
             if (done) done('DR7_ERROR');
         }
     }
@@ -210,15 +225,17 @@
             if (!result.latest) { status('Chưa có bản phát hành nào trên GitHub.'); return null; }
             if (!result.available) { status('Đang dùng bản mới nhất (' + result.latest.tag + ').'); return null; }
             var notes = result.latest.notes ? '\n\n' + result.latest.notes.slice(0, 600) : '';
-            if (!window.confirm('Cập nhật SCCTLM_Foto lên ' + result.latest.tag + '?' + notes)) { status(''); return null; }
-            return window.dr7Updater.update(base, result.latest.tag, function (done, total) {
-                status('Đang tải ' + done + '/' + total + ' file...');
-            }).then(function (installed) {
-                if (installed.restart) {
-                    status('Đã cập nhật ' + result.latest.tag + '. Hãy khởi động lại Photoshop để áp dụng.');
-                    return 'restart';
-                }
-                return 'reload';
+            return ask('Cập nhật SCCTLM_Foto lên ' + result.latest.tag + '?', notes.trim(), 'Cập nhật', 'Để sau').then(function (accepted) {
+                if (!accepted) { status(''); return null; }
+                return window.dr7Updater.update(base, result.latest.tag, function (done, total) {
+                    status('Đang tải ' + done + '/' + total + ' file...');
+                }).then(function (installed) {
+                    if (installed.restart) {
+                        status('Đã cập nhật ' + result.latest.tag + '. Hãy khởi động lại Photoshop để áp dụng.');
+                        return 'restart';
+                    }
+                    return 'reload';
+                });
             });
         }).then(function (next) {
             finish();
@@ -266,13 +283,13 @@
     var base = extensionDir();
     window.dr7Base = base;                                  // tiện kiểm tra trong console
     if (!base) {
-        alert('SCCTLM_Foto: không xác định được thư mục panel.\nHãy cài lại bằng install/Cai-dat-SCCTLM_Foto.bat');
+        notify('SCCTLM_Foto', 'Không xác định được thư mục panel.\nHãy cài lại bằng install/Cai-dat-SCCTLM_Foto.bat');
     } else {
         cs.evalScript('try{$.dr7Base = ' + JSON.stringify(base) + '; $.evalFile($.dr7Base + "/loader.jsx");' +
             '$.dr7Ready ? "DR7_READY" : $.dr7LoadErrors.join("\\n");}catch(e){"DR7_ERROR: "+e+" line "+e.line;}', function (res) {
             ready = res === 'DR7_READY';
             if (!ready) {
-                alert('SCCTLM_Foto — không nạp được lõi ExtendScript:\n' + res + '\n\nThư mục panel:\n' + base);
+                notify('SCCTLM_Foto: không nạp được lõi ExtendScript', res + '\n\nThư mục panel:\n' + base);
                 return;
             }
             // ScriptUI dialogs opened from a CEP panel (Làm Da, Hàng loạt, Tuỳ chỉnh, Chữ/Logo)

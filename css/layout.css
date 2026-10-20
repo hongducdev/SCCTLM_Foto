@@ -543,7 +543,8 @@ button:focus-visible {
     box-shadow: inset 0 0 0 1px var(--destructive);
     color: #fff;
 }
-.shortcut-conflict {
+/* Hộp thoại dùng chung (js/dialog.js) */
+.dr7-dialog {
     position: fixed;
     inset: 0;
     z-index: 1000;
@@ -553,34 +554,48 @@ button:focus-visible {
     padding: 16px;
     background: rgba(0, 0, 0, .55);
 }
-.shortcut-conflict-box {
+.dr7-dialog-box {
+    width: 100%;
     max-width: 280px;
+    max-height: 100%;
+    overflow-y: auto;
     padding: 16px;
+    box-sizing: border-box;
     border-radius: var(--r-card);
     background: var(--card);
-    box-shadow: inset 0 0 0 1px var(--destructive);
+    box-shadow: inset 0 0 0 1px var(--edge);
     color: var(--foreground);
     font: 12px/1.5 "Segoe UI", Tahoma, sans-serif;
 }
-.shortcut-conflict-box strong { display: block; margin-bottom: 6px; color: var(--destructive); font-size: 13px; }
-.shortcut-conflict-box p { margin: 0 0 12px; }
-.shortcut-conflict-box button {
+.dr7-dialog-box.is-error { box-shadow: inset 0 0 0 1px var(--destructive); }
+.dr7-dialog-box strong { display: block; margin-bottom: 6px; font-size: 13px; }
+.dr7-dialog-box.is-error strong { color: var(--destructive); }
+.dr7-dialog-box p { margin: 0 0 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.dr7-dialog-actions { display: flex; gap: 8px; }
+.dr7-dialog-actions button {
     display: block !important;
-    width: 100% !important;
+    flex: 1 1 0;
+    width: auto !important;
     min-width: 0;
     height: 32px !important;
     margin: 0 !important;
-    padding: 0 16px !important;
+    padding: 0 12px !important;
     border: 0 !important;
     border-radius: var(--r-pill) !important;
-    background: var(--secondary) !important;
-    box-shadow: none !important;
-    color: var(--secondary-foreground) !important;
+    background: transparent !important;
+    box-shadow: inset 0 0 0 1px var(--btn-line, var(--edge)) !important;
+    color: var(--foreground) !important;
     font: 600 12px/32px "Segoe UI", Tahoma, sans-serif !important;
     white-space: nowrap;
     cursor: pointer;
 }
-.shortcut-conflict-box button:hover { background: var(--white) !important; }
+.dr7-dialog-actions button:hover { background: var(--muted) !important; }
+.dr7-dialog-actions button.is-primary {
+    background: var(--secondary) !important;
+    box-shadow: none !important;
+    color: var(--secondary-foreground) !important;
+}
+.dr7-dialog-actions button.is-primary:hover { background: var(--white) !important; }
 @keyframes dr7-listening {
     50% { box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .6); }
 }

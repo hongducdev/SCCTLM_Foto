@@ -28,12 +28,12 @@
         }
     }
 
-    // Nhập nhanh: chọn 1 file .atn bất kỳ rồi nạp thẳng vào bảng Actions (bỏ qua Load Actions của Photoshop)
+    // Quick import: pick any .atn file and load it straight into the Actions panel (skips Photoshop's Load Actions)
     $.dr7ImportAtnDialog = function () {
         var file = File.openDialog('Select an Actions file (.atn)', 'Photoshop Actions:*.atn');
         if (!file) {
             var cancel = new Error('cancel');
-            cancel.number = 8007;                               // run() trong js/panel.js coi 8007 là người dùng huỷ
+            cancel.number = 8007;                               // run() in js/panel.js treats 8007 as "user cancelled"
             throw cancel;
         }
         if ($.dr7ShortcutSetup.exists(actionSetName(file), null)) return 'DR7_EXISTS';

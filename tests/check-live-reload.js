@@ -1,5 +1,7 @@
 // Requires Photoshop with the installed SCCTLM_Foto panel open on CEP port 9004.
 // Temporarily adds an HTML comment; always restores source. Does not touch images.
+// Skipped unless DR7_LIVE=1 so the suite can run without Photoshop (e.g. in CI).
+if (!process.env.DR7_LIVE) { console.log('SKIP: needs Photoshop with the panel open (set DR7_LIVE=1)'); process.exit(0); }
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const root=path.resolve(__dirname,'..'), source=path.join(root,'index.html');

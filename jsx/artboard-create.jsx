@@ -10,8 +10,8 @@
  */
 $._ext_ARTBOARD = {
     FILL: { white: [255, 255, 255], black: [0, 0, 0] },
-    FILL_NAME: { white: 'NỀN TRẮNG', black: 'NỀN ĐEN' },
-    DROP_NAME: 'ĐẶT ẢNH / THIẾT KẾ TẠI ĐÂY',
+    FILL_NAME: { white: 'N\u1EC0N TR\u1EAENG', black: 'N\u1EC0N \u0110EN' },
+    DROP_NAME: '\u0110\u1EB6T \u1EA2NH / THI\u1EBET K\u1EBE T\u1EA0I \u0110\u00C2Y',
     SAFE_MARGIN: 0.05,
 
     make: function (board) {

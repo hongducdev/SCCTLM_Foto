@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.1.7 — Báo lỗi khi trùng phím tắt Action
+
+- **Phím tắt Action**: gán phím đã dùng cho Action khác giờ hiện popup nêu đúng phím bị trùng và Action/bộ đang giữ phím đó, không còn tự lấy lại phím; nút trong popup dạng viên thuốc. File: `js/shortcut-key-capture.js`, `css/layout.css`.
+
 ## v0.1.6 — Sửa lỗi cập nhật không ghi được manifest
 
 - Cập nhật từ GitHub: khi ghi file báo `ERR_CANT_WRITE` (vd `CSXS/manifest.xml` đang chỉ-đọc), updater bỏ cờ chỉ-đọc bằng `cep.fs.chmod` rồi ghi lại một lần; thông báo lỗi giờ kèm tên mã (`lỗi 6 ERR_CANT_WRITE`), kể cả lỗi tạo thư mục. File: `js/github-updater.js`.

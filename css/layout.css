@@ -485,7 +485,8 @@ button:focus-visible {
 .group .shortcut-line > select.shortcut-action:focus { box-shadow: inset 0 0 0 1px var(--ring); }
 .group .shortcut-line > select.shortcut-action optgroup { color: var(--muted-foreground); font-style: normal; }
 .group .shortcut-line > select.shortcut-action option { color: #ffffff; background: var(--card); }
-.group .shortcut-line > button.shortcut-capture {
+.group .shortcut-line > button.shortcut-capture,
+.group .shortcut-line > button.shortcut-reserve {
     display: inline-flex;
     flex: 0 0 36px;
     align-items: center;
@@ -502,7 +503,8 @@ button:focus-visible {
     cursor: pointer;
     transition: color 140ms, background 140ms;
 }
-.shortcut-capture svg {
+.shortcut-capture svg,
+.shortcut-reserve svg {
     width: 22px;
     height: 22px;
     fill: none;
@@ -511,9 +513,12 @@ button:focus-visible {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-.group .shortcut-line > button.shortcut-capture:hover { color: #fff; background: rgba(255, 255, 255, .08); }
-.group .shortcut-line > button.shortcut-capture:focus { outline: none; }
-.group .shortcut-line > button.shortcut-capture.listening {
+.group .shortcut-line > button.shortcut-capture:hover,
+.group .shortcut-line > button.shortcut-reserve:hover { color: #fff; background: rgba(255, 255, 255, .08); }
+.group .shortcut-line > button.shortcut-capture:focus,
+.group .shortcut-line > button.shortcut-reserve:focus { outline: none; }
+.group .shortcut-line > button.shortcut-capture.listening,
+.group .shortcut-line > button.shortcut-reserve.listening {
     color: #fff;
     background: var(--destructive);
     animation: dr7-listening 1s ease-in-out infinite;

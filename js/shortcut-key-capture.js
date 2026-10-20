@@ -21,8 +21,9 @@
     var KEY_F2 = 113, KEY_F12 = 123;                    // mã phím ảo: F1 = 112
 
     var cs = new CSInterface();
-    var button = null, picker = null, badge = null;
+    var button = null, picker = null, badge = null, reserveButton = null;
     var listening = false;
+    var mode = 'assign';                                // 'assign': gán phím cho Action · 'reserve': đánh dấu phím dùng ngoài panel
 
     function load(key) {
         try {
@@ -76,8 +77,19 @@
         badge.textContent = text;
         badge.hidden = !text;
         badge.classList.toggle('is-hint', !!hint);
-        button.title = listening ? 'Ấn F2–F12 (+Shift/Ctrl) · Esc huỷ · Backspace xoá phím' : button.getAttribute('data-title') || button.title;
-        button.classList.toggle('listening', listening);
+        var assigning = listening && mode === 'assign', reserving = listening && mode === 'reserve';
+        button.title = assigning ? 'Ấn F2–F12 (+Shift/Ctrl) · Esc huỷ · Backspace xoá phím' : button.getAttribute('data-title') || button.title;
+        button.classList.toggle('listening', assigning);
+        if (reserveButton) {
+            reserveButton.title = reserving ? 'Ấn phím cần đánh dấu / bỏ đánh dấu · Esc huỷ' : reservedTitle();
+            reserveButton.classList.toggle('listening', reserving);
+        }
+    }
+
+    function reservedTitle() {
+        var list = window.dr7ReservedKeys.list();
+        return 'Đánh dấu phím bạn đã gán ngoài panel (trong Photoshop) để panel không gán trùng. Ấn lại phím đã đánh dấu để bỏ.' +
+            (list.length ? '\nĐã đánh dấu: ' + list.join(', ') : '');
     }
 
     // Danh sách Action theo bộ (optgroup); Action đã có phím ghi kèm phím
@@ -180,6 +192,11 @@
 
     // Hộp thông báo phím bị trùng: nêu rõ phím nào và đang gán cho Action nào (bộ nào)
     function showConflict(key, clash) {
+        showNotice('Phím tắt bị trùng', 'Phím ' + key + ' đã được gán cho Action "' + clash.action + '" (bộ "' + clash.set +
+            '"). Hãy chọn phím khác, hoặc xoá phím đó ở Action kia trước (Backspace).');
+    }
+
+    function showNotice(titleText, message) {
         var old = document.querySelector('.shortcut-conflict');
         if (old) old.remove();
         var overlay = document.createElement('div');
@@ -188,10 +205,9 @@
         var box = document.createElement('div');
         box.className = 'shortcut-conflict-box';
         var title = document.createElement('strong');
-        title.textContent = 'Phím tắt bị trùng';
+        title.textContent = titleText;
         var msg = document.createElement('p');
-        msg.textContent = 'Phím ' + key + ' đã được gán cho Action "' + clash.action + '" (bộ "' + clash.set +
-            '"). Hãy chọn phím khác, hoặc xoá phím đó ở Action kia trước (Backspace).';
+        msg.textContent = message;
         var ok = document.createElement('button');
         ok.textContent = 'Đã hiểu';
         function close() { overlay.remove(); }
@@ -211,8 +227,8 @@
         var code = event.keyCode;
         var t = target();
         if (code === KEY_ESCAPE || event.key === 'Escape') { stop(); return; }
-        var others = bindings().filter(function (b) { return !(b.set === t.set && b.action === t.action); });
-        if (code === KEY_BACKSPACE || code === KEY_DELETE) {
+        var others = t ? bindings().filter(function (b) { return !(b.set === t.set && b.action === t.action); }) : [];
+        if (mode === 'assign' && (code === KEY_BACKSPACE || code === KEY_DELETE)) {
             apply(others, 'Đang xoá phím…');
             return;
         }
@@ -224,6 +240,14 @@
         if (event.altKey) { showKey('Không dùng Alt…'); return; }
         var key = (event.ctrlKey || event.metaKey ? 'Ctrl+' : '') + (event.shiftKey ? 'Shift+' : '') +
             'F' + (code - KEY_F2 + 2);
+        if (mode === 'reserve') { toggleReserved(key); return; }
+        // Phím người dùng đánh dấu là đang dùng ngoài panel: chặn
+        if (window.dr7ReservedKeys.has(key)) {
+            stop();
+            showNotice('Phím đã được đánh dấu', 'Phím ' + key + ' bạn đã đánh dấu là đang dùng ngoài panel (trong Photoshop). ' +
+                'Hãy chọn phím khác, hoặc bấm nút khoá rồi ấn lại ' + key + ' để bỏ đánh dấu.');
+            return;
+        }
         // 1 phím chỉ Play 1 Action: phím đã dùng cho Action khác thì báo lỗi, không tự lấy lại
         var clash = others.filter(function (b) { return b.key === key; })[0];
         if (clash) {
@@ -236,24 +260,41 @@
         apply(next, 'Đang gán ' + key + '…');
     }
 
-    function start() {
+    // Đánh dấu / bỏ đánh dấu 1 phím là "đang dùng ngoài panel"
+    function toggleReserved(key) {
+        var bound = bindings().filter(function (b) { return b.key === key; })[0];
+        if (bound && !window.dr7ReservedKeys.has(key)) {
+            stop();
+            showNotice('Không đánh dấu được', 'Phím ' + key + ' đang gán cho Action "' + bound.action + '" (bộ "' + bound.set +
+                '") của panel. Xoá phím đó ở Action kia trước nếu muốn đánh dấu là dùng ngoài panel.');
+            return;
+        }
+        var now = window.dr7ReservedKeys.flip(key);
+        stop(now ? 'Đã đánh dấu ' + key : 'Đã bỏ đánh dấu ' + key);
+    }
+
+    function start(nextMode) {
         if (listening) { stop(); return; }                  // bấm lần nữa = huỷ
-        if (!target()) { showKey('Chưa có Action'); return; }
+        if (nextMode === 'assign' && !target()) { showKey('Chưa có Action'); return; }
         if (window.dr7IsBusy && window.dr7IsBusy()) return;
+        mode = nextMode;
         listening = true;
         setKeyInterest(true);
         document.addEventListener('keydown', onKeyDown, true);
         window.addEventListener('blur', onBlur);
-        showKey('Ấn F2–F12…');
+        showKey(mode === 'reserve' ? 'Ấn phím cần đánh dấu…' : 'Ấn F2–F12…');
     }
 
     window.dr7InitShortcutCapture = function () {
         button = document.querySelector('.shortcut-capture');
         picker = document.querySelector('.shortcut-action');
         badge = document.querySelector('.shortcut-badge');
-        if (!button || !picker || !badge) return;
+        reserveButton = document.querySelector('.shortcut-reserve');
+        if (!button || !picker || !badge || !reserveButton || !window.dr7ReservedKeys) return;
         button.setAttribute('data-title', button.title);       // tiêu đề gốc, khôi phục sau khi nghe phím
-        button.addEventListener('click', start);
+        button.addEventListener('click', function () { start('assign'); });
+        reserveButton.addEventListener('click', function () { start('reserve'); });
+        reserveButton.title = reservedTitle();
         picker.addEventListener('change', function () { save(TARGET_KEY, picker.value); showKey(); });
         window.addEventListener('focus', refreshActions);       // quay lại panel → bắt Action mới tạo trong Photoshop
         refreshActions();

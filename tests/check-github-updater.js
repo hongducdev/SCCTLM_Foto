@@ -114,6 +114,37 @@ const tree = entries => JSON.stringify({ truncated: false, tree: entries.map(([p
     assert.deepEqual(t.writes, [], 'no file may be written before every download succeeds');
     assert.equal(t.read('index.html').toString(), '<html>old</html>');
 
+    // Bundled presets (the bulk of the repo) are never re-downloaded while their sha is unchanged:
+    // one changed JS file among many unchanged presets = exactly one raw download.
+    const presets = [];
+    for (const group of ['dazz', 'fuji', 'kodak']) for (let i = 1; i <= 40; i += 1) presets.push('presets/colors/' + group + '/' + String(i).padStart(3, '0') + '.xmp');
+    presets.push('presets/My Preset (1).xmp', 'presets/MHK05451.xmp');
+    const presetTree = presets.map(p => [p, 'sha:' + p]);
+    const lightRoutes = {
+        [API + '/git/trees/v1.1.0?recursive=1']: tree([['index.html', 'h1'], ['CSXS/manifest.xml', 'm1'], ['js/panel.js', 'new'], ...presetTree]),
+        [RAW + 'js/panel.js']: 'new panel'
+    };
+    const lightRecord = { version: 'v1.0.0', files: { 'index.html': 'h1', 'CSXS/manifest.xml': 'm1', 'js/panel.js': 'old' } };
+    const lightDisk = { 'CSXS/manifest.xml': manifest('1.0.0'), 'index.html': 'i', 'js/panel.js': 'old panel' };
+    for (const [p, sha] of presetTree) { lightRecord.files[p] = sha; lightDisk[p] = 'preset'; }
+    lightDisk['.dr7-version.json'] = JSON.stringify(lightRecord);
+    t = setup(lightRoutes, lightDisk);
+    result = await t.updater.update(BASE, 'v1.1.0');
+    assert.deepEqual(plain(result.changed), ['js/panel.js'], 'only the changed JS file is selected');
+    const rawRequests = t.requests.filter(u => u.startsWith('https://raw.githubusercontent.com/'));
+    assert.deepEqual(rawRequests, [RAW + 'js/panel.js'], 'unchanged presets are not downloaded (' + presets.length + ' presets in the tree)');
+    assert.equal(t.read('js/panel.js').toString(), 'new panel');
+    assert.equal(t.writes.filter(w => /presets\//.test(w)).length, 0, 'unchanged presets are not rewritten');
+
+    // A preset deleted locally (same sha in the record) is fetched again.
+    const missing = 'presets/colors/fuji/007.xmp';
+    const missingDisk = Object.assign({}, lightDisk);
+    delete missingDisk[missing];
+    t = setup(Object.assign({}, lightRoutes, { [RAW + missing]: 'restored preset' }), missingDisk);
+    result = await t.updater.update(BASE, 'v1.1.0');
+    assert.deepEqual(plain(result.changed).sort(), ['js/panel.js', missing].sort(), 'a preset missing on disk is selected for download');
+    assert.equal(t.read(missing).toString(), 'restored preset');
+
     // A release tree without the plugin files is refused; odd tags never reach the network.
     t = setup({ [API + '/git/trees/v1.1.0?recursive=1']: tree([['README.md', 'r']]) }, disk);
     await assert.rejects(t.updater.update(BASE, 'v1.1.0'), /thiếu file plugin/);

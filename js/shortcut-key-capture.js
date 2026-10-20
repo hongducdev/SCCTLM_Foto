@@ -220,7 +220,6 @@
         var key = (event.ctrlKey || event.metaKey ? 'Ctrl+' : '') + (event.shiftKey ? 'Shift+' : '') +
             'F' + (code - KEY_F2 + 2);
         if (mode === 'reserve') { toggleReserved(key); return; }
-        // Phím người dùng đánh dấu là đang dùng ngoài panel: chặn
         if (window.dr7ReservedKeys.has(key)) {
             stop();
             showNotice('Phím đã được đánh dấu', 'Phím ' + key + ' bạn đã đánh dấu là đang dùng ngoài panel (trong Photoshop). ' +
@@ -239,7 +238,6 @@
         apply(next, 'Đang gán ' + key + '…');
     }
 
-    // Đánh dấu / bỏ đánh dấu 1 phím là "đang dùng ngoài panel"
     function toggleReserved(key) {
         var bound = bindings().filter(function (b) { return b.key === key; })[0];
         if (bound && !window.dr7ReservedKeys.has(key)) {

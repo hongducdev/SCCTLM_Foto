@@ -11,7 +11,6 @@
     var STORAGE_KEY = 'dr7ReservedKeys';
     var KEY_FORMAT = /^(Ctrl\+)?(Shift\+)?F([2-9]|1[0-2])$/;      // cùng định dạng với jsx/action-shortcut-setup.jsx
 
-    // Chỉ giữ chuỗi phím hợp lệ, không trùng; bỏ mọi thứ khác trong dữ liệu đã lưu
     function clean(list) {
         var out = [];
         (Array.isArray(list) ? list : []).forEach(function (key) {
@@ -55,7 +54,6 @@
         toggle: toggle,
         list: load,
         has: function (key) { return load().indexOf(key) >= 0; },
-        // Đổi trạng thái 1 phím trong kho lưu; trả về true nếu giờ phím đang được đánh dấu
         flip: function (key) {
             var result = toggle(load(), key);
             save(result.list);
@@ -63,6 +61,6 @@
         }
     };
 
-    if (typeof module === 'object' && module.exports) module.exports = api;   // tests/check-shortcut-reserved.js
+    if (typeof module === 'object' && module.exports) module.exports = api;
     else root.dr7ReservedKeys = api;
 }(typeof window !== 'undefined' ? window : globalThis));

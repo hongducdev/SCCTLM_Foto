@@ -705,17 +705,17 @@ button:focus-visible {
 .support-title { margin: 0; color: var(--white); font: 600 18px/22px "Segoe UI", Tahoma, sans-serif; }
 .support-text { margin: 6px 4px 10px; color: #9aa0ac; font-size: 11px; line-height: 15px; }
 .support-qr {
-    width: 118px;
+    width: 160px;
     margin: 0 auto;
-    padding: 10px 6px 8px;
+    padding: 8px 6px 8px;
     border-radius: 16px;
     border: 1px solid var(--edge);
     background: #fbf8f2;
     color: var(--background);
 }
-.support-qr svg { display: block; width: 52px; height: 52px; margin: 0 auto 4px; }
-.support-qr strong { display: block; font-size: 12px; line-height: 15px; }
-.support-qr span { display: block; color: var(--muted-foreground); font-size: 9px; line-height: 12px; }
+.support-qr-img { display: block; width: 148px; height: 148px; margin: 0 auto 4px; }
+.support-qr strong { display: block; font-size: 11px; line-height: 15px; }
+.support-qr span { display: block; color: var(--muted-foreground); font-size: 10px; line-height: 13px; user-select: text; }
 .support-thanks { margin: 14px 0 0; padding-top: 8px; border-top: 1px solid var(--edge); color: var(--muted-foreground); font-size: 10px; }
 
 /* Cốc cà phê: khói bay, tia sáng nhấp nháy, trái tim đập nhẹ */

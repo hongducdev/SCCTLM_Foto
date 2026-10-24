@@ -162,7 +162,7 @@ Thẻ cộng đồng Facebook, thẻ kênh YouTube `@scctlm`, playlist "300 bài
 
 ### ♡ Tab Ủng hộ
 
-Thẻ **Đồng hành cùng SCCTLM**; mã QR ủng hộ chính thức đang chờ bổ sung.
+Thẻ **Đồng hành cùng SCCTLM**; mã QR ủng hộ TPBank (TRAN THI THUONG · 9897.6386.789).
 
 <details>
 <summary>🗑️ Chức năng đã gỡ khỏi giao diện</summary>

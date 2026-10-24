@@ -21,6 +21,7 @@ function setup(routes, disk) {
         const route = routes[this.url];
         setImmediate(() => {
             if (route === 'network') return this.onerror();
+            if (route && route.status) { this.status = route.status; this.responseText = ''; return this.onload(); }
             this.status = route === undefined ? 404 : 200;
             const body = route === undefined ? '{"message":"Not Found"}' : route;
             if (this.responseType === 'arraybuffer') {
@@ -151,5 +152,11 @@ const tree = entries => JSON.stringify({ truncated: false, tree: entries.map(([p
     t = setup({}, disk);
     await assert.rejects(t.updater.update(BASE, '../main'), /Tag/);
     assert.equal(t.requests.length, 0);
-    console.log('PASS: release check/version compare, incremental download, whitelist/traversal, removal, restart, atomic failure');
+
+    // GitHub's rate limit (403/429) gets a readable message instead of the raw status.
+    for (const status of [403, 429]) {
+        t = setup({ [API + '/releases/latest']: { status } }, { 'CSXS/manifest.xml': manifest('1.0.0') });
+        await assert.rejects(t.updater.check(BASE), error => /giới hạn/.test(error.message) && error.status === status);
+    }
+    console.log('PASS: release check/version compare, incremental download, whitelist/traversal, removal, restart, atomic failure, rate limit');
 })().catch(error => { console.error(error); process.exitCode = 1; });

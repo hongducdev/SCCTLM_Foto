@@ -24,6 +24,8 @@
             xhr.timeout = 30000;
             xhr.onload = function () {
                 if (xhr.status === 200) resolve(type ? xhr.response : xhr.responseText);
+                else if (xhr.status === 403 || xhr.status === 429) reject(Object.assign(  // unauthenticated limit: 60 calls/hour per IP
+                    new Error('GitHub tạm giới hạn lượt kiểm tra từ mạng này, hãy thử lại sau ít phút.'), { status: xhr.status }));
                 else reject(Object.assign(new Error('GitHub ' + xhr.status + ': ' + url), { status: xhr.status }));
             };
             xhr.onerror = xhr.ontimeout = function () { reject(new Error('Không kết nối được GitHub')); };

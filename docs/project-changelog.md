@@ -1,11 +1,12 @@
 # Changelog
 
-## Chưa phát hành
+## v0.1.9 — Nút Tạo Brush / Rim Light kèm phím tắt, QR ủng hộ
 
 - **Phím tắt gắn thẳng vào Thumbnail action**: không còn Action `▶ … (Thumbnail action)` trùng trong bộ SCCTLM_Foto; panel nạp lại bộ Thumbnail action từ `presets/` kèm phím (chỉnh sửa tay trong bộ này mất khi đổi phím). Bản trước gán theo cách cũ được tự chuyển khi mở panel.
 - **Phím tắt trùng**: gán phím đang được dùng (Action khác của panel, phím mặc định của Photoshop, phím đã đánh dấu) thì hiện popup **Ghi đè** / **Không gán** thay vì báo lỗi; phím Action khác của bạn tự gắn trong Photoshop vẫn không kiểm được.
 - **Nút Tạo Brush / Tạo Rim Light** + ô phím tắt cạnh nút: chạy Action *Stroke Brush Path* / *YouTube Rim Light* của bộ Thumbnail action, tự nạp bộ nếu Photoshop chưa có. Nhóm Rim Light luôn hiện (phần màu vẫn ẩn khi ảnh chưa có Rim Light). Bỏ nhóm **Action** (nút nạp `.atn`, nút nhập file, danh sách chọn Action, nút khoá phím); phím tắt chỉ gán qua ô cạnh nút Tạo.
 - **`Thumbnail_action.atn`**: bỏ phím F5 gắn sẵn ở *Stroke Brush Path* (phím gắn sẵn thắng phím panel gán, nên F5 gán cho Action khác không chạy); tắt bước 1 của *YouTube Rim Light* (chọn layer theo ID lúc ghi → hỏi "The command Select is not currently available"), Action chạy trên layer đang chọn. Máy đã nạp bộ cũ: xoá bộ **Thumbnail action** trong bảng Actions, panel tự nạp bản mới và dựng lại phím ở lần bấm Tạo kế tiếp.
+- **Tab Ủng hộ**: thêm mã QR TPBank cùng tên và số tài khoản.
 - **Nút hút màu** (Rim Light, Brush Lab): không còn tự lấy màu Foreground. Bấm nút thì Photoshop chuyển sang công cụ Eyedropper, bấm vào ảnh để lấy màu rồi công cụ cũ được trả lại; bấm nút lần nữa hoặc chọn công cụ khác để huỷ. File: `js/eyedropper-picker.js`, `jsx/eyedropper-tool.jsx`.
 
 ## v0.1.8 — Đánh dấu phím dùng ngoài panel, hộp thoại chung, tách mã Da

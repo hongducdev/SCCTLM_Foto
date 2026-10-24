@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ExtensionList>
-    <Extension Id="com.retouchpanel.panel">
+    <Extension Id="com.scctlm.foto.panel">
         <HostList>
             <Host Name="PHXS" Port="9004" />
             <Host Name="PHSP" Port="9004" />

@@ -53,7 +53,7 @@
     }
 
     function installedVersion(base) {
-        var m = /<Extension Id="com\.retouchpanel\.panel" Version="([^"]+)"/.exec(readText(base, MANIFEST) || '');
+        var m = /<Extension Id="com\.(?:retouchpanel|scctlm\.foto)\.panel" Version="([^"]+)"/.exec(readText(base, MANIFEST) || '');
         return m ? m[1] : '';
     }
 

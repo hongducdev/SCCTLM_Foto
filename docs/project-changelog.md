@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.1 — Đổi Extension Id
+
+- **Extension Id** đổi từ `com.retouchpanel.*` sang `com.scctlm.foto.bundle` / `com.scctlm.foto.panel` (`CSXS/manifest.xml`, `.debug`). Updater, `scripts/release-lib.js` và test nhận cả Id cũ lẫn mới. Sau khi cập nhật lên bản này **phải khởi động lại Photoshop**; panel có thể mất vị trí trong workspace. Đã kiểm chứng live trong Photoshop 23.2.0: panel hiện một lần với Id mới, không lỗi nạp.
+
 ## v0.2.0 — Cập nhật có chữ ký, gỡ cài đặt, thông báo giới hạn GitHub
 
 - **Gỡ cài đặt**: thêm `install/Go-cai-dat-SCCTLM_Foto.bat`. Script hỏi trước khi xoá thư mục cài (kể cả thư mục cũ `DR7` / `DR7.disabled` nếu manifest đúng Id `com.retouchpanel.panel`), và hỏi riêng có tắt `PlayerDebugMode` cho CSXS.4–15 không. README có mục Gỡ cài đặt (Windows, macOS) và ghi rõ `PlayerDebugMode` áp dụng cho mọi extension chưa ký.

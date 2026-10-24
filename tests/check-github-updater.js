@@ -9,8 +9,8 @@ const vm = require('node:vm');
 const { signBytes, publicKeyBase64 } = require('../scripts/release-lib');
 const source = name => fs.readFileSync(path.join(__dirname, '../js', name), 'utf8');
 const BASE = 'C:/ext/DR7';
-const manifest = version => '<ExtensionManifest ExtensionBundleVersion="' + version + '"><ExtensionList>' +
-    '<Extension Id="com.retouchpanel.panel" Version="' + version + '" /></ExtensionList></ExtensionManifest>';
+const manifest = (version, id) => '<ExtensionManifest ExtensionBundleVersion="' + version + '"><ExtensionList>' +
+    '<Extension Id="' + (id || 'com.retouchpanel.panel') + '" Version="' + version + '" /></ExtensionList></ExtensionManifest>';
 const sha512 = data => crypto.createHash('sha512').update(data).digest('hex');
 const MTIME = 1000;
 
@@ -165,6 +165,11 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     t = setup(signedRelease('1.1.0', { ...content, 'CSXS/manifest.xml': manifest('1.1.0').replace('</ExtensionList>',
         '</ExtensionList><CEFCommandLine/>') }), disk);
     assert.equal((await t.updater.update(BASE, 'v1.1.0')).restart, true);
+
+    // Renaming the Extension Id (old Id on disk, new Id in the release) updates and asks for a restart.
+    t = setup(signedRelease('1.1.0', { ...content, 'CSXS/manifest.xml': manifest('1.1.0', 'com.scctlm.foto.panel') }), disk);
+    assert.equal((await t.updater.update(BASE, 'v1.1.0')).restart, true);
+    assert.equal(t.updater.installedVersion(BASE), '1.1.0', 'installedVersion reads the new Id');
 
     // A download failing midway writes nothing.
     t = setup({ ...routes, [rawOf('v1.1.0') + 'index.html']: 'network' }, disk);

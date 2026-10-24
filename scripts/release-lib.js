@@ -46,7 +46,7 @@ function sha512(data) { return crypto.createHash('sha512').update(data).digest('
 
 function installedVersion(root) {
     const text = fs.readFileSync(path.join(root, 'CSXS/manifest.xml'), 'utf8');
-    const m = /<Extension Id="com\.retouchpanel\.panel" Version="([^"]+)"/.exec(text);
+    const m = /<Extension Id="com\.(?:retouchpanel|scctlm\.foto)\.panel" Version="([^"]+)"/.exec(text);
     if (!m) throw new Error('CSXS/manifest.xml has no Extension Version');
     return m[1];
 }

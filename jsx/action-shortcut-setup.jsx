@@ -2,7 +2,8 @@
  * Function-key shortcuts (F2-F12, optionally with Shift and/or Ctrl/Cmd) that PLAY any action.
  *
  * Scripts cannot set a key on an existing action ("Set" is not available for actions), but an
- * .atn file can carry one. So we generate the set "SCCTLM_Foto" with one action per binding,
+ * .atn file can carry one. Actions of a set bundled in presets/ get the key in a reloaded copy of that
+ * set (jsx/action-set-import.jsx). For any other action we generate the set "SCCTLM_Foto" with one action per binding,
  * "\u25B6 <action> (<set>)", that has the key and whose only step plays the target, and load it,
  * replacing the previous "SCCTLM_Foto" set (and the legacy "MHK DR7" set of older versions) (removed when no binding is left).
  * The user's own actions are never touched.
@@ -81,6 +82,21 @@ $.dr7ShortcutSetup = {
         return out.join('\n');
     },
 
+    // true while our set still holds a play wrapper for a bundled action (made before keys went onto the bundled set)
+    hasBundledWrapper: function () {
+        var self = $.dr7ShortcutSetup, found = false;
+        var bundled = typeof $.dr7BundledSets === 'function' ? $.dr7BundledSets() : {};
+        self.eachAction(function (setName, actionName) {
+            if (setName !== self.SET_NAME) return false;
+            for (var name in bundled) {
+                var tail = ' (' + name + ')';
+                if (bundled.hasOwnProperty(name) && actionName.slice(-tail.length) === tail) found = true;
+            }
+            return found;
+        });
+        return found;
+    },
+
     exists: function (setName, actionName) {
         var found = false;
         this.eachAction(function (s, a) {
@@ -91,14 +107,22 @@ $.dr7ShortcutSetup = {
     },
 
     // bindings: "key\tset\taction\n..." (built by js/shortcut-key-capture.js)
+    // Keys for actions of a set bundled in presets/ go straight onto that set ($.dr7InstallBundledKeys);
+    // only other actions get a play wrapper.
     install: function (bindings) {
         var self = $.dr7ShortcutSetup;
         var actions = [];
+        var bundled = typeof $.dr7BundledSets === 'function' ? $.dr7BundledSets() : {};
+        var baked = {}, bakedCount = 0;
         var lines = String(bindings).split('\n');
         for (var i = 0; i < lines.length; i += 1) {
             var f = lines[i].split('\t');
             // Our own set is rebuilt below, so it can never be a target; missing targets are dropped
             if (f.length !== 3 || !self.KEY.test(f[0]) || f[1] === self.SET_NAME || f[1] === self.LEGACY_SET_NAME || !self.exists(f[1], f[2])) continue;
+            if (bundled.hasOwnProperty(f[1])) {
+                (baked[f[1]] = baked[f[1]] || {})[f[2]] = f[0];
+                continue;
+            }
             actions.push(self.action(self.PLAY_PREFIX + f[2] + ' (' + f[1] + ')', f[0], self.playStep(f[1], f[2])));
         }
         var stale = [self.SET_NAME, self.LEGACY_SET_NAME];
@@ -110,7 +134,13 @@ $.dr7ShortcutSetup = {
             desc.putReference(charIDToTypeID('null'), ref);
             executeAction(charIDToTypeID('Dlt '), desc, DialogModes.NO);
         }
-        if (!actions.length) return 0;                            // no shortcuts left: no empty set
+        // Every bundled set in Photoshop is rebuilt, so a removed key (or a key an older copy carried) goes away too
+        for (var setName in bundled) {
+            if (bundled.hasOwnProperty(setName) && self.exists(setName, null)) {
+                bakedCount += $.dr7InstallBundledKeys(setName, bundled[setName], baked[setName] || {});
+            }
+        }
+        if (!actions.length) return bakedCount;                   // no wrappers left: no empty set
         var atn = new File(Folder.temp + '/dr7-shortcut.atn');
         atn.encoding = 'BINARY';
         if (!atn.open('w')) throw new Error('Kh\u00F4ng ghi \u0111\u01B0\u1EE3c ' + atn.fsName);
@@ -118,6 +148,6 @@ $.dr7ShortcutSetup = {
         atn.close();
         app.load(atn);
         atn.remove();
-        return actions.length;                                    // number of shortcuts installed
+        return actions.length + bakedCount;                       // number of shortcuts installed
     }
 };

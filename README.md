@@ -23,7 +23,7 @@
 - [💻 Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
 - [🚀 Cài đặt](#-cài-đặt)
 - [🧰 Các tab chức năng](#-các-tab-chức-năng)
-- [🎬 Nhóm Action](#-nhóm-action)
+- [🎬 Nút Tạo & phím tắt](#-nút-tạo--phím-tắt)
 - [🔄 Hot Reload & Cập nhật](#-hot-reload--cập-nhật)
 - [📁 Cấu trúc thư mục](#-cấu-trúc-thư-mục)
 - [🛠️ Xử lý sự cố](#️-xử-lý-sự-cố)
@@ -38,9 +38,9 @@
 | 🧩 | **Giao diện tab, nhóm thu gọn** | Thanh tab Retouch / Artboard / Khám phá / Ủng hộ; mỗi nhóm có mũi tên thu gọn, nút dạng viên thuốc icon trên nền xám tối của Adobe. |
 | 🪄 | **Không phá huỷ** | Mọi thao tác sinh layer, mask hoặc adjustment layer riêng — chỉnh Opacity / Blend Mode / đảo ngược bất cứ lúc nào. |
 | 🌈 | **RGB 8-bit & 16-bit** | Thuật toán màu và kết cấu chạy chính xác trên cả hai. |
-| ⤓ | **Nạp Action 1 click** | Mỗi file `.atn` trong `presets/` thành một nút; không nạp trùng bộ đã có. |
-| 💡 | **Rim Light** | Tự hiện khi ảnh có nhóm `Rim Light` > lớp `Color`: chọn màu (ô viên thuốc, hex, hút Foreground, 8 màu mẫu) và Độ sáng. |
-| ⌨️ | **Phím tắt Action** | Gán F2–F12 (kèm Shift/Ctrl) để Play bất kỳ Action nào. |
+| ⤓ | **Tạo Brush / Tạo Rim Light** | Một nút chạy Action tương ứng, tự nạp bộ Thumbnail action nếu Photoshop chưa có. |
+| 💡 | **Rim Light** | Phần màu tự hiện khi ảnh có nhóm `Rim Light` > lớp `Color`: chọn màu (ô viên thuốc, hex, hút Foreground, 8 màu mẫu) và Độ sáng. |
+| ⌨️ | **Phím tắt Action** | Ô phím cạnh nút Tạo: gán F2–F12 (kèm Shift/Ctrl) để Play Action đó. |
 | 🖌️ | **Brush Lab** | Bật Shape Dynamics + Pen Pressure bằng một nút; xem trước nét cọ, chỉnh Cỡ / Cứng, màu cọ (Foreground) và Độ sáng (Opacity) ngay trên panel. |
 | 🎨 | **Bộ màu & Mix màu** | 6 bộ màu MHK (165 màu): bấm 1 màu để áp ngay, hoặc bật Mix để chọn tối đa 4 màu, chỉnh độ mờ từng layer và pha thành màu mới. |
 | 🧱 | **Artboard** | Tạo bộ artboard theo 27 mẫu album Facebook MHK / khổ YouTube / khổ tuỳ chỉnh, kèm guide vùng an toàn. |
@@ -108,7 +108,7 @@ Panel rộng khoảng 300px, thanh tab nằm ngay dưới tiêu đề; nút **�
 
 ### 🎨 Tab Retouch
 
-Gồm các nhóm có thể thu gọn: **Retouch**, **Brush Lab**, **Rim Light** (ẩn khi không có), **Action** và **Màu & Preset**.
+Gồm các nhóm có thể thu gọn: **Retouch**, **Brush Lab**, **Rim Light** (phần màu ẩn khi ảnh chưa có Rim Light) và **Màu & Preset**.
 
 #### Retouch
 
@@ -173,20 +173,17 @@ Bản đầu có 24 nút trên một trang; giao diện hiện tại có 21 nút
 
 ---
 
-## 🎬 Nhóm Action
+## 🎬 Nút Tạo & phím tắt
 
-### ⤓ Nạp Action nhanh
+Đầu nhóm **Brush Lab** và **Rim Light** có một hàng: nút xanh **Tạo Brush** / **Tạo Rim Light** và ô phím tắt bên cạnh.
 
-Chép file bộ Action `.atn` vào `presets/` (cùng chỗ với preset `.xmp`, tên file theo cùng quy tắc) rồi bấm **↻** — mỗi file thành một nút có icon tải xuống kèm \<tên file\>.
-
-- Bấm nút là nạp bộ Action vào bảng Actions, **không cần mở ảnh**.
-- Bộ cùng tên đã có trong Photoshop → giữ nguyên bản của bạn, panel báo "đã có" (không nạp trùng).
-- Bản đóng gói sẵn: `Thumbnail_action.atn` — bộ **Thumbnail action** gồm *Stroke Brush Path* (phím F5) và *YouTube Rim Light*.
-- Phím F của bộ trùng phím menu (F2–F4) → Photoshop sẽ hỏi như mục phím tắt bên dưới.
+- Nút **Tạo** chạy Action của bộ **Thumbnail action** (`presets/Thumbnail_action.atn`): *Stroke Brush Path* cho Brush, *YouTube Rim Light* cho Rim Light. Cần mở ảnh.
+- Photoshop chưa có bộ Action đó thì panel **tự nạp** trước rồi mới chạy; đã có thì giữ nguyên bản của bạn (không nạp trùng).
+- Ô phím tắt hiện phím đã gán (chưa gán thì hiện icon bàn phím) và chỉ gán cho đúng Action của nút đó.
 
 ### 💡 Rim Light
 
-Nhóm **Rim Light** chỉ hiện khi ảnh đang mở có nhóm `Rim Light` chứa lớp `Color` (do Action *YouTube Rim Light* tạo); panel kiểm tra khi quay lại panel và mỗi vài giây, không có thì ẩn cả nhóm.
+Nút **Tạo Rim Light** luôn hiện. Phần màu và Độ sáng chỉ hiện khi ảnh đang mở có nhóm `Rim Light` chứa lớp `Color` (do Action *YouTube Rim Light* tạo); panel kiểm tra khi quay lại panel và mỗi vài giây.
 
 | Điều khiển | Tác vụ |
 |---|---|
@@ -196,21 +193,20 @@ Nhóm **Rim Light** chỉ hiện khi ảnh đang mở có nhóm `Rim Light` ch�
 
 ### ⌨️ Phím tắt Play Action
 
-1. Chọn Action trong danh sách (lấy từ bảng Actions, trừ bộ **SCCTLM_Foto** do panel tự dựng).
-2. Bấm **⌨ Gán phím tắt** (nút chuyển xanh = đang nghe).
-3. Ấn **F2–F12**, có thể kèm Shift và/hoặc Ctrl — ví dụ `F5`, `Shift+F3`, `Ctrl+Shift+F11`.
+1. Bấm ô phím cạnh nút **Tạo** (ô chuyển đỏ = đang nghe).
+2. Ấn **F2–F12**, có thể kèm Shift và/hoặc Ctrl — ví dụ `F5`, `Shift+F3`, `Ctrl+Shift+F11`.
 
 | Thao tác | Kết quả |
 |---|---|
-| **Backspace / Delete** | Xoá phím của Action đang chọn |
-| **Esc** hoặc bấm nút lần nữa | Huỷ gán |
+| **Backspace / Delete** | Xoá phím của Action đó |
+| **Esc** hoặc bấm ô lần nữa | Huỷ gán |
 | Phím khác (chữ, số, Alt…) | Bị từ chối — Action của Photoshop chỉ nhận phím F |
-| Gán phím đã dùng cho Action khác | Phím chuyển sang Action mới (1 phím = 1 Action) |
+| Phím đang được dùng | Popup liệt kê nơi đang dùng (Action khác của panel, phím mặc định của Photoshop như F5 = Brush Settings, phím đã đánh dấu): **Ghi đè** hoặc **Không gán**. Ghi đè phím menu thì Photoshop hỏi thêm *"Remove the conflicting action shortcuts?"* — chọn **No**. |
 
 <details>
 <summary>⚙️ Cách hoạt động & xung đột phím</summary>
 
-Photoshop không cho script đặt phím lên Action có sẵn, nên panel dựng lại bộ **SCCTLM_Foto** gồm mỗi phím một Action `▶ <tên Action> (<bộ>)` có gắn phím, chỉ 1 bước Play Action gốc (hết phím thì bộ bị xoá). Action gốc của bạn không bị sửa. Danh sách phím lưu trong panel; xoá bộ SCCTLM_Foto bằng tay thì gán lại 1 phím bất kỳ để dựng lại. Bản cũ dùng tên bộ `MHK DR7`: panel tự thay bằng bộ mới (giữ nguyên phím) ở lần mở đầu tiên. Action mới tạo trong Photoshop xuất hiện trong danh sách khi quay lại panel.
+Photoshop không cho script đặt phím lên Action có sẵn, nhưng **Thumbnail action** là bộ panel đóng gói: mỗi lần đổi phím, panel xoá bộ đó và nạp lại bản trong `presets/` có gắn sẵn phím, nên bảng Actions chỉ có một *YouTube Rim Light* / *Stroke Brush Path* mang phím. Chỉnh sửa tay trong bộ Thumbnail action sẽ mất khi đổi phím. Danh sách phím lưu trong panel. Phím gán cho Action khác từ bản cũ vẫn dùng bộ **SCCTLM_Foto** (Action `▶ <tên Action> (<bộ>)` chỉ 1 bước Play); bản trước gán phím cho Thumbnail action qua bộ này thì panel tự chuyển sang cách mới ở lần mở đầu tiên.
 
 Nếu phím trùng phím tắt menu (F2 = Cut, F3 = Copy, F4 = Paste), Photoshop hỏi *"Remove the conflicting action shortcuts?"* — chọn **No** để phím Play Action, **Yes** để giữ phím cho menu (Action khi đó không có phím).
 
@@ -275,10 +271,12 @@ SCCTLM_Foto/
 │   └── explore.css              # Tab Khám phá
 ├── js/
 │   ├── CSInterface.js           # Thư viện giao tiếp Adobe CEP
-│   ├── panel.js                 # Cầu nối Panel ↔ Photoshop, header Nạp lại/Cập nhật, nút .atn / .xmp
+│   ├── panel.js                 # Cầu nối Panel ↔ Photoshop, header Nạp lại/Cập nhật, nút .xmp
 │   ├── github-updater.js        # Kiểm tra & cài GitHub Release (cep.fs, không cần Node)
 │   ├── dev-source-sync.js       # ↻ trên máy dev: chép code mới từ thư mục nguồn
-│   ├── shortcut-key-capture.js  # Phím tắt Action: chọn Action, nghe phím F, lưu danh sách
+│   ├── create-action-buttons.js # Nút Tạo Brush / Tạo Rim Light: nạp bộ Action nếu thiếu rồi chạy
+│   ├── shortcut-conflicts.js    # Tìm nơi phím F đang được dùng (panel, phím mặc định Photoshop, phím đã đánh dấu)
+│   ├── shortcut-key-capture.js  # Ô phím tắt cạnh nút Tạo: nghe phím F, lưu danh sách
 │   ├── tab-switcher.js          # Chuyển tab Retouch / Artboard / Khám phá / Ủng hộ
 │   ├── brush-setup-controls.js  # Brush Lab: Thiết lập cọ / Về mặc định
 │   ├── brush-controls.js        # Brush Lab: xem trước nét cọ, thanh Cỡ / Cứng
@@ -302,17 +300,17 @@ SCCTLM_Foto/
 │   ├── color-mix.jsx            # Áp màu MHK (Look LUT) và Mix màu: $.dr7ApplyColorMix
 │   ├── artboard-create.jsx      # Tạo artboard: $._ext_ARTBOARD
 │   ├── brush-pen-pressure.jsx   # BPP / BPPRESET / trạng thái cọ; chạy được độc lập
-│   ├── action-set-import.jsx    # Nạp bộ Action .atn đóng gói (bỏ qua nếu đã có bộ cùng tên)
+│   ├── action-set-import.jsx    # Nạp bộ Action .atn đóng gói khi thiếu, rồi chạy Action (bỏ qua nạp nếu đã có)
 │   ├── brush-size-hardness.jsx  # BRUSH: đọc / ghi Size + Hardness của cọ
 │   ├── eyedropper-tool.jsx      # EYEDROPPER: bật/trả công cụ Eyedropper, đọc Foreground
 │   ├── rim-light-color.jsx      # RIMCOLOR: tô màu lớp Color, đọc/đặt cường độ nhóm Rim Light
-│   ├── action-shortcut-setup.jsx # Liệt kê Action; sinh & nạp bộ "SCCTLM_Foto" (▶ Play Action có phím F)
+│   ├── action-shortcut-setup.jsx # Nạp phím: gắn thẳng vào bộ đóng gói, Action khác qua bộ "SCCTLM_Foto" (▶ Play)
 │   ├── pj/                      # Tài nguyên cọ (.tpl) và hoa văn (.pat)
 │   └── *.jsx                    # Module chuyên biệt: ds, ba, se, ls, ss, re, db, sh, li, tc, wt, pfsd2
 ├── presets/
 │   ├── colors/                  # 6 bộ màu MHK: <bộ>/NNN.xmp + NNN.icc, manifest.json
 │   ├── *.xmp                    # Preset Camera Raw riêng (mỗi file một nút)
-│   └── *.atn                    # Bộ Action nạp nhanh (mỗi file một nút)
+│   └── *.atn                    # Bộ Action đi kèm (Thumbnail action)
 ├── img/
 │   ├── icon-large.png           # Biểu tượng panel
 │   ├── logo.svg                 # Logo SCCTLM ở tiêu đề
@@ -355,7 +353,7 @@ Bấm **↻** trên panel. Nếu sửa ở thư mục nguồn (vd `D:\DR7`) mà 
 <details>
 <summary>💡 Không thấy nhóm Rim Light</summary>
 
-Nhóm chỉ hiện khi ảnh đang mở có nhóm `Rim Light` chứa lớp `Color`. Nạp bộ Thumbnail action (nút **Thumbnail action** (icon tải xuống)) rồi chạy Action *YouTube Rim Light* trên ảnh.
+Nhóm chỉ hiện khi ảnh đang mở có nhóm `Rim Light` chứa lớp `Color`. Bấm **Tạo Rim Light** (panel tự nạp bộ Thumbnail action nếu chưa có) trên ảnh đang mở.
 
 </details>
 

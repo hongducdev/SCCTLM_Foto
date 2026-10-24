@@ -1,9 +1,9 @@
 /*
  * Nhóm Rim Light: ô màu dạng viên thuốc + mã hex + hút màu từ ảnh + 7 màu mẫu + thanh Cường độ.
  *
- * Nhóm chỉ hiện khi ảnh đang mở có nhóm "Rim Light" chứa lớp "Color" ($._ext_RIMCOLOR.available(),
- * xem jsx/rim-light-color.jsx); Photoshop không báo khi đổi ảnh hay chạy Action nên panel hỏi lại khi quay
- * lại panel và mỗi vài giây. Đổi màu tô lại lớp Color ngay (lệnh RIMCOLOR, 1 bước History), kéo
+ * Nút Tạo Rim Light luôn hiện (js/create-action-buttons.js); phần màu / Độ sáng chỉ hiện khi ảnh đang mở có
+ * nhóm "Rim Light" chứa lớp "Color" ($._ext_RIMCOLOR.available(), xem jsx/rim-light-color.jsx); Photoshop
+ * không báo khi đổi ảnh hay chạy Action nên panel hỏi lại khi quay lại panel và mỗi vài giây. Đổi màu tô lại lớp Color ngay (lệnh RIMCOLOR, 1 bước History), kéo
  * Cường độ đặt độ mờ của cả nhóm Rim Light. Nhóm vừa hiện thì lấy cường độ thật của nhóm.
  */
 (function () {
@@ -14,7 +14,7 @@
     var HEX = /^#[0-9a-f]{6}$/i;
 
     var cs = new CSInterface();
-    var group = null, pill = null, picker = null, hexInput = null, slider = null, sliderValue = null;
+    var body = null, resetButton = null, pill = null, picker = null, hexInput = null, slider = null, sliderValue = null;
     var exists = false;
     var pending = false;                                // chưa nhận kết quả lần hỏi trước thì không hỏi thêm
     var opacityTimer = 0;
@@ -50,7 +50,8 @@
     function setExists(value) {
         if (exists === value) return;
         exists = value;
-        group.hidden = !exists;
+        body.hidden = !exists;
+        resetButton.hidden = !exists;
         if (window.dr7FitHeight) window.dr7FitHeight();
         if (exists) {                                    // nhóm vừa xuất hiện: lấy cường độ thật của nhóm
             cs.evalScript('$._ext_RIMCOLOR.getOpacity()', function (res) {
@@ -76,7 +77,8 @@
     }
 
     window.dr7InitRimColor = function () {
-        group = document.querySelector('.group-rim');
+        body = document.querySelector('.rim-body');
+        resetButton = document.querySelector('.rim-reset');
         pill = document.querySelector('.rim-pill');
         picker = document.querySelector('.rim-color-input');
         hexInput = document.querySelector('.rim-hex');
@@ -84,7 +86,7 @@
         sliderValue = document.querySelector('.rim-intensity-value');
         var eyedropper = document.querySelector('.rim-eyedropper');
         var swatches = document.querySelectorAll('.rim-swatch');
-        if (!group || !pill || !picker || !hexInput || !slider || !sliderValue || !eyedropper) return;
+        if (!body || !resetButton || !pill || !picker || !hexInput || !slider || !sliderValue || !eyedropper) return;
 
         picker.addEventListener('change', function () { pickColor(picker.value); });
         hexInput.addEventListener('input', function () {
@@ -100,8 +102,7 @@
             swatch.addEventListener('click', function () { pickColor(swatch.getAttribute('data-color')); });
         });
         eyedropper.addEventListener('click', function () { window.dr7Eyedropper(eyedropper, pickColor); });
-        var reset = document.querySelector('.rim-reset');
-        if (reset) reset.addEventListener('click', function () {   // về trắng + độ sáng 100%
+        resetButton.addEventListener('click', function () {   // về trắng + độ sáng 100%
             slider.value = 100;
             paintTrack();
             writeOpacity();

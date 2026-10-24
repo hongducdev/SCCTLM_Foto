@@ -225,17 +225,33 @@ assert.equal(vm.runInNewContext(calls[5].code, host), 'DR7_OK');
 calls[5].callback('DR7_OK');
 assert.throws(() => acrHost.$.dr7ApplyBundledXmp('../../secret.xmp'), /Invalid preset name/,
     'the host must re-check preset names before touching the file system');
-// Bundled .atn import: same name rules as presets, no open document needed, "already there" is not an error.
+// Bundled action: spec "file<TAB>set<TAB>action" with plain characters only; the host imports the set when missing, then plays.
 const sent = calls.length, alertsBefore = alerts.length;
-for (const bad of ['../evil.atn', 'a"b.atn', 'notes.txt', '.atn']) panel.dr7ImportActions(bad);
-assert.equal(calls.length, sent, 'unsafe action file names must be rejected by the bridge');
+const specOf = (...parts) => parts.join('\t');
+for (const bad of [specOf('../evil.atn', 'Set', 'Act'), specOf('a"b.atn', 'Set', 'Act'), specOf('notes.txt', 'Set', 'Act'),
+    specOf('x.atn', 'Set'), specOf('x.atn', 'Se"t', 'Act'), specOf('x.atn', 'Set', 'A\nct')]) {
+    panel.dr7EnsureAction(bad);
+    panel.dr7PlayAction(bad);
+}
+assert.equal(calls.length, sent, 'unsafe action specs must be rejected by the bridge');
+const spec = specOf('Thumbnail_action.atn', 'Thumbnail action', 'Stroke Brush Path');
 const atnResults = [];
-panel.dr7ImportActions('Thumbnail_action.atn', res => atnResults.push(res));
-assert.equal(calls.length, sent + 1, 'a valid bundled actions file must be sent');
+panel.dr7EnsureAction(spec, res => atnResults.push(res));
+assert.equal(calls.length, sent + 1, 'a valid bundled action must be sent');
+panel.dr7PlayAction(spec);
+assert.equal(calls.length, sent + 1, 'a second command must wait while the first one is running');
 const atnHost = {
     app: { documents: [], displayDialogs: 1, preferences: { rulerUnits: 2 }, load: file => atnHost.loaded.push(file.name) },
-    loaded: [], asked: [],
-    $: { dr7Base: root, dr7ShortcutSetup: { exists: (set, action) => { atnHost.asked.push([set, action]); return atnHost.present; } } },
+    loaded: [], asked: [], played: [],
+    $: {
+        dr7Base: root,
+        dr7ShortcutSetup: { exists: (set, action) => { atnHost.asked.push([set, action]); return action === null ? atnHost.setPresent : atnHost.actionPresent; } }
+    },
+    ActionReference: function () { this.names = {}; this.putName = (cls, name) => { this.names[cls] = name; }; },
+    ActionDescriptor: function () { this.putReference = (key, ref) => { this.ref = ref; }; },
+    charIDToTypeID: id => id,
+    DialogModes: { NO: 3 },
+    executeAction: (event, desc) => atnHost.played.push([event, desc.ref.names.ASet, desc.ref.names.Actn]),
     File: function (file) {
         this.name = path.basename(file); this.fsName = file; this.exists = fs.existsSync(file);
         let data = null, at = 0;
@@ -245,16 +261,27 @@ const atnHost = {
     }
 };
 vm.runInNewContext(read('jsx/action-set-import.jsx'), atnHost);
-atnHost.present = false;
-assert.equal(vm.runInNewContext(calls[sent].code, atnHost), 'DR7_OK', 'import must work without an open document');
-assert.deepEqual(atnHost.asked, [['Thumbnail action', null]], 'the set name must be read from the .atn header');
+atnHost.setPresent = false; atnHost.actionPresent = false;
+assert.equal(vm.runInNewContext(calls[sent].code, atnHost), 'DR7_OK', 'ensure must work without an open document');
+assert.deepEqual(atnHost.asked, [['Thumbnail action', 'Stroke Brush Path'], ['Thumbnail action', null], ['Thumbnail action', null]],
+    'the set name must be read from the .atn header before loading');
 assert.deepEqual(atnHost.loaded, ['Thumbnail_action.atn']);
-atnHost.present = true;
-assert.equal(vm.runInNewContext(calls[sent].code, atnHost), 'DR7_EXISTS', 'an existing set must be kept, not loaded twice');
+atnHost.setPresent = true; atnHost.actionPresent = true;
+assert.equal(vm.runInNewContext(calls[sent].code, atnHost), 'DR7_EXISTS', 'an existing action must be kept, not loaded twice');
+assert.equal(atnHost.loaded.length, 1);
+atnHost.setPresent = true; atnHost.actionPresent = false;
+assert.match(vm.runInNewContext(calls[sent].code, atnHost), /^DR7_ERROR.*has no action/, 'a set missing the action must not be overwritten');
 assert.equal(atnHost.loaded.length, 1);
 calls[sent].callback('DR7_EXISTS');
 assert.deepEqual(atnResults, ['DR7_EXISTS']);
 assert.equal(alerts.length, alertsBefore, 'DR7_EXISTS must not raise an alert');
+panel.dr7PlayAction(spec);
+assert.equal(calls.length, sent + 2);
+assert.match(calls[sent + 1].code, /documents\.length/, 'playing needs an open document');
+atnHost.actionPresent = true;
+assert.equal(vm.runInNewContext(calls[sent + 1].code, Object.assign(atnHost, { app: Object.assign(atnHost.app, { documents: [{}] }) })), 'DR7_OK');
+assert.deepEqual(atnHost.played, [['Ply ', 'Thumbnail action', 'Stroke Brush Path']]);
+calls[sent + 1].callback('DR7_OK');
 assert.throws(() => vm.runInNewContext('$.dr7ImportBundledAtn("../x.atn")', atnHost),
     /Invalid action file name/, 'the host must re-check the file name');
 // Shortcut set rename: installing replaces the new set and removes the legacy "MHK DR7" set of older versions.
@@ -285,5 +312,57 @@ assert.throws(() => vm.runInNewContext('$.dr7ImportBundledAtn("../x.atn")', atnH
     assert.equal(setup.install('Shift+F3	Default Actions	Gradient Map'), 1);
     assert.deepEqual(deleted.sort(), ['MHK DR7', 'SCCTLM_Foto'], 'both the current and the legacy set must be removed');
     assert.equal(setup.install('Shift+F3	MHK DR7	▶ Old'), 0, 'the legacy set is never a shortcut target');
+}
+// Keys for bundled actions go onto a reloaded copy of the bundled set; other actions still get a play wrapper.
+{
+    const atnPath = path.join(root, 'presets', 'Thumbnail_action.atn');
+    const original = fs.readFileSync(atnPath);
+    const sets = { 'Thumbnail action': ['Stroke Brush Path', 'YouTube Rim Light'], 'SCCTLM_Foto': ['▶ YouTube Rim Light (Thumbnail action)'], 'Default Actions': ['Gradient Map'] };
+    const deleted = [], written = [], loaded = [];
+    const bundledFile = { name: 'Thumbnail_action.atn', fsName: atnPath };
+    function FileMock(file) {
+        let data = null, at = 0;
+        Object.assign(this, file && file.fsName ? file : { name: path.basename(String(file)), fsName: String(file) });
+        this.open = mode => { if (mode !== 'w') { data = fs.readFileSync(this.fsName); at = 0; } return true; };
+        this.read = count => { const end = count === undefined ? data.length : at + count; const text = data.subarray(at, end).toString('latin1'); at = end; return text; };
+        this.write = text => written.push(Buffer.from(text, 'latin1'));
+        this.close = () => {};
+        this.remove = () => {};
+    }
+    const host = {
+        charIDToTypeID: id => id, stringIDToTypeID: id => id,
+        ActionReference: function () { this.idx = {}; this.putIndex = (cls, i) => { this.idx[cls] = i; }; this.putName = (cls, n) => { this.name = n; }; },
+        ActionDescriptor: function () { this.putReference = (k, r) => { this.ref = r; }; this.putName = () => {}; this.toStream = () => 'vers'; },
+        DialogModes: { NO: 0 },
+        executeAction: (event, desc) => { if (event === 'Dlt ') { deleted.push(desc.ref.name); delete sets[desc.ref.name]; } },
+        executeActionGet: ref => {
+            const names = Object.keys(sets), set = names[ref.idx.ASet - 1];
+            if (!set) throw new Error('past the last set');
+            if (ref.idx.Actn) return { getString: () => sets[set][ref.idx.Actn - 1] };
+            return { getString: () => set, hasKey: () => true, getInteger: () => sets[set].length };
+        },
+        File: FileMock,
+        Folder: Object.assign(function () { this.getFiles = () => [Object.assign(new FileMock(bundledFile), { constructor: FileMock })]; }, { temp: 'T' }),
+        app: { load: file => loaded.push(file.name) },
+        $: { dr7Base: root }
+    };
+    host.File.prototype = FileMock.prototype;
+    vm.runInNewContext(read('jsx/action-shortcut-setup.jsx'), host);
+    vm.runInNewContext(read('jsx/action-set-import.jsx'), host);
+    const setup = host.$.dr7ShortcutSetup;
+    assert.equal(setup.hasBundledWrapper(), true, 'an old wrapper for a bundled action must be detected');
+    assert.equal(setup.install('F5\tThumbnail action\tYouTube Rim Light\nShift+F3\tDefault Actions\tGradient Map'), 2);
+    assert.deepEqual(deleted, ['SCCTLM_Foto', 'Thumbnail action'], 'the wrapper set and the old bundled set are replaced');
+    assert.deepEqual(loaded, ['dr7-bundled-keys.atn', 'dr7-shortcut.atn']);
+    const [baked, wrappers] = written;
+    assert.equal(baked.length, original.length, 'only key bytes change');
+    const diff = [...baked.keys()].filter(i => baked[i] !== original[i]);
+    const rimName = original.indexOf(Buffer.from('\u0000\u0000\u0000\u0012' + 'YouTube Rim Light'.split('').map(c => '\u0000' + c).join(''), 'latin1'));
+    assert.ok(rimName > 0);
+    assert.deepEqual(diff, [rimName - 5], 'F5 is written as the u16 key of YouTube Rim Light, nothing else changes');
+    assert.equal(baked.readUInt16BE(rimName - 6), 5);
+    assert.ok(!wrappers.toString('latin1').includes('Y\u0000o\u0000u\u0000T'), 'no wrapper for the bundled action');
+    assert.ok(wrappers.toString('latin1').includes('G\u0000r\u0000a\u0000d'), 'other actions keep their play wrapper');
+    assert.equal(setup.hasBundledWrapper(), false);
 }
 console.log('PASS: ' + names.length + ' doa exports, JSX syntax/encoding/resources, bridge readiness/errors/preferences/double clicks/preset names, atn import');

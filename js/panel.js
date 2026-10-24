@@ -40,7 +40,8 @@
     // Colour mix: "group/NNN:opacity" entries (max 4), see jsx/color-mix.jsx.
     var COLOR_MIX = /^[a-z]+\/\d{3}:\d{1,3}(,[a-z]+\/\d{3}:\d{1,3}){0,3}$/;
     var HEX_COLOR = /^#[0-9a-f]{6}$/i;
-    var ATN_FILE = /^[A-Za-z0-9 _()-]+(\.[A-Za-z0-9 _()-]+)*\.atn$/i;
+    // Action đi kèm panel: "file.atn\tbộ\tAction" (xem jsx/action-set-import.jsx, js/create-action-buttons.js)
+    var BUNDLED_ACTION = /^[A-Za-z0-9 _()-]+(\.[A-Za-z0-9 _()-]+)*\.atn\t[A-Za-z0-9 _()-]+\t[A-Za-z0-9 _()-]+$/i;
     // Danh sách phím tắt Play Action: mỗi dòng "phím\tbộ\tAction" (xem jsx/action-shortcut-setup.jsx).
     // Rỗng = xoá hết phím. Tên Action không được chứa ký tự điều khiển.
     var SHORTCUT_LIST = {
@@ -56,8 +57,8 @@
     // done(res): tuỳ chọn, gọi sau khi Photoshop chạy xong (res = "DR7_OK" / "DR7_CANCEL" / lỗi)
     // arg: tuỳ chọn, màu "#rrggbb" truyền cho lệnh $._ext_<name>.run
     function run(kind, name, done, arg) {
-        var valid = kind === 'preset' ? PRESET_FILE : kind === 'atn' ? ATN_FILE : kind === 'colormix' ? COLOR_MIX : kind === 'shortcut' ? SHORTCUT_LIST :
-            kind === 'artboard' ? window.dr7Artboard.spec : kind === 'atnpick' ? /^pick$/ : /^[A-Za-z_][A-Za-z0-9_]*$/;
+        var valid = kind === 'preset' ? PRESET_FILE : (kind === 'play' || kind === 'ensure') ? BUNDLED_ACTION : kind === 'colormix' ? COLOR_MIX : kind === 'shortcut' ? SHORTCUT_LIST :
+            kind === 'artboard' ? window.dr7Artboard.spec : /^[A-Za-z_][A-Za-z0-9_]*$/;
         if (!valid.test(name) || (arg !== undefined && !HEX_COLOR.test(arg))) { if (done) done('DR7_INVALID'); return; }
         if (!ready) {
             notify('Photoshop chưa sẵn sàng', 'Lõi Photoshop chưa sẵn sàng. Hãy đóng và mở lại panel.');
@@ -67,17 +68,17 @@
         if (busy) { if (done) done('DR7_BUSY'); return; }
         busy = true;
         var target = kind === 'doa' ? '$.dr7Commands[' + JSON.stringify(name) + ']' :
-            kind === 'preset' ? '$.dr7ApplyBundledXmp' : kind === 'colormix' ? '$.dr7ApplyColorMix' : kind === 'atn' ? '$.dr7ImportBundledAtn' : kind === 'atnpick' ? '$.dr7ImportAtnDialog' :
+            kind === 'preset' ? '$.dr7ApplyBundledXmp' : kind === 'colormix' ? '$.dr7ApplyColorMix' : kind === 'play' ? '$.dr7PlayBundledAction' : kind === 'ensure' ? '$.dr7EnsureBundledAction' :
             kind === 'shortcut' ? '$.dr7ShortcutSetup.install' : kind === 'artboard' ? '$._ext_ARTBOARD.run' : '$._ext_' + name + '.run';
-        var args = kind === 'atnpick' ? '' : kind === 'preset' || kind === 'atn' || kind === 'colormix' || kind === 'shortcut' || kind === 'artboard' ? JSON.stringify(name) :
+        var args = kind === 'preset' || kind === 'play' || kind === 'ensure' || kind === 'colormix' || kind === 'shortcut' || kind === 'artboard' ? JSON.stringify(name) :
             arg !== undefined ? JSON.stringify(arg) : '';
         // name đã qua kiểm tra; riêng danh sách phím tắt (nhiều dòng, tên Action tuỳ ý) không được
         // chèn thô vào mã ExtendScript hay thông báo → dùng nhãn cố định
-        var label = kind === 'shortcut' ? 'Phím tắt Action' : kind === 'atnpick' ? 'Nhập Action' : kind === 'artboard' ? 'Artboard' : name;
+        var label = kind === 'shortcut' ? 'Phím tắt Action' : kind === 'play' || kind === 'ensure' ? 'Action' : kind === 'artboard' ? 'Artboard' : name;
         // Only WM (its own batch dialog), BPP/BPPRESET (brush setup) and BUGFIX run without an open image;
         // BA processes every open document, so it needs at least one.
         var code = '(function(){var d=app.displayDialogs,u=app.preferences.rulerUnits;' +
-            'try{' + (kind !== 'shortcut' && kind !== 'atn' && kind !== 'atnpick' && kind !== 'artboard' && !/^(WM|BPP|BPPRESET|BUGFIX)$/.test(name) ?
+            'try{' + (kind !== 'shortcut' && kind !== 'ensure' && kind !== 'artboard' && !/^(WM|BPP|BPPRESET|BUGFIX)$/.test(name) ?
                 'if(!app.documents.length)return "DR7_NO_DOCUMENT";' : '') +
             'if(typeof ' + target + '!=="function")throw new Error("Missing command: ' + label + '");' +
             'var r=' + target + '(' + args + ');return r==="DR7_EXISTS"?r:"DR7_OK";}catch(e){if(e.number===8007)return "DR7_CANCEL";' +
@@ -106,10 +107,9 @@
     window.dr7ApplyPreset = function (fileName) { run('preset', fileName); };
     // spec "fuji/001:60,dazz/003:40": mỗi màu 1 layer, độ mờ theo %, xem js/color-presets.js
     window.dr7ApplyColorMix = function (spec, done) { run('colormix', spec, done); };
-    // done(res): "DR7_OK" = đã nạp bộ Action, "DR7_EXISTS" = Photoshop đã có bộ cùng tên
-    window.dr7ImportActions = function (fileName, done) { run('atn', fileName, done); };
-    // Chọn 1 file .atn bất kỳ và nạp thẳng vào bảng Actions
-    window.dr7ImportActionPicker = function (done) { run('atnpick', 'pick', done); };
+    // spec "file.atn<TAB>bộ<TAB>Action": nạp bộ Action đi kèm nếu Photoshop chưa có (ensure), rồi chạy nó (play)
+    window.dr7EnsureAction = function (spec, done) { run('ensure', spec, done); };
+    window.dr7PlayAction = function (spec, done) { run('play', spec, done); };
     // Gọi từ js/shortcut-key-capture.js sau khi người dùng ấn phím
     window.dr7SetupShortcut = function (list, done) { run('shortcut', list, done); };
     // spec đã qua window.dr7Artboard.spec; tạo artboard bằng jsx/artboard-create.jsx
@@ -134,41 +134,6 @@
         });
     }
 
-    // One button per .atn dropped into /presets, followed by the static "Nhập…" picker button.
-    function renderActionFiles() {
-        var grid = document.querySelector('.atn-grid');
-        var importButton = grid && grid.querySelector('.atn-import');
-        if (!importButton) return;
-        var files = [];
-        if (window.cep && window.cep.fs && base) {
-            var listing = window.cep.fs.readdir(base + '/presets');
-            if (!listing.err) files = listing.data.filter(function (file) { return ATN_FILE.test(file); }).sort();
-        }
-        files.forEach(function (file) {
-            var button = document.createElement('button');
-            var label = file.replace(/\.atn$/i, '').replace(/_/g, ' ');
-            button.title = 'Nạp bộ Action ' + label + ' vào bảng Actions (' + file + ')';
-            button.className = 'atn-load icon-btn';
-            button.textContent = label;
-            button.onclick = function () {
-                window.dr7ImportActions(file, function (res) {
-                    if (res === 'DR7_OK') flashStatus('✓ Đã nạp bộ Action ' + label);
-                    else if (res === 'DR7_EXISTS') flashStatus('Bộ Action ' + label + ' đã có trong Photoshop');
-                    if (window.dr7RefreshActions) window.dr7RefreshActions();
-                });
-            };
-            grid.insertBefore(button, importButton);
-        });
-        importButton.onclick = function () {
-            window.dr7ImportActionPicker(function (res) {
-                if (res === 'DR7_OK') flashStatus('✓ Đã nhập bộ Action');
-                else if (res === 'DR7_EXISTS') flashStatus('Bộ Action này đã có trong Photoshop');
-                if (window.dr7RefreshActions) window.dr7RefreshActions();
-            });
-        };
-        fitHeight();
-    }
-
     // Manifest size is only a default; Photoshop may remember an older, taller panel.
     function fitHeight() {
         if (!window.__adobe_cep__) return;
@@ -191,6 +156,7 @@
     }
     window.dr7Status = status;
     window.dr7FitHeight = fitHeight;
+    window.dr7FlashStatus = flashStatus;
     // Thông báo ngắn, tự ẩn nếu chưa bị thông báo khác thay
     var flashTimer = 0;
     function flashStatus(text) {
@@ -252,8 +218,7 @@
         if (window.dr7InitArtboard) window.dr7InitArtboard();
         if (window.dr7InitColorPresets) window.dr7InitColorPresets(base);
         renderPresets();
-        renderActionFiles();
-        if (window.dr7InitShortcutCapture) window.dr7InitShortcutCapture();
+        if (window.dr7InitCreateButtons) window.dr7InitCreateButtons();
         if (window.dr7InitBrushSetup) window.dr7InitBrushSetup();
         if (window.dr7InitBrushControls) window.dr7InitBrushControls();
         if (window.dr7InitBrushColor) window.dr7InitBrushColor();
@@ -295,7 +260,10 @@
             // ScriptUI dialogs opened from a CEP panel (Làm Da, Hàng loạt, Tuỳ chỉnh, Chữ/Logo)
             // can hang Photoshop on Windows until this workaround runs. It used to be fired from
             // body onload, which always lands before this async callback and was silently dropped.
-            run('ext', 'BUGFIX');
+            // Dọn phím tắt kiểu cũ sau khi lõi vừa nạp xong (js/shortcut-key-capture.js); chạy sau BUGFIX vì 1 lệnh mỗi lúc
+            run('ext', 'BUGFIX', function () {
+                if (window.dr7CleanupShortcuts) window.dr7CleanupShortcuts();
+            });
         });
     }
 }());

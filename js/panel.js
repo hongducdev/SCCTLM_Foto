@@ -193,6 +193,7 @@
             var notes = result.latest.notes ? '\n\n' + result.latest.notes.slice(0, 600) : '';
             return ask('Cập nhật SCCTLM_Foto lên ' + result.latest.tag + '?', notes.trim(), 'Cập nhật', 'Để sau').then(function (accepted) {
                 if (!accepted) { status(''); return null; }
+                status('Đang kiểm tra file...');   // the first update after 0.1.9 hashes every installed file (~4 s)
                 return window.dr7Updater.update(base, result.latest.tag, function (done, total) {
                     status('Đang tải ' + done + '/' + total + ' file...');
                 }).then(function (installed) {

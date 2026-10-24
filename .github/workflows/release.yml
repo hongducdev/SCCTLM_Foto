@@ -1,7 +1,8 @@
 name: release
 
 # Push a tag like v0.1.8 (after bumping CSXS/manifest.xml and docs/project-changelog.md) to publish the release.
-# No asset is attached: the in-panel updater reads the git tree, the release is only the tag + notes.
+# No asset is attached: the in-panel updater reads release-manifest.json (signed offline with scripts/release-sign.js)
+# at the tag, the release is only the tag + notes.
 on:
   push:
     tags: ['v*']
@@ -23,6 +24,11 @@ jobs:
             echo "::error::tag $GITHUB_REF_NAME does not match manifest (bundle $manifest, extension $extension)"
             exit 1
           fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Verify signed release manifest
+        run: node scripts/release-verify.js
       - name: Extract changelog section
         run: |
           version="${GITHUB_REF_NAME#v}"

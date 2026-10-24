@@ -41,6 +41,10 @@ package-lock.json
 temp/
 tmp/
 
+# Signing keys (the release key lives outside the repo; this is a safety net)
+*.pem
+*.key
+
 # Adobe CEP / Photoshop artifacts
 *.zxp
 *.dmp

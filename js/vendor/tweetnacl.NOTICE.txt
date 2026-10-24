@@ -1,0 +1,5 @@
+tweetnacl 1.0.3 (nacl-fast.min.js), https://github.com/dchest/tweetnacl-js
+License: Unlicense / public domain
+Used only to verify Ed25519 signatures of release-manifest.json (CEP's Chromium 88 has no WebCrypto Ed25519).
+tweetnacl.min.js is the unmodified upstream file. SHA-256:
+3ec535c004aeeb225785d8e93fb33bf99f52e399bd7dfc01969b5629baea5131

@@ -48,7 +48,7 @@ if "%DR7_SKIP_REG%"=="1" (
 
 rem ---------- 2. Copy plugin ----------
 echo [2/3] Copy plugin ...
-robocopy "%SRC%" "%DR7_TARGET%" /E /XD _dev .git install /XF .gitignore .gitattributes /NFL /NDL /NJH /NJS /R:1 /W:1 >nul
+robocopy "%SRC%" "%DR7_TARGET%" /E /XD _dev .git install scripts /XF .gitignore .gitattributes /NFL /NDL /NJH /NJS /R:1 /W:1 >nul
 if errorlevel 8 (
     echo       [x] Copy that bai. Dong Photoshop het roi thu lai.
     echo.

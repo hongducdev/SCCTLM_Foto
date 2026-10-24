@@ -1,7 +1,8 @@
 /* DR7 updater: installs the latest GitHub Release of hongducdev/SCCTLM_Foto into the panel folder.
- * Pure logic (no DOM). Files are fetched over HTTPS from a fixed repository and written
- * with cep.fs; every download finishes before the first write, so a network failure
- * midway leaves the installed copy untouched. */
+ * Pure logic (no DOM). The file list of a release comes from release-manifest.json, signed with the
+ * maintainer's Ed25519 key (js/release-keys.js). Every download is hashed against that manifest and
+ * finishes before the first write, so a bad signature, a tampered file or a network failure midway
+ * leaves the installed copy untouched. A release that is not newer than the installed one is refused. */
 (function () {
     'use strict';
 
@@ -10,9 +11,7 @@
     var RAW = 'https://raw.githubusercontent.com/' + REPO + '/';
     var RECORD = '.dr7-version.json';
     var MANIFEST = 'CSXS/manifest.xml';
-    // Same runtime set as install/watch-plugin.js, plus the manifest. Paths are git paths ("/").
-    var RUNTIME = /^(index\.html|style\.css|loader\.jsx|CSXS\/manifest\.xml|(js|jsx|css|img|presets)\/.+)$/;
-    var SAFE = /^[A-Za-z0-9 _.()&+,-]+(\/[A-Za-z0-9 _.()&+,-]+)*$/;
+    var SIGNED_MANIFEST = 'release-manifest.json';
 
     function fs() { return window.cep.fs; }
 
@@ -119,45 +118,104 @@
         });
     }
 
+    // Record entry for an installed file: its hash plus the mtime it had when that hash was known
+    // (cep.fs.stat reports no size, so mtime alone says whether the file may have changed).
+    function stamp(base, path, sha512) {
+        var stat = fs().stat(base + '/' + path);
+        return { sha512: sha512, mtime: stat.err ? -1 : +stat.data.mtime };
+    }
+
+    // Hash of the installed file, or null when it cannot be read.
+    function localHash(base, path) {
+        var result = fs().readFile(base + '/' + path, window.cep.encoding.Base64);
+        return result.err ? Promise.resolve(null) : window.dr7Release.sha512(window.dr7Release.fromBase64(result.data));
+    }
+
+    // Splits the signed file list into files to download and files already identical on disk.
+    // A record entry { sha512, mtime } that still matches the file's mtime saves hashing it again;
+    // records from 0.1.9 (git sha strings) fall through to a one-time hash instead of a re-download.
+    function selectChanged(base, files, record) {
+        var changed = [], current = {};
+        return Object.keys(files).reduce(function (chain, path) {
+            return chain.then(function () {
+                var stat = fs().stat(base + '/' + path), known = record.files[path];
+                if (stat.err) { changed.push(path); return null; }
+                if (known && typeof known === 'object' && known.sha512 === files[path] && known.mtime === +stat.data.mtime) {
+                    current[path] = known;
+                    return null;
+                }
+                return localHash(base, path).then(function (hash) {
+                    if (hash === files[path]) current[path] = stamp(base, path, hash); else changed.push(path);
+                });
+            });
+        }, Promise.resolve()).then(function () { return { changed: changed, current: current }; });
+    }
+
+    // Fetches and verifies the signed manifest of release `tag`; rejects unless it is genuinely newer.
+    function verifiedManifest(base, tag) {
+        var raw = RAW + encodeURIComponent(tag) + '/', installed = installedVersion(base);
+        return Promise.all([request(raw + SIGNED_MANIFEST, 'arraybuffer'), request(raw + SIGNED_MANIFEST + '.sig', 'arraybuffer')])
+            .then(function (parts) {
+                var manifest = window.dr7Release.parse(parts[0], parts[1], window.dr7ReleaseKeys || {});
+                if (manifest.version !== tag.replace(/^v/, '')) {
+                    throw new Error('Chữ ký thuộc bản ' + manifest.version + ', không phải ' + tag + ' — đã huỷ.');
+                }
+                if (!isNewer(manifest.version, installed)) {
+                    throw new Error('Bản ' + tag + ' không mới hơn bản đang cài (' + installed + ') — đã huỷ.');
+                }
+                if (parseVersion(installed) && isNewer(manifest.minVersion, installed)) {
+                    throw new Error('Bản ' + tag + ' cần cài lại thủ công, bản đang cài (' + installed + ') quá cũ để cập nhật tự động.');
+                }
+                if (!manifest.files[MANIFEST] || !manifest.files['index.html']) throw new Error('Bản phát hành ' + tag + ' thiếu file plugin');
+                return manifest;
+            }, function (error) {
+                if (error.status === 404) throw new Error('Bản ' + tag + ' chưa có chữ ký phát hành — đã huỷ, không thay đổi file nào.');
+                throw error;
+            });
+    }
+
     // Installs release `tag` into `base`. onProgress(done, total) during downloads.
     // -> { changed: [paths], removed: [paths], restart: bool }
     function update(base, tag, onProgress) {
         if (!/^[A-Za-z0-9._-]+$/.test(tag)) return Promise.reject(new Error('Tag không hợp lệ: ' + tag));
-        var record = readRecord(base);
-        return request(API + '/git/trees/' + encodeURIComponent(tag) + '?recursive=1').then(function (text) {
-            var tree = JSON.parse(text);
-            if (tree.truncated) throw new Error('Cây file trên GitHub quá lớn');
-            var files = {}, changed = [];
-            tree.tree.forEach(function (entry) {
-                if (entry.type !== 'blob' || !RUNTIME.test(entry.path) || !SAFE.test(entry.path) ||
-                    /(^|\/)\.\.?(\/|$)/.test(entry.path)) return;
-                files[entry.path] = entry.sha;
-                if (record.files[entry.path] !== entry.sha || fs().stat(base + '/' + entry.path).err) changed.push(entry.path);
-            });
-            if (!files[MANIFEST] || !files['index.html']) throw new Error('Bản phát hành ' + tag + ' thiếu file plugin');
-            var removed = Object.keys(record.files).filter(function (path) {
-                return !files[path] && RUNTIME.test(path) && SAFE.test(path);
-            });
-            var downloads = {}, done = 0;
-            if (onProgress) onProgress(0, changed.length);
+        var record = readRecord(base), downloads = {}, done = 0, selection, manifest;
+        return verifiedManifest(base, tag).then(function (signed) {
+            manifest = signed;
+            return selectChanged(base, manifest.files, record);
+        }).then(function (picked) {
+            selection = picked;
+            if (onProgress) onProgress(0, selection.changed.length);
             // Sequential downloads keep memory and GitHub load low; nothing is written yet.
-            return changed.reduce(function (chain, path) {
+            return selection.changed.reduce(function (chain, path) {
                 return chain.then(function () {
                     return request(RAW + encodeURIComponent(tag) + '/' + path.split('/').map(encodeURIComponent).join('/'),
                         'arraybuffer').then(function (buffer) {
-                        downloads[path] = buffer;
-                        if (onProgress) onProgress(++done, changed.length);
+                        return window.dr7Release.sha512(buffer).then(function (hash) {
+                            if (hash !== manifest.files[path]) {
+                                throw new Error('File tải về không khớp chữ ký: ' + path + ' — đã huỷ, không thay đổi file nào.');
+                            }
+                            downloads[path] = buffer;
+                            if (onProgress) onProgress(++done, selection.changed.length);
+                        });
                     });
                 });
-            }, Promise.resolve()).then(function () {
-                var oldManifest = readText(base, MANIFEST);
-                changed.forEach(function (path) { write(base, path, toBase64(downloads[path]), window.cep.encoding.Base64); });
-                removed.forEach(function (path) { fs().deleteFile(base + '/' + path); });
-                write(base, RECORD, JSON.stringify({ version: tag, files: files }, null, 1), window.cep.encoding.UTF8);
-                var newManifest = changed.indexOf(MANIFEST) === -1 ? oldManifest :
-                    new TextDecoder('utf-8').decode(downloads[MANIFEST]);
-                return { changed: changed, removed: removed, restart: manifestShape(oldManifest) !== manifestShape(newManifest) };
+            }, Promise.resolve());
+        }).then(function () {
+            var changed = selection.changed;
+            var removed = Object.keys(record.files).filter(function (path) {
+                return !manifest.files[path] && window.dr7Release.isRuntimePath(path);
             });
+            var oldManifest = readText(base, MANIFEST);
+            changed.forEach(function (path) { write(base, path, toBase64(downloads[path]), window.cep.encoding.Base64); });
+            removed.forEach(function (path) { fs().deleteFile(base + '/' + path); });
+            var files = {};
+            Object.keys(manifest.files).forEach(function (path) {
+                files[path] = selection.current[path] || stamp(base, path, manifest.files[path]);
+            });
+            write(base, RECORD, JSON.stringify({ version: tag, files: files }, null, 1), window.cep.encoding.UTF8);
+            var newManifest = changed.indexOf(MANIFEST) === -1 ? oldManifest :
+                new TextDecoder('utf-8').decode(downloads[MANIFEST]);
+            return { changed: changed, removed: removed, restart: manifestShape(oldManifest) !== manifestShape(newManifest) };
         });
     }
 

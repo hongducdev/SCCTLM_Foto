@@ -1,9 +1,10 @@
 # Changelog
 
-## v0.2.0 — (đang phát triển) Gỡ cài đặt, thông báo giới hạn GitHub
+## v0.2.0 — (đang phát triển) Cập nhật có chữ ký, gỡ cài đặt, thông báo giới hạn GitHub
 
 - **Gỡ cài đặt**: thêm `install/Go-cai-dat-SCCTLM_Foto.bat`. Script hỏi trước khi xoá thư mục cài (kể cả thư mục cũ `DR7` / `DR7.disabled` nếu manifest đúng Id `com.retouchpanel.panel`), và hỏi riêng có tắt `PlayerDebugMode` cho CSXS.4–15 không. README có mục Gỡ cài đặt (Windows, macOS) và ghi rõ `PlayerDebugMode` áp dụng cho mọi extension chưa ký.
 - **Cập nhật**: GitHub trả 403/429 (giới hạn 60 lượt/giờ mỗi IP khi chưa đăng nhập) thì panel báo "GitHub tạm giới hạn lượt kiểm tra từ mạng này, hãy thử lại sau ít phút." thay vì mã lỗi thô.
+- **Cập nhật có chữ ký**: bản phát hành kèm `release-manifest.json` (SHA-512 từng file runtime) và `release-manifest.json.sig` (Ed25519). Panel kiểm chữ ký bằng khoá công khai trong `js/release-keys.js` (tweetnacl vendor tại `js/vendor/`, vì Chromium của CEP không có Ed25519 trong WebCrypto), băm từng file tải về và chỉ ghi khi tất cả khớp; không còn gọi GitHub `git/trees` (mỗi lần kiểm tra/cập nhật chỉ 1 lượt API). Từ chối bản không mới hơn bản đang cài (chặn hạ cấp), manifest ký cho phiên bản khác tag, hoặc `minVersion` cao hơn bản đang cài. Bản ghi `.dr7-version.json` giờ lưu `{ sha512, mtime }`; lần đầu từ bản ghi cũ (git sha) panel băm file đang cài một lần (~4 giây cho ~20 MB) thay vì tải lại. Công cụ cho người phát hành: `scripts/release-keygen.js`, `release-sign.js`, `release-verify.js` (CI chạy verify trước khi tạo Release). Người dùng ở 0.1.9 trở xuống vẫn dùng updater cũ, không kiểm chữ ký. File: `js/github-updater.js`, `js/release-manifest-verifier.js`, `js/release-keys.js`, `js/vendor/tweetnacl.min.js`, `scripts/`, `.github/workflows/release.yml`, `tests/check-release-manifest.js`.
 - **Sửa nhỏ**: README không còn ghi "không gửi dữ liệu qua mạng" (panel có kết nối GitHub và YouTube, nhưng không gửi ảnh hay dữ liệu cá nhân); bộ cài in đúng "CSXS.4 - CSXS.15"; manifest `<Author>` là `SCCTLM` (thay đổi manifest nên lần lên 0.2.0 cần khởi động lại Photoshop).
 
 ## v0.1.9 — Nút Tạo Brush / Rim Light kèm phím tắt, QR ủng hộ

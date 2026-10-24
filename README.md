@@ -257,17 +257,30 @@ install\Hot-reload-SCCTLM_Foto.bat
 Nút **⤓** trên thanh tiêu đề lấy GitHub Release mới nhất của `hongducdev/SCCTLM_Foto`:
 
 - Mỗi lần mở panel tự kiểm tra im lặng; có bản mới thì nút hiện **chấm xanh**.
-- Bấm nút → xác nhận → chỉ tải các file runtime đã đổi (`index.html`, `style.css`, `loader.jsx`, `CSXS/manifest.xml`, `js/ css/ jsx/ img/ presets/`), tải xong hết mới ghi đè, rồi tự nạp lại. Lỗi mạng giữa chừng không làm hỏng bản đang cài.
+- Bấm nút → xác nhận → panel tải `release-manifest.json` và chữ ký `.sig` của bản đó, kiểm chữ ký Ed25519 bằng khoá công khai trong `js/release-keys.js`, rồi chỉ tải các file runtime đã đổi (`index.html`, `style.css`, `loader.jsx`, `CSXS/manifest.xml`, `js/ css/ jsx/ img/ presets/`). Mỗi file tải về phải khớp SHA-512 trong manifest đã ký; tải và kiểm xong hết mới ghi đè, rồi tự nạp lại. Chữ ký sai, file bị đổi hoặc lỗi mạng giữa chừng đều không làm thay đổi bản đang cài.
+- Chỉ nhận bản **mới hơn** bản đang cài (không bị ép xuống bản cũ dù chữ ký hợp lệ).
+- Lần cập nhật đầu tiên từ bản cũ phải băm toàn bộ file đang cài (~20 MB, khoảng 4 giây, panel hiện "Đang kiểm tra file..."); các lần sau chỉ băm file có mtime đổi.
 - `manifest.xml` đổi cấu trúc (không chỉ số phiên bản) → panel báo khởi động lại Photoshop.
 - File đích chỉ-đọc (lỗi `ERR_CANT_WRITE`) được bỏ cờ chỉ-đọc rồi ghi lại một lần; lỗi ghi vẫn hiện kèm tên mã để dễ chẩn đoán.
-- Bản ghi file đã cài: `.dr7-version.json` (bị xoá khi cài lại bằng `.bat` / watcher).
+- Bản ghi file đã cài: `.dr7-version.json` (hash và mtime từng file; bị xoá khi cài lại bằng `.bat` / watcher).
 
 <details>
 <summary>🏷️ Phát hành bản mới (người phát triển)</summary>
 
-1. Tăng `ExtensionBundleVersion` và `Version` của panel trong `CSXS/manifest.xml` (phải trùng nhau, dạng `x.y.z`).
-2. Commit, push lên `main`.
-3. `gh release create v0.2.0 --title "SCCTLM_Foto 0.2.0" --notes "Nội dung thay đổi"` — tag phải là `v` + đúng số phiên bản.
+Làm một lần: `node scripts/release-keygen.js` tạo khoá ký Ed25519 tại `%USERPROFILE%\.scctlm\release-ed25519.pem` (đổi chỗ bằng biến `SCCTLM_SIGNING_KEY`). Dán public key in ra vào `js/release-keys.js` (`k1`), commit, và **sao lưu file `.pem` ở hai nơi offline**. Khoá riêng không bao giờ vào repo (`*.pem` đã nằm trong `.gitignore`).
+
+Mỗi bản phát hành:
+
+1. Tăng `ExtensionBundleVersion` và `Version` của panel trong `CSXS/manifest.xml` (phải trùng nhau, dạng `x.y.z`) và thêm mục `## vX.Y.Z` vào `docs/project-changelog.md`.
+2. Commit mọi thay đổi (script ký từ chối khi cây làm việc còn thay đổi chưa commit).
+3. `node scripts/release-sign.js` ghi `release-manifest.json` + `release-manifest.json.sig` (SHA-512 của mọi file runtime git đang theo dõi), rồi commit hai file đó. Thêm `--min-version x.y.z` nếu bản này không cập nhật tự động được từ bản cũ hơn x.y.z.
+4. `node scripts/release-verify.js` (không cần khoá riêng, CI cũng chạy), rồi đặt tag `vX.Y.Z` và push tag. Workflow `release.yml` tạo GitHub Release. Tag phải là `v` + đúng số phiên bản.
+
+**Giới hạn bảo mật cần biết**
+- Chữ ký bảo vệ khỏi việc ai đó chiếm tài khoản/repo GitHub rồi đẩy mã lạ; nó không bảo vệ nếu **khoá riêng bị lộ**. Khoá lộ thì mọi bản đang tin khoá đó đều hết được bảo vệ: chỉ còn cách phát bản mới có khoá mới và báo người dùng cài lại thủ công.
+- Xoay khoá có kế hoạch: bản N nhúng cả `k1` và `k2` trong `js/release-keys.js`; từ bản N+1 trở đi ký bằng `k2` (`--key-id k2`).
+- Mất khoá riêng thì không phát hành tiếp qua nút cập nhật được (người dùng cài lại thủ công).
+- Người dùng còn ở **0.1.9 trở xuống không bao giờ được bảo vệ**: updater cũ vẫn lấy danh sách file từ GitHub API mà không kiểm chữ ký. Khuyến nghị mọi người lên 0.2.0.
 
 </details>
 
@@ -295,6 +308,9 @@ SCCTLM_Foto/
 │   ├── CSInterface.js           # Thư viện giao tiếp Adobe CEP
 │   ├── panel.js                 # Cầu nối Panel ↔ Photoshop, header Nạp lại/Cập nhật, nút .xmp
 │   ├── github-updater.js        # Kiểm tra & cài GitHub Release (cep.fs, không cần Node)
+│   ├── release-manifest-verifier.js # Kiểm chữ ký Ed25519 của release-manifest.json, băm SHA-512
+│   ├── release-keys.js          # Khoá công khai tin cậy để ký bản phát hành
+│   ├── vendor/tweetnacl.min.js  # tweetnacl 1.0.3 (public domain), chỉ dùng để kiểm chữ ký
 │   ├── dev-source-sync.js       # ↻ trên máy dev: chép code mới từ thư mục nguồn
 │   ├── create-action-buttons.js # Nút Tạo Brush / Tạo Rim Light: nạp bộ Action nếu thiếu rồi chạy
 │   ├── shortcut-conflicts.js    # Tìm nơi phím F đang được dùng (panel, phím mặc định Photoshop, phím đã đánh dấu)
@@ -343,6 +359,7 @@ SCCTLM_Foto/
 │   ├── Fix-CEP-SCCTLM_Foto.reg          # Bật PlayerDebugMode
 │   ├── Hot-reload-SCCTLM_Foto.bat       # Khởi động bộ theo dõi Hot Reload
 │   └── watch-plugin.js          # Theo dõi file và nạp lại panel bằng Node.js
+├── scripts/                     # Công cụ người phát hành: release-keygen / release-sign / release-verify
 ├── tests/                       # Kiểm thử tự động: script, updater, hot reload, bộ màu, artboard, Khám phá
 ├── docs/                        # Hướng dẫn thiết kế và nhật ký phát triển
 └── README.md

@@ -28,6 +28,7 @@
 - [🔄 Hot Reload & Cập nhật](#-hot-reload--cập-nhật)
 - [📁 Cấu trúc thư mục](#-cấu-trúc-thư-mục)
 - [🛠️ Xử lý sự cố](#️-xử-lý-sự-cố)
+- [⚖️ Nguồn gốc & bản quyền](#️-nguồn-gốc--bản-quyền)
 
 ---
 
@@ -398,6 +399,12 @@ Bấm **↻** trên panel. Nếu sửa ở thư mục nguồn (vd `D:\DR7`) mà 
 Nhóm chỉ hiện khi ảnh đang mở có nhóm `Rim Light` chứa lớp `Color`. Bấm **Tạo Rim Light** (panel tự nạp bộ Thumbnail action nếu chưa có) trên ảnh đang mở.
 
 </details>
+
+---
+
+## ⚖️ Nguồn gốc & bản quyền
+
+Phần mã do **hongducdev** viết (bộ cập nhật có chữ ký, script phát hành, bộ gỡ cài đặt, công cụ clean-room, các module viết lại sau này) giữ bản quyền theo [`LICENSE`](LICENSE) (All rights reserved). Một số file `jsx/` có nguồn gốc từ một plugin gốc đã được gỡ obfuscation; chúng **không** thuộc phạm vi `LICENSE` và đang được viết lại theo quy trình clean-room. Danh sách đầy đủ từng nhóm file nằm trong [`NOTICE.md`](NOTICE.md).
 
 ---
 

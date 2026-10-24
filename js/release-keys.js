@@ -2,5 +2,5 @@
  * Create the pair with `node scripts/release-keygen.js` and paste the printed value here (k1 stays empty
  * until then, so the updater installs nothing). To rotate, ship a build that lists both keys first. */
 window.dr7ReleaseKeys = {
-    k1: ''
+    k1: 'fpD2AWp9bNNehR9bjZ1UMJSZkjVPWdZwbC2hTUeUcko='
 };

@@ -35,6 +35,9 @@
         return Promise.resolve(toHex(window.nacl.hash(bytes)));
     }
 
+    // Synchronous hash for update recovery, which must finish before the panel loads the ExtendScript core.
+    function sha512Sync(bytes) { return toHex(window.nacl.hash(bytes)); }
+
     // Verifies `signature` (base64 text bytes) over the raw `manifestBytes` with publicKeys[keyId]
     // (base64 of the 32-byte key). Returns the parsed manifest; throws a readable Error otherwise.
     function parse(manifestBytes, signature, publicKeys) {
@@ -65,5 +68,5 @@
         return manifest;
     }
 
-    window.dr7Release = { parse: parse, sha512: sha512, isRuntimePath: isRuntimePath, fromBase64: fromBase64 };
+    window.dr7Release = { parse: parse, sha512: sha512, sha512Sync: sha512Sync, isRuntimePath: isRuntimePath, fromBase64: fromBase64 };
 }());

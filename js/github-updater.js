@@ -1,8 +1,9 @@
 /* DR7 updater: installs the latest GitHub Release of hongducdev/SCCTLM_Foto into the panel folder.
  * Pure logic (no DOM). The file list of a release comes from release-manifest.json, signed with the
  * maintainer's Ed25519 key (js/release-keys.js). Every download is hashed against that manifest and
- * finishes before the first write, so a bad signature, a tampered file or a network failure midway
- * leaves the installed copy untouched. A release that is not newer than the installed one is refused. */
+ * finishes before the first write, and files go through js/update-staging-journal.js (staging folder + journal),
+ * so a bad signature, a tampered file, a network failure or a crash midway never leaves a mix of two versions.
+ * A release that is not newer than the installed one is refused. */
 (function () {
     'use strict';
 
@@ -76,34 +77,6 @@
         return window.btoa(chunks.join(''));
     }
 
-    function makeDirs(base, path) {
-        var parts = path.split('/').slice(0, -1), dir = base;
-        for (var i = 0; i < parts.length; i++) {
-            dir += '/' + parts[i];
-            if (fs().stat(dir).err) {
-                var made = fs().makedir(dir);
-                if (made.err) throw new Error('Không tạo được thư mục ' + dir + ' (lỗi ' + errorName(made.err) + ')');
-            }
-        }
-    }
-
-    function write(base, path, data, encoding) {
-        makeDirs(base, path);
-        var target = base + '/' + path;
-        var result = fs().writeFile(target, data, encoding);
-        if (result.err === fs().ERR_CANT_WRITE) {            // file chỉ-đọc (vd chép từ nguồn chỉ-đọc): bỏ cờ rồi ghi lại 1 lần
-            fs().chmod(target, 438);                         // 0o666
-            result = fs().writeFile(target, data, encoding);
-        }
-        if (result.err) throw new Error('Không ghi được ' + path + ' (lỗi ' + errorName(result.err) + ')');
-    }
-
-    // cep.fs.ERR_* theo mã số, để thông báo lỗi đọc được (vd 6 -> ERR_CANT_WRITE)
-    function errorName(code) {
-        var names = Object.keys(fs()).filter(function (key) { return /^ERR_/.test(key) && fs()[key] === code; });
-        return code + (names.length ? ' ' + names[0] : '');
-    }
-
     // -> { current, latest: { tag, name, notes, url } | null, available }
     function check(base) {
         var current = installedVersion(base);
@@ -116,13 +89,6 @@
             if (error.status === 404) return { current: current, latest: null, available: false };
             throw error;
         });
-    }
-
-    // Record entry for an installed file: its hash plus the mtime it had when that hash was known
-    // (cep.fs.stat reports no size, so mtime alone says whether the file may have changed).
-    function stamp(base, path, sha512) {
-        var stat = fs().stat(base + '/' + path);
-        return { sha512: sha512, mtime: stat.err ? -1 : +stat.data.mtime };
     }
 
     // Hash of the installed file, or null when it cannot be read.
@@ -145,7 +111,7 @@
                     return null;
                 }
                 return localHash(base, path).then(function (hash) {
-                    if (hash === files[path]) current[path] = stamp(base, path, hash); else changed.push(path);
+                    if (hash === files[path]) current[path] = window.dr7Staging.stamp(base, path, hash); else changed.push(path);
                 });
             });
         }, Promise.resolve()).then(function () { return { changed: changed, current: current }; });
@@ -172,6 +138,18 @@
                 if (error.status === 404) throw new Error('Bản ' + tag + ' chưa có chữ ký phát hành — đã huỷ, không thay đổi file nào.');
                 throw error;
             });
+    }
+
+    // Writes every download to the staging folder and reads it back. The install is untouched until this is done.
+    function stageAll(base, paths, downloads, hashes) {
+        var staging = window.dr7Staging;
+        staging.clearStaging(base);
+        return paths.reduce(function (chain, path) {
+            return chain.then(function () {
+                staging.stage(base, path, toBase64(downloads[path]));
+                return staging.verifyStaged(base, path, hashes[path]);
+            });
+        }, Promise.resolve()).catch(function (error) { staging.clearStaging(base); throw error; });
     }
 
     // Installs release `tag` into `base`. onProgress(done, total) during downloads.
@@ -201,18 +179,24 @@
                 });
             }, Promise.resolve());
         }).then(function () {
-            var changed = selection.changed;
+            return stageAll(base, selection.changed, downloads, manifest.files);
+        }).then(function () {
+            var staging = window.dr7Staging, changed = selection.changed;
             var removed = Object.keys(record.files).filter(function (path) {
                 return !manifest.files[path] && window.dr7Release.isRuntimePath(path);
             });
             var oldManifest = readText(base, MANIFEST);
-            changed.forEach(function (path) { write(base, path, toBase64(downloads[path]), window.cep.encoding.Base64); });
-            removed.forEach(function (path) { fs().deleteFile(base + '/' + path); });
-            var files = {};
+            var files = {};                                   // moved files get stamped after the move; unchanged ones keep their entry
             Object.keys(manifest.files).forEach(function (path) {
-                files[path] = selection.current[path] || stamp(base, path, manifest.files[path]);
+                files[path] = changed.indexOf(path) === -1 ? selection.current[path] : manifest.files[path];
             });
-            write(base, RECORD, JSON.stringify({ version: tag, files: files }, null, 1), window.cep.encoding.UTF8);
+            try {
+                staging.begin(base, { journalVersion: 1, tag: tag,
+                    move: staging.order(changed).map(function (path) { return { path: path, sha512: manifest.files[path] }; }),
+                    remove: removed, record: { version: tag, files: files } });
+            } catch (error) { staging.clearStaging(base); throw error; }
+            var outcome = staging.recover(base);              // the same code path that finishes an interrupted update
+            if (outcome.status !== 'completed') throw new Error(outcome.message);
             var newManifest = changed.indexOf(MANIFEST) === -1 ? oldManifest :
                 new TextDecoder('utf-8').decode(downloads[MANIFEST]);
             return { changed: changed, removed: removed, restart: manifestShape(oldManifest) !== manifestShape(newManifest) };

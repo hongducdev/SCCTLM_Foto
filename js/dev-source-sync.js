@@ -13,6 +13,7 @@
 
     var SOURCE_RECORD = '.dr7-dev-source';
     var UPDATER_RECORD = '.dr7-version.json';
+    var UPDATER_JOURNAL = '.dr7-update.json';
     // Cùng danh sách file runtime với install/watch-plugin.js
     var FILES = ['index.html', 'style.css', 'loader.jsx'];
     var FOLDERS = ['js', 'jsx', 'css', 'img', 'presets'];
@@ -74,7 +75,7 @@
         FILES.forEach(function (file) { count += copyIfNewer(src, base, file); });
         FOLDERS.forEach(function (folder) { count += copyFolder(src, base, folder); });
         // Bản ghi của GitHub updater không còn khớp file vừa chép (giống watch-plugin.js)
-        if (count) fs().deleteFile(base + '/' + UPDATER_RECORD);
+        if (count) { fs().deleteFile(base + '/' + UPDATER_RECORD); fs().deleteFile(base + '/' + UPDATER_JOURNAL); }
         return count;
     };
 }());

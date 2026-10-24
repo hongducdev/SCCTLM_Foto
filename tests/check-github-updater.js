@@ -18,11 +18,14 @@ const pem = crypto.generateKeyPairSync('ed25519').privateKey.export({ type: 'pkc
 const otherPem = crypto.generateKeyPairSync('ed25519').privateKey.export({ type: 'pkcs8', format: 'pem' });
 const KEYS = { k1: publicKeyBase64(pem) };
 
-function setup(routes, disk, stamps = {}) {
+function setup(routes, disk, stamps = {}, faults = {}) {
     const requests = [];
     const files = new Map(Object.entries(disk).map(([k, v]) => [BASE + '/' + k, Buffer.from(v)]));
     const mtimes = new Map([...files.keys()].map(k => [k, stamps[k.slice(BASE.length + 1)] || MTIME]));
     const dirs = new Set([BASE]);
+    for (const key of files.keys()) for (let i = key.indexOf('/', BASE.length + 1); i > 0; i = key.indexOf('/', i + 1)) dirs.add(key.slice(0, i));
+    const counts = { write: 0, rename: 0 };
+    const children = dir => [...new Set([...files.keys(), ...dirs].filter(k => k.startsWith(dir + '/') && k !== dir).map(k => k.slice(dir.length + 1).split('/')[0]))];
     const writes = [];
     const hashedReads = [];
     let clock = 5000;
@@ -48,7 +51,7 @@ function setup(routes, disk, stamps = {}) {
         fs: {
             readFile: (p, enc) => {
                 if (!files.has(p)) return { err: 3 };
-                if (enc === 'Base64') { hashedReads.push(p); return { err: 0, data: files.get(p).toString('base64') }; }
+                if (enc === 'Base64') { if (!p.includes('/.dr7-update')) hashedReads.push(p); return { err: 0, data: files.get(p).toString('base64') }; }
                 return { err: 0, data: files.get(p).toString('utf8') };
             },
             stat: p => files.has(p)
@@ -56,12 +59,24 @@ function setup(routes, disk, stamps = {}) {
                 : dirs.has(p) ? { err: 0, data: { isDirectory: () => true } } : { err: 3 },
             makedir: p => { dirs.add(p); return { err: 0 }; },
             writeFile: (p, data, enc) => {
+                if (faults.failWrite && ++counts.write === faults.failWrite) return { err: 7 };
                 writes.push(p);
                 files.set(p, enc === 'Base64' ? Buffer.from(data, 'base64') : Buffer.from(data));
                 mtimes.set(p, clock++);
                 return { err: 0 };
             },
-            deleteFile: p => { files.delete(p); return { err: 0 }; }
+            deleteFile: p => dirs.has(p) ? { err: 8 } : files.delete(p) ? { err: 0 } : { err: 3 },   // like cep.fs: no directories
+            chmod: () => ({ err: 0 }),
+            readdir: p => dirs.has(p) ? { err: 0, data: children(p) } : { err: 3 },
+            rename: (from, to) => {                          // like cep.fs: no overwrite, no implicit parent folders
+                counts.rename += 1;
+                if (faults.failRename === counts.rename) return { err: 6 };
+                if (faults.crashRename === counts.rename) throw new Error('process died');   // the file about to be replaced was already deleted
+                if (!files.has(from) || !dirs.has(to.slice(0, to.lastIndexOf('/')))) return { err: 3 };
+                if (files.has(to)) return { err: 1 };
+                files.set(to, files.get(from)); mtimes.set(to, mtimes.get(from)); files.delete(from); mtimes.delete(from);
+                return { err: 0 };
+            }
         }
     };
     const window = { XMLHttpRequest, cep, btoa: s => Buffer.from(s, 'binary').toString('base64'),
@@ -72,8 +87,9 @@ function setup(routes, disk, stamps = {}) {
     vm.runInNewContext(source('vendor/tweetnacl.min.js'), window);
     window.dr7ReleaseKeys = KEYS;
     vm.runInNewContext(source('release-manifest-verifier.js'), window);
+    vm.runInNewContext(source('update-staging-journal.js'), window);
     vm.runInNewContext(source('github-updater.js'), window);
-    return { updater: window.dr7Updater, requests, files, mtimes, writes, hashedReads, read: p => files.get(BASE + '/' + p) };
+    return { updater: window.dr7Updater, staging: window.dr7Staging, requests, files, mtimes, dirs, writes, hashedReads, read: p => files.get(BASE + '/' + p) };
 }
 
 // Objects from the vm realm have foreign prototypes; compare their JSON shape.
@@ -223,5 +239,94 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
         t = setup({ [API + '/releases/latest']: { status } }, { 'CSXS/manifest.xml': manifest('1.0.0') });
         await assert.rejects(t.updater.check(BASE), error => /giới hạn/.test(error.message) && error.status === status);
     }
+    // Staging + journal: nothing reaches the install until every file is staged and verified, and an
+    // interrupted move is finished (or abandoned) by recover() before the panel loads.
+    const staged = { 'index.html': '<html>2.0</html>', 'CSXS/manifest.xml': manifest('2.0.0'), 'js/panel.js': 'panel 2',
+        'js/github-updater.js': 'updater 2', 'jsx/a.jsx': 'a2', 'jsx/b.jsx': 'b2' };
+    const stagedDisk = { 'index.html': '<html>1.0</html>', 'CSXS/manifest.xml': manifest('1.0.0'), 'js/panel.js': 'panel 1',
+        'js/github-updater.js': 'updater 1', 'jsx/a.jsx': 'a1', 'jsx/b.jsx': 'b1', 'jsx/gone.jsx': 'old',
+        '.dr7-version.json': JSON.stringify({ version: 'v1.0.0', files: { 'jsx/gone.jsx': 'g' } }) };
+    const stagedRoutes = signedRelease('2.0.0', staged);
+    const snapshot = run => ({
+        disk: Object.fromEntries([...run.files].map(([p, data]) => [p.slice(BASE.length + 1), data])),
+        stamps: Object.fromEntries([...run.mtimes].map(([p, m]) => [p.slice(BASE.length + 1), m]))
+    });
+    const leftovers = run => [...run.files.keys()].filter(p => p.startsWith(BASE + '/.dr7-update/'));
+    const onDisk = run => Object.fromEntries(Object.keys(staged).map(p => [p, run.read(p).toString()]));
+    const installedOld = Object.fromEntries(Object.entries(stagedDisk).filter(([p]) => staged[p] !== undefined).map(([p, v]) => [p, String(v)]));
+
+    // A write error while staging (disk full) leaves the install untouched and cleans the staging folder.
+    t = setup(stagedRoutes, stagedDisk, {}, { failWrite: 2 });
+    await assert.rejects(t.updater.update(BASE, 'v2.0.0'), /Không ghi được/);
+    assert.deepEqual(onDisk(t), installedOld, 'the installed files are untouched');
+    assert.deepEqual(leftovers(t), [], 'staged files are removed');
+    assert.equal(t.read('.dr7-update.json'), undefined, 'no journal is left behind');
+
+    // A move failing after two files: update() reports it, the journal stays, recover() finishes the job.
+    t = setup(stagedRoutes, stagedDisk, {}, { crashRename: 3 });
+    await assert.rejects(t.updater.update(BASE, 'v2.0.0'), /Chưa hoàn tất cập nhật v2.0.0.*process died/);
+    const journal = JSON.parse(t.read('.dr7-update.json'));
+    assert.equal(journal.journalVersion, 1);
+    assert.deepEqual(journal.move.map(m => m.path), ['js/panel.js', 'jsx/a.jsx', 'jsx/b.jsx', 'js/github-updater.js', 'index.html', 'CSXS/manifest.xml'],
+        'the code that runs recover(), index.html and the manifest are moved last');
+    assert.deepEqual(journal.remove, ['jsx/gone.jsx']);
+    assert.equal(t.read('index.html').toString(), '<html>1.0</html>', 'index.html is still the old one when the move stops early');
+    const crashed = snapshot(t);
+    t = setup({}, crashed.disk, crashed.stamps);
+    let outcome = t.staging.recover(BASE);
+    assert.equal(outcome.status, 'completed');
+    assert.equal(outcome.reload, true, 'panel code changed, so the panel must reload');
+    assert.deepEqual(onDisk(t), Object.fromEntries(Object.entries(staged).map(([p, v]) => [p, String(v)])), 'every file now matches the release');
+    assert.equal(t.read('jsx/gone.jsx'), undefined);
+    assert.deepEqual(leftovers(t), []);
+    assert.equal(t.read('.dr7-update.json'), undefined, 'journal removed once finished');
+    const finished = JSON.parse(t.read('.dr7-version.json'));
+    assert.equal(finished.version, 'v2.0.0');
+    assert.equal(finished.files['jsx/a.jsx'].sha512, sha512('a2'));
+    assert.equal(t.updater.installedVersion(BASE), '2.0.0');
+    assert.equal(t.staging.recover(BASE).status, 'none', 'a second recover() finds nothing to do');
+    assert.deepEqual(t.writes, [...t.writes].filter(p => p.endsWith('.dr7-version.json')), 'recover only writes the record');
+
+    // A move that fails without the process dying (staged file locked): the file is copied instead and the update completes.
+    t = setup(stagedRoutes, stagedDisk, {}, { failRename: 2 });
+    result = await t.updater.update(BASE, 'v2.0.0');
+    assert.deepEqual(onDisk(t), Object.fromEntries(Object.entries(staged).map(([p, v]) => [p, String(v)])));
+    assert.deepEqual(leftovers(t), []);
+
+    // A staged file changed after the journal was written: nothing moves, everything is cleaned, with a message.
+    t = setup(stagedRoutes, stagedDisk, {}, { crashRename: 1 });
+    await assert.rejects(t.updater.update(BASE, 'v2.0.0'), /process died/);
+    const tamperedState = snapshot(t);
+    tamperedState.disk['.dr7-update/jsx/b.jsx'] = 'b-evil';
+    t = setup({}, tamperedState.disk, tamperedState.stamps);
+    outcome = t.staging.recover(BASE);
+    assert.equal(outcome.status, 'discarded');
+    assert.match(outcome.message, /gián đoạn.*cập nhật lại/);
+    assert.equal(t.read('jsx/b.jsx').toString(), 'b1', 'the tampered file never reaches the install');
+    assert.equal(t.read('jsx/a.jsx').toString(), 'a1', 'nothing was moved');
+    assert.deepEqual(leftovers(t), []);
+    assert.equal(t.read('.dr7-update.json'), undefined);
+    assert.equal(t.read('index.html').toString(), '<html>1.0</html>', 'index.html was not replaced');
+
+    // Damaged or unknown journals are discarded, and the panel still loads.
+    for (const [label, text] of [['broken json', '{"journalVersion": 1, "move": ['], ['future journalVersion', JSON.stringify({ journalVersion: 2, tag: 'v9.0.0', move: [], remove: [], record: { version: 'v9.0.0', files: {} } })],
+        ['path outside the runtime set', JSON.stringify({ ...journal, remove: ['../../evil.dll'] })]]) {
+        t = setup({}, { ...installedOld, '.dr7-update.json': text, '.dr7-update/jsx/a.jsx': 'a2' });
+        outcome = t.staging.recover(BASE);
+        assert.equal(outcome.status, 'discarded', label);
+        assert.equal(t.read('.dr7-update.json'), undefined, label + ': journal removed');
+        assert.deepEqual(leftovers(t), [], label + ': staging removed');
+        assert.deepEqual(onDisk(t), installedOld, label + ': install untouched');
+    }
+
+    // No journal: recover() does nothing at all.
+    t = setup({}, installedOld);
+    assert.deepEqual(plain(t.staging.recover(BASE)), { status: 'none' });
+    assert.deepEqual(t.writes, []);
+
+    // The ordering helper on its own: tail files last whatever order they arrive in.
+    assert.deepEqual(plain(t.staging.order(['index.html', 'js/github-updater.js', 'jsx/z.jsx', 'js/vendor/tweetnacl.min.js', 'css/a.css'])),
+        ['css/a.css', 'jsx/z.jsx', 'js/github-updater.js', 'js/vendor/tweetnacl.min.js', 'index.html']);
+
     console.log('PASS: release check/version compare, signed incremental update, tamper/downgrade/min-version refusal, record cache, removal, restart, atomic failure, rate limit');
 })().catch(error => { console.error(error); process.exitCode = 1; });

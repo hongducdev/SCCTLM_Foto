@@ -35,14 +35,18 @@ function dr7Here() {
 }
 
 $.dr7LoadErrors = [];
+$.dr7LoadTimes = [];                                   // { file, ms } per evalFile, to see what a panel open costs
+$.dr7LoadTotalMs = 0;
 $.dr7Ready = false;
 $.dr7Commands = {};
 $._ext.evalFile = function (path) {
+    $.hiresTimer;                                        // reading it resets it
     try {
         $.evalFile(path);
     } catch (e) {
         $.dr7LoadErrors.push(String(path) + ': ' + e + ' (line ' + e.line + ')');
     }
+    $.dr7LoadTimes.push({ file: String(path), ms: Math.round($.hiresTimer / 1000) });
 };
 
 $._ext.evalFiles = function (jsxFolderPath) {
@@ -63,6 +67,7 @@ $._ext.evalFiles = function (jsxFolderPath) {
     // Cờ cho các file jsx/ chạy được độc lập (vd brush-pen-pressure.jsx):
     // đang nạp từ loader thì chỉ đăng ký lệnh, không tự chạy.
     $.dr7Loading = true;
+    var startedAt = new Date().getTime();
     $.dr7SkinFns = {};                                   // a reload must not keep closures of a skin file that no longer loads
     try {
         $._ext.evalFile(here + '/jsx/4.jsxbin');
@@ -79,5 +84,6 @@ $._ext.evalFiles = function (jsxFolderPath) {
     for (var pName in $.presetLutCommands) {
         if ($.presetLutCommands.hasOwnProperty(pName)) $.dr7Commands[pName] = $.presetLutCommands[pName];
     }
+    $.dr7LoadTotalMs = new Date().getTime() - startedAt;
     $.dr7Ready = $.dr7LoadErrors.length === 0;
 }());

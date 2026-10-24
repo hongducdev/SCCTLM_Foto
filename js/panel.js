@@ -251,6 +251,12 @@
     if (!base) {
         notify('SCCTLM_Foto', 'Không xác định được thư mục panel.\nHãy cài lại bằng install/Cai-dat-SCCTLM_Foto.bat');
     } else {
+        // Finish an update that was cut short, before the core loads, so ExtendScript never sees half of two versions.
+        var recovered = { status: 'none' };
+        try { if (window.dr7Staging) recovered = window.dr7Staging.recover(base); }
+        catch (error) { recovered = { status: 'failed', message: 'Không kiểm tra được cập nhật dở dang: ' + error.message }; }
+        if (recovered.reload) { window.location.reload(); return; }   // the journal is gone now, so this reloads once
+        if (recovered.message) status(recovered.message, true);
         cs.evalScript('try{$.dr7Base = ' + JSON.stringify(base) + '; $.evalFile($.dr7Base + "/loader.jsx");' +
             '$.dr7Ready ? "DR7_READY" : $.dr7LoadErrors.join("\\n");}catch(e){"DR7_ERROR: "+e+" line "+e.line;}', function (res) {
             ready = res === 'DR7_READY';

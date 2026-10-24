@@ -73,6 +73,8 @@ async function sync() {
     for (const name of removed) fs.rmSync(path.join(target,name), { force: true });
     // The GitHub updater's record no longer matches the copied files; a later update re-checks all.
     fs.rmSync(path.join(target, '.dr7-version.json'), { force: true });
+    fs.rmSync(path.join(target, '.dr7-update.json'), { force: true });          // a half-finished GitHub update must not overwrite what was just copied
+    fs.rmSync(path.join(target, '.dr7-update'), { recursive: true, force: true });
     previous = next; reloadPending = true;
     const reloaded = await evaluate('dr7Reload()');
     if (!reloaded) { status('Changes copied; waiting to reload after the current command.'); return; }

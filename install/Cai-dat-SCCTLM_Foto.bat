@@ -63,6 +63,9 @@ if not exist "%DR7_TARGET%\CSXS\manifest.xml" (
 )
 rem Ban ghi cua trinh cap nhat GitHub khong con khop file vua copy -> xoa de lan sau tai lai du.
 if exist "%DR7_TARGET%\.dr7-version.json" del /q "%DR7_TARGET%\.dr7-version.json" >nul 2>&1
+rem Cap nhat do dang (journal + thu muc tam) khong duoc ghi de len file vua copy.
+if exist "%DR7_TARGET%\.dr7-update.json" del /q "%DR7_TARGET%\.dr7-update.json" >nul 2>&1
+if exist "%DR7_TARGET%\.dr7-update" rmdir /s /q "%DR7_TARGET%\.dr7-update" >nul 2>&1
 echo       [ok] Da copy vao %DR7_TARGET%
 rem Cai tu git checkout (may dev): nut Nap lai tren panel tu chep code moi tu thu muc nguon.
 if exist "%SRC%\.git" ((echo %SRC%)>"%DR7_TARGET%\.dr7-dev-source") else del /q "%DR7_TARGET%\.dr7-dev-source" >nul 2>&1

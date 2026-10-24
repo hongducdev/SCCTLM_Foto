@@ -257,12 +257,13 @@ install\Hot-reload-SCCTLM_Foto.bat
 Nút **⤓** trên thanh tiêu đề lấy GitHub Release mới nhất của `hongducdev/SCCTLM_Foto`:
 
 - Mỗi lần mở panel tự kiểm tra im lặng; có bản mới thì nút hiện **chấm xanh**.
-- Bấm nút → xác nhận → panel tải `release-manifest.json` và chữ ký `.sig` của bản đó, kiểm chữ ký Ed25519 bằng khoá công khai trong `js/release-keys.js`, rồi chỉ tải các file runtime đã đổi (`index.html`, `style.css`, `loader.jsx`, `CSXS/manifest.xml`, `js/ css/ jsx/ img/ presets/`). Mỗi file tải về phải khớp SHA-512 trong manifest đã ký; tải và kiểm xong hết mới ghi đè, rồi tự nạp lại. Chữ ký sai, file bị đổi hoặc lỗi mạng giữa chừng đều không làm thay đổi bản đang cài.
+- Bấm nút → xác nhận → panel tải `release-manifest.json` và chữ ký `.sig` của bản đó, kiểm chữ ký Ed25519 bằng khoá công khai trong `js/release-keys.js`, rồi chỉ tải các file runtime đã đổi (`index.html`, `style.css`, `loader.jsx`, `CSXS/manifest.xml`, `js/ css/ jsx/ img/ presets/`). Mỗi file tải về phải khớp SHA-512 trong manifest đã ký; tải và kiểm xong hết mới ghi vào thư mục tạm `.dr7-update/`, đọc lại kiểm hash, rồi mới chuyển từng file vào chỗ thật theo journal `.dr7-update.json` và tự nạp lại. Chữ ký sai, file bị đổi hoặc lỗi mạng/đĩa giữa chừng đều không làm thay đổi bản đang cài.
+- Nếu việc chuyển file bị đứt giữa chừng (mất điện, đóng Photoshop, antivirus khoá file), lần mở panel sau tự hoàn tất hoặc huỷ trước khi nạp lõi ExtendScript; huỷ thì panel báo "Cập nhật lần trước bị gián đoạn, hãy bấm ⤓ để cập nhật lại". `index.html`, `js/github-updater.js` và `CSXS/manifest.xml` được chuyển sau cùng. `cep.fs` không xoá được thư mục nên `.dr7-update/` còn lại dạng thư mục rỗng.
 - Chỉ nhận bản **mới hơn** bản đang cài (không bị ép xuống bản cũ dù chữ ký hợp lệ).
 - Lần cập nhật đầu tiên từ bản cũ phải băm toàn bộ file đang cài (~20 MB, khoảng 4 giây, panel hiện "Đang kiểm tra file..."); các lần sau chỉ băm file có mtime đổi.
 - `manifest.xml` đổi cấu trúc (không chỉ số phiên bản) → panel báo khởi động lại Photoshop.
 - File đích chỉ-đọc (lỗi `ERR_CANT_WRITE`) được bỏ cờ chỉ-đọc rồi ghi lại một lần; lỗi ghi vẫn hiện kèm tên mã để dễ chẩn đoán.
-- Bản ghi file đã cài: `.dr7-version.json` (hash và mtime từng file; bị xoá khi cài lại bằng `.bat` / watcher).
+- Bản ghi file đã cài: `.dr7-version.json` (hash và mtime từng file; bị xoá khi cài lại bằng `.bat` / watcher, cùng với `.dr7-update.json` và `.dr7-update/`).
 
 <details>
 <summary>🏷️ Phát hành bản mới (người phát triển)</summary>
@@ -308,6 +309,7 @@ SCCTLM_Foto/
 │   ├── CSInterface.js           # Thư viện giao tiếp Adobe CEP
 │   ├── panel.js                 # Cầu nối Panel ↔ Photoshop, header Nạp lại/Cập nhật, nút .xmp
 │   ├── github-updater.js        # Kiểm tra & cài GitHub Release (cep.fs, không cần Node)
+│   ├── update-staging-journal.js # Thư mục tạm + journal + tự phục hồi khi cập nhật bị đứt
 │   ├── release-manifest-verifier.js # Kiểm chữ ký Ed25519 của release-manifest.json, băm SHA-512
 │   ├── release-keys.js          # Khoá công khai tin cậy để ký bản phát hành
 │   ├── vendor/tweetnacl.min.js  # tweetnacl 1.0.3 (public domain), chỉ dùng để kiểm chữ ký

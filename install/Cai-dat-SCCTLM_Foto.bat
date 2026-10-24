@@ -37,7 +37,7 @@ rem ---------- 1. Cho phep extension khong ky ----------
 if "%DR7_SKIP_REG%"=="1" (
     echo [1/3] Bo qua buoc registry ^(DR7_SKIP_REG=1^)
 ) else (
-    echo [1/3] Bat PlayerDebugMode cho CSXS.4 - CSXS.12 ...
+    echo [1/3] Bat PlayerDebugMode cho CSXS.4 - CSXS.15 ...
     reg import "%~dp0Fix-CEP-SCCTLM_Foto.reg" >nul 2>&1
     if errorlevel 1 (
         echo       [x] Khong ghi duoc registry. Thu bam chuot phai -^> Run as administrator.
@@ -113,7 +113,7 @@ echo.
 echo   Kiem tra hien thi tieng Viet: File ^> Scripts ^> Browse...
 echo     chon %SRC%\_dev\tools\test-vietnamese.jsx
 echo.
-echo   Go cai dat: xoa thu muc %DR7_TARGET%
+echo   Go cai dat: chay install\Go-cai-dat-SCCTLM_Foto.bat
 echo ============================================================
 echo.
 pause

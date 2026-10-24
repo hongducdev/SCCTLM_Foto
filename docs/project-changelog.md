@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.2.0 — (đang phát triển) Gỡ cài đặt, thông báo giới hạn GitHub
+
+- **Gỡ cài đặt**: thêm `install/Go-cai-dat-SCCTLM_Foto.bat`. Script hỏi trước khi xoá thư mục cài (kể cả thư mục cũ `DR7` / `DR7.disabled` nếu manifest đúng Id `com.retouchpanel.panel`), và hỏi riêng có tắt `PlayerDebugMode` cho CSXS.4–15 không. README có mục Gỡ cài đặt (Windows, macOS) và ghi rõ `PlayerDebugMode` áp dụng cho mọi extension chưa ký.
+- **Cập nhật**: GitHub trả 403/429 (giới hạn 60 lượt/giờ mỗi IP khi chưa đăng nhập) thì panel báo "GitHub tạm giới hạn lượt kiểm tra từ mạng này, hãy thử lại sau ít phút." thay vì mã lỗi thô.
+- **Sửa nhỏ**: README không còn ghi "không gửi dữ liệu qua mạng" (panel có kết nối GitHub và YouTube, nhưng không gửi ảnh hay dữ liệu cá nhân); bộ cài in đúng "CSXS.4 - CSXS.15"; manifest `<Author>` là `SCCTLM` (thay đổi manifest nên lần lên 0.2.0 cần khởi động lại Photoshop).
+
 ## v0.1.9 — Nút Tạo Brush / Rim Light kèm phím tắt, QR ủng hộ
 
 - **Phím tắt gắn thẳng vào Thumbnail action**: không còn Action `▶ … (Thumbnail action)` trùng trong bộ SCCTLM_Foto; panel nạp lại bộ Thumbnail action từ `presets/` kèm phím (chỉnh sửa tay trong bộ này mất khi đổi phím). Bản trước gán theo cách cũ được tự chuyển khi mở panel.

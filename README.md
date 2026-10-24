@@ -22,6 +22,7 @@
 - [✨ Điểm nổi bật](#-điểm-nổi-bật)
 - [💻 Yêu cầu hệ thống](#-yêu-cầu-hệ-thống)
 - [🚀 Cài đặt](#-cài-đặt)
+- [🗑️ Gỡ cài đặt](#️-gỡ-cài-đặt)
 - [🧰 Các tab chức năng](#-các-tab-chức-năng)
 - [🎬 Nút Tạo & phím tắt](#-nút-tạo--phím-tắt)
 - [🔄 Hot Reload & Cập nhật](#-hot-reload--cập-nhật)
@@ -46,7 +47,7 @@
 | 🧱 | **Artboard** | Tạo bộ artboard theo 27 mẫu album Facebook MHK / khổ YouTube / khổ tuỳ chỉnh, kèm guide vùng an toàn. |
 | 🧭 | **Khám phá** | Xem playlist YouTube SCCTLM và link cộng đồng ngay trong panel. |
 | 🎞️ | **Preset & kết cấu** | Preset Camera Raw `.xmp` đặt vào `presets/` tự thành nút; hoa văn Hạt phim có sẵn. |
-| 🔒 | **Chạy cục bộ** | Adobe CEP + ExtendScript, không gửi dữ liệu qua mạng. |
+| 🔒 | **Chạy cục bộ** | Adobe CEP + ExtendScript. Không gửi ảnh hay dữ liệu cá nhân; chỉ kết nối GitHub (kiểm tra/cập nhật) và YouTube (tab Khám phá). |
 | 🔁 | **Cập nhật từ GitHub** | Nút ⤓ trên panel tải bản phát hành mới nhất, không cần cài lại. |
 
 ---
@@ -71,6 +72,8 @@
    - bật `PlayerDebugMode` cho CSXS.4 → CSXS.15 (cho phép extension chưa ký số);
    - chép plugin vào `%APPDATA%\Adobe\CEP\extensions\SCCTLM_Foto`.
 3. Mở Photoshop → **Window > Extensions > SCCTLM_Foto**.
+
+> ⚠️ **Về `PlayerDebugMode`:** panel chưa ký số nên cần bật chế độ này. Nó cho phép **mọi** extension CEP chưa ký chạy với tài khoản Windows/macOS đó, không riêng SCCTLM_Foto. Khi không dùng nữa, tắt lại bằng bước gỡ cài đặt bên dưới.
 
 <details>
 <summary>🔧 Cài thủ công (Windows)</summary>
@@ -99,6 +102,25 @@
 3. Mở Photoshop → `Window > Extensions > SCCTLM_Foto`.
 
 </details>
+
+---
+
+## 🗑️ Gỡ cài đặt
+
+### 🪟 Windows
+
+1. **Đóng hoàn toàn Photoshop.**
+2. Chạy `install\Go-cai-dat-SCCTLM_Foto.bat` — script sẽ hỏi từng bước:
+   - xoá `%APPDATA%\Adobe\CEP\extensions\SCCTLM_Foto` (và thư mục cài cũ `DR7` / `DR7.disabled` nếu còn);
+   - tắt `PlayerDebugMode` cho CSXS.4 → CSXS.15. Chỉ chọn **Y** khi bạn không còn dùng extension chưa ký nào khác.
+
+### 🍎 macOS
+
+```bash
+rm -rf ~/Library/Application\ Support/Adobe/CEP/extensions/SCCTLM_Foto
+# Chỉ chạy dòng dưới nếu không còn extension chưa ký nào khác:
+for n in 9 10 11 12 13 14 15; do defaults delete com.adobe.CSXS.$n PlayerDebugMode 2>/dev/null; done
+```
 
 ---
 
@@ -317,6 +339,7 @@ SCCTLM_Foto/
 │   └── colors/*.svg             # Icon thẻ bộ màu
 ├── install/
 │   ├── Cai-dat-SCCTLM_Foto.bat          # Cài đặt tự động
+│   ├── Go-cai-dat-SCCTLM_Foto.bat       # Gỡ cài đặt, tắt PlayerDebugMode (hỏi trước)
 │   ├── Fix-CEP-SCCTLM_Foto.reg          # Bật PlayerDebugMode
 │   ├── Hot-reload-SCCTLM_Foto.bat       # Khởi động bộ theo dõi Hot Reload
 │   └── watch-plugin.js          # Theo dõi file và nạp lại panel bằng Node.js

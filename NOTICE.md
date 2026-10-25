@@ -15,6 +15,10 @@ Copyright (c) 2026 hongducdev. All rights reserved.
   `tests/photoshop-baseline-record.jsx`, `tests/photoshop-command-inventory.jsx`
 - `docs/clean-room/`, `docs/development-roadmap.md`
 - Phần đo thời gian nạp trong `loader.jsx`
+- `jsx/white-teeth.jsx`, `jsx/white-teeth-dialog.jsx`: Trắng Răng (WT), viết lại clean-room (xem `docs/clean-room/LOG.md`)
+- `jsx/tone-group.jsx`, `jsx/tone-group-masks.jsx`: Màu tổng (BTNPFSD2), viết lại clean-room
+- `jsx/dodge-burn.jsx`, `jsx/dodge-burn-layers.jsx`, `jsx/dodge-burn-dialog.jsx`: Đánh khối (DB), viết lại clean-room
+- `jsx/local-smoother.jsx`, `jsx/local-smoother-layers.jsx`, `jsx/local-smoother-dialog.jsx`: Làm mịn da (LS), viết lại clean-room
 - Mọi module viết lại theo quy trình clean-room (`docs/clean-room/PROCESS.md`) sau khi được
   ghi vào `docs/clean-room/LOG.md`
 
@@ -31,8 +35,8 @@ Các file dưới đây được dựng lại từ một plugin Photoshop có s�
 (JSXBIN, packer, sojson), như ghi trong `_dev/README.md`. Repo này **không có** giấy phép
 bằng văn bản của tác giả gốc để sửa hay phân phối lại chúng, và `LICENSE` không áp dụng cho chúng:
 
-- `jsx/4.jsxbin`, `jsx/ba.jsx`, `jsx/db.jsx`, `jsx/ds.jsx`, `jsx/li.jsx`, `jsx/ls.jsx`,
-  `jsx/pfsd2.jsx`, `jsx/re.jsx`, `jsx/se.jsx`, `jsx/sh.jsx`, `jsx/ss.jsx`, `jsx/tc.jsx`, `jsx/wt.jsx`
+- `jsx/4.jsxbin`, `jsx/ba.jsx`, `jsx/ds.jsx`, `jsx/li.jsx`,
+  `jsx/re.jsx`, `jsx/se.jsx`, `jsx/sh.jsx`, `jsx/ss.jsx`, `jsx/tc.jsx`
 - `jsx/pj/*`
 - phần lõi của `jsx/skin-*.jsx` (tách nguyên văn từ `main.jsx` cũ)
 

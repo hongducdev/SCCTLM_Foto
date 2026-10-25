@@ -44,14 +44,17 @@ file mốc `tests/baselines/*.json`, và `tests/compare-baselines.js`. Module đ
 
 1. **Kiểm kê** (bên đặc tả): chạy `tests/photoshop-command-inventory.jsx` trong Photoshop đang mở panel để lấy tên lệnh đã
    đăng ký; `grep -o "onClickButton('[A-Z0-9_]*')" index.html` để biết nút nào gọi lệnh nào.
-2. **Mốc hành vi** (bên đặc tả): đặt tên lệnh vào `COMMANDS` trong `tests/photoshop-baseline-record.jsx`, chạy, lưu JSON
-   vào `tests/baselines/<module>.before.json`. Lệnh mở hộp thoại thì ghi tay giá trị hộp thoại vào đặc tả, hoặc đặt
-   `app.displayDialogs = DialogModes.NO` nếu lệnh hỗ trợ.
+2. **Mốc hành vi** (bên đặc tả): chạy `pwsh tests/record-baseline-with-dialogs.ps1 -Commands <LỆNH> -Name <module>.before -Samples`
+   (gọi `tests/photoshop-baseline-record.jsx`; lệnh không có trong `$.dr7Commands` được gọi qua `$._ext_<LỆNH>.run()`; script
+   tự nhấn Enter khi hộp thoại hiện, và `-Samples` ghi thêm lưới 16x16 điểm màu). Lưu JSON vào
+   `tests/baselines/<module>.before.json`. Giá trị hộp thoại vẫn ghi tay vào đặc tả. Script chiếm bàn phím khi chạy.
 3. **Đặc tả** (bên đặc tả): điền `spec-template.md`; bên thứ hai (không phải người viết) đọc lại để xoá chi tiết nào
    trông như chép từ mã.
 4. **Viết mới** (bên cài đặt): từ gói bàn giao, tên rõ nghĩa, file kebab-case, mỗi file ≤ 200 dòng nếu được.
 5. **Đối chứng**: chạy lại cùng script trên mã mới, lưu `<module>.after.json`, rồi
-   `node tests/compare-baselines.js <module>.before.json <module>.after.json` (sai lệch histogram nằm trong ngưỡng của đặc tả).
+   `node tests/compare-baselines.js <module>.before.json <module>.after.json --samples [mean= over4= max=]` (ngưỡng histogram và
+   lưới `samples` lấy từ mục 6 của đặc tả; chủ repo duyệt ngưỡng ngay ở bước 3, trước khi cài đặt). Bên cài đặt chỉnh tối đa **một**
+   vòng sau lần cài đầu; chưa đạt thì dừng và báo số đo từng hướng, không tự thử tiếp, không nới ngưỡng.
 6. **Thay thế**: xoá file gốc khỏi cây làm việc, cập nhật README mục Cấu trúc thư mục và changelog, ghi vào `LOG.md`.
 
 ## Việc quy trình này không giải quyết

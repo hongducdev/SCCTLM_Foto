@@ -59,7 +59,7 @@ for (const entry of fs.readdirSync(path.join(root, 'jsx'), { withFileTypes: true
 }
 // Workflow and Da dialog scripts: a real failure must reach the panel bridge (message/line, silent cancel),
 // not be reported as "no file open". Executes each file's actual wrapper statement.
-for (const file of ['ds', 'se', 'ba', 'ls', 'ss', 're', 'db', 'tc']) {
+for (const file of ['ds', 'se', 'ba', 'ss', 're', 'tc']) {
     const line = read('jsx/' + file + '.jsx').split('\n').find(l => l.includes('try{app.activeDocument.suspendHistory('));
     const wrapper = line && [line.slice(line.indexOf('try{app.activeDocument.suspendHistory')).trim()];
     assert.ok(wrapper, file + ' wrapper must exist');
@@ -74,9 +74,15 @@ for (const file of ['ds', 'se', 'ba', 'ls', 'ss', 're', 'db', 'tc']) {
     assert.equal(notices.length, 1, file + ' must still explain a missing document');
 }
 // Every Da dialog script must refuse non-RGB documents before opening its dialog.
-for (const file of ['ls', 'ss', 're', 'db', 'tc']) {
+for (const file of ['ss', 're', 'tc']) {
     assert.match(read('jsx/' + file + '.jsx'), /mode!==DocumentMode\.RGB/, file + ' must guard RGB mode');
 }
+// Local smoother (clean-room rewrite of LS): registers LS, guards RGB, runs as one history step.
+assert.match(read('jsx/local-smoother.jsx'), /\$\._ext_LS\s*=\s*\{[\s\S]*DocumentMode\.RGB[\s\S]*suspendHistory/, 'LS registers, guards RGB and runs as one history step');
+// Teeth whitening (clean-room rewrite): registers WT, does nothing outside RGB, runs as one history step.
+assert.match(read('jsx/white-teeth.jsx'), /\$\._ext_WT\s*=\s*\{[\s\S]*DocumentMode\.RGB[\s\S]*suspendHistory/, 'WT registers, guards RGB and runs as one history step');
+// Dodge & Burn (clean-room rewrite): registers DB, one history step, RGB-only guard.
+assert.match(read('jsx/dodge-burn.jsx'), /\$\._ext_DB\s*=\s*\{[\s\S]*DocumentMode\.RGB[\s\S]*suspendHistory/, 'DB registers, guards RGB and runs as one history step');
 // Clear History wiped the user's undo stack (was the tail of MBPF).
 assert.doesNotMatch(mainAndSkins, /clearEvent/, 'no command may clear the document history');
 // Da commands without a dialog: run the real $.dr7SkinStep from main.jsx against a stub host.
@@ -94,7 +100,7 @@ assert.equal(skinHost.$.dr7SkinStepBody, null, 'the step body must not leak afte
 skinDoc.mode = 'CMYK';
 skinHost.$.dr7SkinStep('DR7 test', () => { skinRan++; })();
 assert.deepEqual([skinRan, skinNotices.length], [1, 1], 'non-RGB must explain and not run');
-assert.match(read('jsx/pfsd2.jsx'), /\$\.dr7SkinStep\("[^"]+", SkinColor\)\(\)/, 'Mau tong must use the skin step');
+assert.match(read('jsx/tone-group.jsx'),/\$\._ext_BTNPFSD2\s*=\s*\{[\s\S]*suspendHistory/, 'Mau tong registers BTNPFSD2 and runs as one history step');
 // Every skin command lives in its own skin-*.jsx and registers itself; the table is built from that registry.
 const skinNames = ['DKACR', 'FSJH', 'GGXS', 'JMXS', 'MBPF', 'TJSH', 'TJYY', 'ZCZQ'];
 const registeredBy = {};

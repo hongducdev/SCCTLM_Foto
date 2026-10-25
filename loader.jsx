@@ -49,6 +49,10 @@ $._ext.evalFile = function (path) {
     $.dr7LoadTimes.push({ file: String(path), ms: Math.round($.hiresTimer / 1000) });
 };
 
+// Originals replaced by clean-room rewrites. An install that was unzipped over an old one, or updated by a pre-0.2.0
+// updater, can still hold them; they sort after their rewrites and would overwrite the same $._ext_<CMD>.
+$._ext.retiredJsx = { 'db.jsx': true, 'ls.jsx': true, 'pfsd2.jsx': true, 'wt.jsx': true };
+
 $._ext.evalFiles = function (jsxFolderPath) {
     var folder = new Folder(jsxFolderPath);
     if (!folder.exists) {
@@ -57,6 +61,7 @@ $._ext.evalFiles = function (jsxFolderPath) {
     }
     var files = folder.getFiles('*.jsx');
     for (var i = 0; i < files.length; i += 1) {
+        if ($._ext.retiredJsx.hasOwnProperty(decodeURI(files[i].name).toLowerCase())) continue;
         $._ext.evalFile(files[i]);
     }
 };

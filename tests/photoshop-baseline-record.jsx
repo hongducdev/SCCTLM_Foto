@@ -3,11 +3,15 @@
 // Runs each command in $.dr7BaselineCommands on 3 synthetic RGB images, records the layer tree and the composite
 // histogram of the result, and writes JSON to tests/baselines/<name>.json. It calls commands by name only.
 // Set before running:  $.dr7BaselineCommands = ['WT'];  $.dr7BaselineName = 'wt.before';  (name is optional)
+// A name missing from $.dr7Commands is run as $._ext_<NAME>.run() (panel "ext" buttons such as DB and LS); those open a
+// modal dialog, so start the run through tests/drive-photoshop-dialog.ps1 to press Enter. $.dr7BaselineSamples = true also
+// records a 16x16 grid of composite RGB values per image (compare with: compare-baselines.js --samples).
 //   $ps = New-Object -ComObject Photoshop.Application
 //   $ps.DoJavaScript('$.dr7BaselineCommands=["WT"]; $.dr7BaselineName="wt.before"; $.evalFile(new File("D:/DR7/tests/photoshop-baseline-record.jsx"))', $null)
 (function () {
     var COMMANDS = $.dr7BaselineCommands || [];
     var NAME = $.dr7BaselineName || 'baseline';
+    var WITH_SAMPLES = !!$.dr7BaselineSamples;
     var original = app.documents.length ? app.activeDocument : null;
     var units = app.preferences.rulerUnits, dialogs = app.displayDialogs;
     var foreground = app.foregroundColor, background = app.backgroundColor, tool = app.currentTool;
@@ -54,6 +58,15 @@
         else { node.children = []; for (var i = 0; i < layer.layers.length; i++) node.children.push(describe(layer.layers[i])); }
         return node;
     }
+    function sampleGrid(doc) {
+        var grid = [];
+        for (var y = 0; y < 16; y++) for (var x = 0; x < 16; x++) {
+            var sampler = doc.colorSamplers.add([x * 8 + 4.5, y * 8 + 4.5]), c = sampler.color.rgb;
+            grid.push([Math.round(c.red), Math.round(c.green), Math.round(c.blue)]);
+            sampler.remove();
+        }
+        return grid;
+    }
     function tree(doc) { var out = []; for (var i = 0; i < doc.layers.length; i++) out.push(describe(doc.layers[i])); return out; }
 
     try {
@@ -70,12 +83,14 @@
                 scratch.bitsPerChannel = BitsPerChannelType.EIGHT;
                 IMAGES[m].draw(scratch);
                 scratch.selection.select([[16, 16], [112, 16], [112, 112], [16, 112]]);
-                var run = $.dr7Commands[COMMANDS[c]];
+                var run = $.dr7Commands[COMMANDS[c]], ext = $['_ext_' + COMMANDS[c]];
+                if (typeof run != 'function' && ext && typeof ext.run == 'function') run = function () { ext.run(); };
                 if (typeof run != 'function') throw new Error('Not a registered command');
                 run();
                 entry.ok = true;
                 entry.layers = tree(scratch);
                 entry.histogram = scratch.histogram;
+                if (WITH_SAMPLES) entry.samples = sampleGrid(scratch);
             } catch (error) { entry.ok = false; entry.error = String(error); }
             try { scratch.close(SaveOptions.DONOTSAVECHANGES); } catch (e) { }
             scratch = null;

@@ -347,7 +347,17 @@ SCCTLM_Foto/
 │   ├── rim-light-color.jsx      # RIMCOLOR: tô màu lớp Color, đọc/đặt cường độ nhóm Rim Light
 │   ├── action-shortcut-setup.jsx # Nạp phím: gắn thẳng vào bộ đóng gói, Action khác qua bộ "SCCTLM_Foto" (▶ Play)
 │   ├── pj/                      # Tài nguyên cọ (.tpl) và hoa văn (.pat)
-│   └── *.jsx                    # Module chuyên biệt: ds, ba, se, ls, ss, re, db, sh, li, tc, wt, pfsd2
+│   └── *.jsx                    # Module chuyên biệt: ds, ba, se, ss, re, sh, li, tc
+│   ├── white-teeth.jsx          # Trắng Răng (WT), viết lại theo clean-room
+│   ├── white-teeth-dialog.jsx   # Hộp thoại hướng dẫn của Trắng Răng
+│   ├── tone-group.jsx           # Màu tổng (BTNPFSD2), viết lại theo clean-room
+│   ├── tone-group-masks.jsx     # Mặt nạ độ sáng của Màu tổng
+│   ├── dodge-burn.jsx           # Đánh khối (DB), viết lại theo clean-room
+│   ├── dodge-burn-layers.jsx    # Hàm tạo layer/mask của Đánh khối
+│   ├── dodge-burn-dialog.jsx    # Hộp thoại Dodge & Burn
+│   ├── local-smoother.jsx       # Làm mịn da (LS), viết lại theo clean-room
+│   ├── local-smoother-layers.jsx # Hàm lọc/layer/mask của Làm mịn da
+│   ├── local-smoother-dialog.jsx # Hộp thoại và hộp gợi ý của Làm mịn da
 ├── presets/
 │   ├── colors/                  # 6 bộ màu MHK: <bộ>/NNN.xmp + NNN.icc, manifest.json
 │   ├── *.xmp                    # Preset Camera Raw riêng (mỗi file một nút)

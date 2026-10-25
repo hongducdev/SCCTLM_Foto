@@ -20,4 +20,10 @@ assert.match(compare(recording(run()), recording())[0], /missing from the new re
 assert.match(compare(recording(), recording(run()))[0], /not in the baseline/);
 assert.match(compare(recording(run()), recording(run({ histogram: [] })))[0], /histogram distance Infinity/);
 assert.deepEqual(compare(recording(run({ ok: false, error: 'a' })), recording(run({ ok: false, error: 'b' }))), [], 'a command failing in both is not a regression');
+const grid = shift => Array.from({ length: 256 }, (_, i) => [100 + (i < 20 ? shift : 0), 120, 140]);
+const limits = { mean: 1.5, over4: 0.05, max: 20 };
+assert.deepEqual(compare(recording(run({ samples: grid(0) })), recording(run({ samples: grid(2) })), 0.02, limits), [], 'small sample drift passes');
+assert.match(compare(recording(run({ samples: grid(0) })), recording(run({ samples: grid(9) })), 0.02, limits)[0], /samples over4/, 'more than 5% of points over 4 levels fails');
+assert.match(compare(recording(run({ samples: grid(0) })), recording(run()), 0.02, limits)[0], /samples missing/);
+assert.deepEqual(compare(recording(run({ samples: grid(0) })), recording(run())), [], 'samples are only checked on request');
 console.log('PASS: baseline comparison (structure, blend/opacity, histogram threshold, missing/extra runs)');

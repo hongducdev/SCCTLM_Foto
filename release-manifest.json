@@ -1,10 +1,10 @@
 {
  "format": 1,
  "keyId": "k1",
- "version": "0.2.2",
+ "version": "0.2.3",
  "minVersion": "0.2.0",
  "files": {
-  "CSXS/manifest.xml": "e54c36d0470fdc41059525b4a0cef18775f37d0ea0fd3ccaf3ce8662ac9329a16404cff702a1188272bb8fb3eee2e654e6e2ce1cc0cc5b3d5ab6836f7fb0e759",
+  "CSXS/manifest.xml": "9a8a0cec4f8331c82b329ee248a852ea7c0c42d1051146533be882136d42cbdeb616adcfbf1d013ffec0768823d917873a3a5a5350bc71723f9c1242ba52492f",
   "css/artboard.css": "69e538ce42bb491004099fcd5916c2d7ea72c6a946cbe3bb23b4478d39c4d8aa520da29a0fd336721eb826b8ce61c40ef819adb9fd05ded2c0b970846ae39e0a",
   "css/button-icons.css": "e161ffc815800b467f3d9b7a3b974d6ed9d922c3522fd5e1ea030c43eda25bdcd7978f5743411773c1a27157934ad9df52f42c5e26aa2dea2b8cea5d9185e4f5",
   "css/color-presets.css": "fca4b4a652658632b58ba72c97c73dd01b5899c96efd0f867c8e84b1bd0e02a6ab8ccca09dc64b66aaf4df63c0947b2e8399a390d44a5e591f97baa21f0ea1b9",

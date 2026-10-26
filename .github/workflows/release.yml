@@ -1,8 +1,8 @@
 name: release
 
 # Push a tag like v0.1.8 (after bumping CSXS/manifest.xml and docs/project-changelog.md) to publish the release.
-# No asset is attached: the in-panel updater reads release-manifest.json (signed offline with scripts/release-sign.js)
-# at the tag, the release is only the tag + notes.
+# The in-panel updater reads release-manifest.json (signed offline with scripts/release-sign.js) from raw files at the tag,
+# so it never touches the attached zip. The zip is for manual installs and makes GitHub count downloads per release.
 on:
   push:
     tags: ['v*']
@@ -38,6 +38,8 @@ jobs:
             exit 1
           fi
           cat notes.md
+      - name: Build install zip
+        run: git archive --format=zip --prefix=SCCTLM_Foto/ -o "SCCTLM_Foto-${GITHUB_REF_NAME}.zip" "$GITHUB_REF_NAME"
       - name: Create release
         env:
           GH_TOKEN: ${{ github.token }}
@@ -45,5 +47,5 @@ jobs:
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
             echo "Release $GITHUB_REF_NAME already exists, leaving it as is."
           else
-            gh release create "$GITHUB_REF_NAME" --verify-tag --title "SCCTLM_Foto ${GITHUB_REF_NAME#v}" --notes-file notes.md
+            gh release create "$GITHUB_REF_NAME" "SCCTLM_Foto-${GITHUB_REF_NAME}.zip" --verify-tag --title "SCCTLM_Foto ${GITHUB_REF_NAME#v}" --notes-file notes.md
           fi

@@ -36,7 +36,9 @@ Mỗi bản phát hành:
 1. Tăng `ExtensionBundleVersion` và `Version` của panel trong `CSXS/manifest.xml` (phải trùng nhau, dạng `x.y.z`) và thêm mục `## vX.Y.Z` vào `docs/project-changelog.md`.
 2. Commit mọi thay đổi (script ký từ chối khi cây làm việc còn thay đổi chưa commit).
 3. `node scripts/release-sign.js` ghi `release-manifest.json` + `release-manifest.json.sig` (SHA-512 của mọi file runtime git đang theo dõi), rồi commit hai file đó. Thêm `--min-version x.y.z` nếu bản này không cập nhật tự động được từ bản cũ hơn x.y.z.
-4. `node scripts/release-verify.js` (không cần khoá riêng, CI cũng chạy), rồi đặt tag `vX.Y.Z` và push tag. Workflow `release.yml` tạo GitHub Release. Tag phải là `v` + đúng số phiên bản.
+4. `node scripts/release-verify.js` (không cần khoá riêng, CI cũng chạy), rồi đặt tag `vX.Y.Z` và push tag. Workflow `release.yml` tạo GitHub Release và đính kèm `SCCTLM_Foto-vX.Y.Z.zip` (`git archive` của tag, dùng để cài thủ công). Tag phải là `v` + đúng số phiên bản.
+
+**Xem lượt tải:** chỉ file zip đính kèm được GitHub đếm (bộ cập nhật trong panel đọc raw file nên không làm tăng số). `gh api repos/hongducdev/SCCTLM_Foto/releases --jq '.[] | {tag: .tag_name, downloads: [.assets[].download_count] | add}'`. Release trước 0.2.3 không có zip.
 
 **Giới hạn bảo mật cần biết**
 - Chữ ký bảo vệ khỏi việc ai đó chiếm tài khoản/repo GitHub rồi đẩy mã lạ; nó không bảo vệ nếu **khoá riêng bị lộ**. Khoá lộ thì mọi bản đang tin khoá đó đều hết được bảo vệ: chỉ còn cách phát bản mới có khoá mới và báo người dùng cài lại thủ công.

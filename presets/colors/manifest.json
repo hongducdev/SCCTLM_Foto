@@ -504,23 +504,31 @@
     },
     {
      "id": "leica/003",
-     "name": "Hasselblad 01"
+     "name": "Hàn Mặc"
     },
     {
      "id": "leica/004",
-     "name": "Hasselblad 02"
+     "name": "Lưu Niên"
     },
     {
      "id": "leica/005",
-     "name": "Hasselblad 03"
+     "name": "Thanh Nguyệt"
     },
     {
      "id": "leica/006",
-     "name": "Hasselblad 04"
+     "name": "Thiều Hoa"
     },
     {
      "id": "leica/007",
-     "name": "Hasselblad Classic"
+     "name": "Ti Trúc"
+    },
+    {
+     "id": "leica/008",
+     "name": "Trúc Kính"
+    },
+    {
+     "id": "leica/009",
+     "name": "Xích Hà"
     }
    ]
   },

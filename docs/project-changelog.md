@@ -69,7 +69,7 @@
 
 ## v0.1.4 — Bộ màu MHK và Mix màu
 
-- Nhóm **Màu & Preset** có 6 bộ màu dạng thẻ icon (Fuji 71, Dazz 34, Kodak 12, Leica 7, Ricoh 7, Hồng Kông 34 màu); bấm thẻ để xem các màu nhỏ bên dưới, bấm 1 màu là áp ngay (100%) thành layer `Color <bộ> <số>`.
+- Nhóm **Màu & Preset** có 6 bộ màu dạng thẻ icon (Fuji 71, Dazz 34, Kodak 12, Leica 9, Ricoh 7, Hồng Kông 34 màu); bấm thẻ để xem các màu nhỏ bên dưới, bấm 1 màu là áp ngay (100%) thành layer `Color <bộ> <số>`.
 - **Mix màu**: bật công tắc, chọn tối đa 4 màu, mỗi màu có thanh độ mờ riêng; "Áp dụng Mix" tạo mỗi màu 1 layer (mỗi layer render từ ảnh gốc) rồi hạ opacity để pha thành màu mới.
 - **Look LUT**: bộ lọc Camera Raw bỏ qua bảng Look (`crs:RGBTable`) nên trước đây nhiều màu áp xong không đổi. `_dev/tools/xmp-rgbtable-to-cube.js` giải mã bảng theo định dạng DNG SDK và `build-color-presets.js` ghi ra `presets/colors/<nhóm>/NNN.icc` (ICC device-link). `jsx/color-mix.jsx` áp bằng lớp Color Lookup đặt trên Smart Object (không gộp xuống pixel), cả nhóm gói trong một group `Color <bộ> NNN`; ảnh tách nền không còn bị nền đen và vẫn mở lại Camera Raw để chỉnh. Look gốc của Adobe ("Camera Canon…") lấy bảng từ `Camera Raw.8bi` qua `_dev/tools/extract-stock-look-tables.js`; preset "Bản 2" (Stubbed) mượn bảng của preset anh em cùng UUID. Cả 165 màu đều đổi màu khi áp.
 - Dữ liệu: `presets/colors/<bộ>/NNN.xmp` + `presets/colors/manifest.json` (id ASCII, tên tiếng Việt), icon `img/colors/*.svg`; sinh lại bằng `node _dev/tools/build-color-presets.js "<thư mục bộ màu>" "<thư mục icon>"`.

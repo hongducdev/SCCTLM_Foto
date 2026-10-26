@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.0 — Leica: thay Hasselblad bằng 7 màu MHK
+
+- Bộ **Leica** bỏ 5 màu Hasselblad (01–04, Classic) và thêm 7 màu MHK: Hàn Mặc, Lưu Niên, Thanh Nguyệt, Thiều Hoa, Ti Trúc, Trúc Kính, Xích Hà. Bộ Leica giờ có 9 màu.
+
 ## v0.2.3 — Đính kèm file zip cài đặt vào GitHub Release
 
 - Mỗi bản phát hành giờ kèm `SCCTLM_Foto-vX.Y.Z.zip` (`git archive` của tag) để cài thủ công; GitHub đếm lượt tải của file này (`download_count`). Bộ cập nhật trong panel vẫn đọc file thô nên không làm tăng số đếm. File: `.github/workflows/release.yml`, `docs/deployment-guide.md`.

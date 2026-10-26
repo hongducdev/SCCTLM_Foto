@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.3 — Đính kèm file zip cài đặt vào GitHub Release
+
+- Mỗi bản phát hành giờ kèm `SCCTLM_Foto-vX.Y.Z.zip` (`git archive` của tag) để cài thủ công; GitHub đếm lượt tải của file này (`download_count`). Bộ cập nhật trong panel vẫn đọc file thô nên không làm tăng số đếm. File: `.github/workflows/release.yml`, `docs/deployment-guide.md`.
+
 ## v0.2.2 — Trắng Răng, Đánh khối, Màu tổng, Làm mịn da viết lại theo clean-room
 
 - **Trắng Răng (WT)** được viết lại từ đặc tả hành vi (`docs/clean-room/specs/wt.md`) thành `jsx/white-teeth.jsx` và `jsx/white-teeth-dialog.jsx`; `jsx/wt.jsx` (mã gốc đã decompile) bị xoá. Đối chứng trong Photoshop 23.2.0: cây layer và histogram khớp mốc `tests/baselines/wt.before.json`; đáp ứng Curves lệch tối đa 1 mức, Hue/Saturation tối đa 3 mức trên 89 ô mẫu. Hộp thoại có thêm ghi nhớ "Không hiện lại cửa sổ này" (tuỳ chọn lưu bằng `app.putCustomOptions`, chưa được đặc tả xác nhận).

@@ -22,6 +22,7 @@
 - **Rim Light** — nút **Tạo Rim Light**; khi ảnh có nhóm `Rim Light` > lớp `Color` thì chọn màu (hex, hút màu, 8 màu mẫu) và Độ sáng.
 - **Màu & Preset** — 6 bộ màu MHK (165 màu): bấm để áp, hoặc **Mix** tối đa 4 màu. File `.xmp` đặt vào `presets/` tự thành nút.
 - **Artboard** — 27 mẫu album Facebook MHK, khổ YouTube hoặc khổ tuỳ chỉnh, kèm guide vùng an toàn.
+- **Watermark** — đọc EXIF của ảnh đang mở, thêm viền và dòng "Shot on máy ảnh · thông số"; 3 kiểu khung, bo góc, logo, chọn thông số, font, canh chữ, màu nền (có hút màu), xem trước và lưu mẫu.
 - **Khám phá** — playlist YouTube SCCTLM và link cộng đồng ngay trong panel.
 - **Phím tắt Action** — gán F2–F12 (kèm Shift/Ctrl) cho nút **Tạo Brush** / **Tạo Rim Light**.
 - **Cập nhật một chạm** — nút **⤓** tải bản mới từ GitHub, kiểm chữ ký Ed25519 trước khi cài. Nút **↻** nạp lại panel.

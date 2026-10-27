@@ -13,6 +13,7 @@ SCCTLM_Foto/
 │   ├── button-icons.css         # Icon nút (SVG mask)
 │   ├── color-presets.css        # Bộ màu MHK và Mix màu
 │   ├── artboard.css             # Tab Artboard
+│   ├── exif-frame.css           # Tab Watermark
 │   └── explore.css              # Tab Khám phá
 ├── js/
 │   ├── CSInterface.js           # Thư viện giao tiếp Adobe CEP
@@ -26,7 +27,7 @@ SCCTLM_Foto/
 │   ├── create-action-buttons.js # Nút Tạo Brush / Tạo Rim Light: nạp bộ Action nếu thiếu rồi chạy
 │   ├── shortcut-conflicts.js    # Tìm nơi phím F đang được dùng (panel, phím mặc định Photoshop, phím đã đánh dấu)
 │   ├── shortcut-key-capture.js  # Ô phím tắt cạnh nút Tạo: nghe phím F, lưu danh sách
-│   ├── tab-switcher.js          # Chuyển tab Retouch / Artboard / Khám phá / Ủng hộ
+│   ├── tab-switcher.js          # Chuyển tab Retouch / Artboard / Watermark / Khám phá / Ủng hộ
 │   ├── brush-setup-controls.js  # Brush Lab: Thiết lập cọ / Về mặc định
 │   ├── brush-controls.js        # Brush Lab: xem trước nét cọ, thanh Cỡ / Cứng
 │   ├── brush-color-controls.js  # Brush Lab: màu cọ (Foreground) cho Stroke Brush Path
@@ -34,6 +35,20 @@ SCCTLM_Foto/
 │   ├── artboard-facebook-album-presets.js # Artboard: 27 mẫu album Facebook MHK
 │   ├── artboard-layout.js       # Artboard: dữ liệu khổ, thuật toán xếp, kiểm tra
 │   ├── artboard-tab.js          # Artboard: giao diện tab
+│   ├── exif-frame-fields.js     # Khung ảnh: đọc EXIF thành các trường (tiêu cự, khẩu độ, tốc độ, ISO, ống kính, ngày)
+│   ├── exif-frame-layout.js     # Khung ảnh: hình học 3 kiểu khung và bo góc, màu chữ tương phản, kiểm tra spec
+│   ├── exif-frame-compose.js    # Khung ảnh: ghép giá trị trên form thành spec gửi Photoshop
+│   ├── exif-frame-presets.js    # Khung ảnh: lưu/nạp mẫu vào localStorage (lọc theo SCHEMA)
+│   ├── exif-frame-templates.js  # Khung ảnh: 3 mẫu Hasselblad dựng sẵn và danh sách logo hãng trong img/logos
+│   ├── wm-templates-data.js     # Watermark mẫu gốc: 54 mẫu 徕卡一瞬 (sinh bởi scripts/build-watermark-templates.py, không sửa tay)
+│   ├── wm-vars.js               # Watermark mẫu gốc: biến chữ (tên máy, thông số, ngày giờ theo i18n của mẫu, GPS)
+│   ├── wm-layout.js             # Watermark mẫu gốc: bản port bộ render gốc, trả về danh sách thao tác vẽ
+│   ├── wm-spec.js               # Watermark mẫu gốc: kiểm tra dữ liệu gửi sang Photoshop
+│   ├── wm-tab.js                # Watermark mẫu gốc: chọn mẫu, đọc EXIF, đo chữ trong Photoshop rồi vẽ
+│   ├── exif-frame-fonts.js      # Khung ảnh: nạp danh sách font của Photoshop
+│   ├── exif-frame-form.js       # Khung ảnh: các ô của form, giá trị, chụp/khôi phục mẫu, logo
+│   ├── exif-frame-preview.js    # Khung ảnh: xem trước gần đúng bằng HTML/CSS từ spec
+│   ├── exif-frame-tab.js        # Khung ảnh: nối form với EXIF, xem trước, mẫu và lệnh vẽ
 │   ├── explore-feed.js          # Khám phá: tải & parse RSS playlist YouTube
 │   ├── explore-tab.js           # Khám phá: giao diện tab
 │   ├── section-collapse.js      # Thu gọn / mở rộng từng nhóm
@@ -48,6 +63,10 @@ SCCTLM_Foto/
 │   ├── preset-lut.jsx           # Áp Preset Camera Raw (.xmp)
 │   ├── color-mix.jsx            # Áp màu MHK (Look LUT) và Mix màu: $.dr7ApplyColorMix
 │   ├── artboard-create.jsx      # Tạo artboard: $._ext_ARTBOARD
+│   ├── exif-frame.jsx           # Khung ảnh: $._ext_EXIFFRAME (đọc EXIF và font, nới canvas, vẽ chữ)
+│   ├── wm-measure.jsx           # Watermark mẫu gốc: đo độ rộng chữ bằng font thật của Photoshop
+│   ├── wm-draw.jsx              # Watermark mẫu gốc: vẽ nền, chữ, logo, khung bo, chữ dọc thành layer
+│   ├── exif-frame-decor.jsx     # Khung ảnh: $._ext_EXIFFRAME_DECOR (bo góc ảnh, đặt logo)
 │   ├── brush-pen-pressure.jsx   # BPP / BPPRESET / trạng thái cọ; chạy được độc lập
 │   ├── action-set-import.jsx    # Nạp bộ Action .atn đóng gói khi thiếu, rồi chạy Action (bỏ qua nạp nếu đã có)
 │   ├── brush-size-hardness.jsx  # BRUSH: đọc / ghi Size + Hardness của cọ
@@ -80,7 +99,7 @@ SCCTLM_Foto/
 │   ├── Fix-CEP-SCCTLM_Foto.reg          # Bật PlayerDebugMode
 │   ├── Hot-reload-SCCTLM_Foto.bat       # Khởi động bộ theo dõi Hot Reload
 │   └── watch-plugin.js          # Theo dõi file và nạp lại panel bằng Node.js
-├── scripts/                     # Công cụ người phát hành: release-keygen / release-sign / release-verify
+├── scripts/                     # Công cụ người phát hành: release-keygen / release-sign / release-verify + build-watermark-templates.py (chuyển pack 徕卡一瞬 thành js/wm-templates-data.js và img/wm)
 ├── tests/                       # Kiểm thử tự động: script, updater, hot reload, bộ màu, artboard, Khám phá
 ├── docs/                        # Hướng dẫn thiết kế và nhật ký phát triển
 └── README.md

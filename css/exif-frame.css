@@ -1,0 +1,135 @@
+/* --- Tab Khung ảnh --- */
+.exif-frame { font-family: "Segoe UI", Tahoma, sans-serif; color: #ffffff; }
+/* Đặt lại luật `button` toàn cục của style.css; :where() giữ độ ưu tiên thấp để class bên dưới luôn thắng */
+:where(.exif-frame) button, :where(.exif-frame) button:hover, :where(.exif-frame) button:active {
+    float: none; width: auto; height: auto; margin: 0; padding: 0; overflow: visible;
+    border: 0; border-radius: 0; background: none; box-shadow: none; color: inherit;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+}
+.exif-frame button:focus-visible, .exif-frame input:focus-visible { outline: 2px solid var(--ring) !important; outline-offset: 2px; }
+.exif-frame .ef-title { margin: 6px 0 0; color: var(--white); font: 600 18px/22px "Segoe UI", Tahoma, sans-serif; }
+.exif-frame .ef-sub { margin: 2px 0 8px; color: var(--muted-foreground); font-size: 11px; }
+
+.exif-frame input, .exif-frame select { box-sizing: border-box; margin: 0; font-family: inherit; }
+.exif-frame .ef-field { display: flex; align-items: center; gap: 6px; margin-top: 8px; color: #d3d3d7; font-size: 11px; }
+.exif-frame .ef-field > span { flex: 0 0 56px; min-width: 0; }
+.exif-frame .ef-field input, .exif-frame .ef-field select {
+    flex: 1; width: 0; min-width: 0; height: 34px; padding: 0 10px; border: 1px solid var(--btn-line); border-radius: 999px;
+    background: var(--background); color: #ffffff; font-size: 11.5px; font-weight: 600;
+}
+.exif-frame .ef-field input::placeholder { color: var(--muted-foreground); font-weight: 400; }
+.exif-frame input:focus, .exif-frame select:focus { border-color: var(--ring); outline: none; }
+.exif-frame select option { background: var(--background); color: #ffffff; }
+
+/* Ô chọn: bỏ mũi tên gốc, vẽ mũi tên riêng; không viền focus màu mà chỉ sáng viền lên */
+.exif-frame .ef-field select {
+    appearance: none; -webkit-appearance: none; padding: 0 30px 0 14px; cursor: pointer; text-overflow: ellipsis;
+    background: var(--background) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23a8a8a8' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E") no-repeat right 10px center / 14px 14px;
+    transition: border-color 140ms, background-color 140ms;
+}
+.exif-frame .ef-field select:hover { border-color: var(--muted-foreground); background-color: var(--muted); }
+.exif-frame .ef-field select:focus, .exif-frame .ef-field select:focus-visible { outline: none !important; border-color: var(--muted-foreground); }
+.exif-frame .ef-row .ef-field select { padding: 0 26px 0 10px; background-position: right 8px center; }
+.exif-frame select option, .exif-frame select optgroup { padding: 6px 10px; font-size: 11.5px; }
+.exif-frame select optgroup { color: var(--muted-foreground); font-style: normal; font-weight: 600; }
+.exif-frame select optgroup option { color: #ffffff; font-weight: 500; }
+.exif-frame input[type="number"]::-webkit-inner-spin-button, .exif-frame input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+.exif-frame .ef-row { display: flex; gap: 8px; }
+.exif-frame .ef-row .ef-field { flex: 1 1 50%; min-width: 0; }
+.exif-frame .ef-row .ef-field > span { flex: 0 0 auto; }
+.exif-frame .ef-row .ef-field input { padding: 0 6px; }
+.exif-frame .ef-field em { color: var(--muted-foreground); font-style: normal; font-size: 10.5px; }
+
+/* Nút đọc lại EXIF nằm bên phải tiêu đề nhóm */
+.exif-frame .ef-reload { float: right; width: 18px; height: 18px; margin-top: -1px; color: var(--muted-foreground); transition: color 140ms; }
+.exif-frame .ef-reload:hover { color: #ffffff; }
+.exif-frame .ef-reload svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.exif-frame .ef-footer { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--edge); }
+.exif-frame .ef-summary-row { display: flex; align-items: center; gap: 6px; color: #ffffff; font-size: 11px; }
+.exif-frame .ef-summary-icon { flex: 0 0 16px; width: 16px; height: 16px; fill: var(--primary); stroke: none; }
+.exif-frame .ef-summary-icon path { fill: none; stroke: var(--primary-foreground); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.exif-frame .ef-summary-icon.is-empty { fill: var(--muted); }
+.exif-frame .ef-apply {
+    display: block; width: 100%; height: 40px; margin-top: 10px; border-radius: 999px; background: var(--primary);
+    box-shadow: none; color: var(--primary-foreground); font: 600 14px/40px "Segoe UI", Tahoma, sans-serif;
+    transition: filter 120ms, transform 120ms;
+}
+.exif-frame .ef-apply:hover { opacity: .9; }
+.exif-frame .ef-apply:active { transform: translateY(1px); opacity: .8; }
+.exif-frame .ef-apply[disabled] { background: var(--edge); color: var(--muted-foreground); cursor: default; transform: none; opacity: 1; }
+.exif-frame .ef-note { margin: 6px 0 0; color: var(--muted-foreground); font-size: 10.5px; text-align: center; }
+
+/* Chọn thông số hiển thị: ô tick dạng viên thuốc */
+.exif-frame .ef-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.exif-frame .ef-chip { position: relative; cursor: pointer; }
+.exif-frame .ef-chip input { position: absolute; opacity: 0; width: 0; height: 0; }
+.exif-frame .ef-chip span {
+    display: block; height: 24px; padding: 0 9px; border: 1px solid var(--edge); border-radius: 999px; background: var(--background);
+    color: var(--muted-foreground); font-size: 10.5px; line-height: 22px; transition: background 140ms, border-color 140ms, color 140ms;
+}
+.exif-frame .ef-chip:hover span { border-color: var(--muted-2); color: var(--foreground); }
+.exif-frame .ef-chip input:checked + span { border-color: var(--ink); background: var(--ink); color: var(--on-ink); }
+.exif-frame .ef-chip input:focus-visible + span { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* Canh chữ */
+.exif-frame .ef-segment { display: flex; margin-top: 8px; padding: 3px; border-radius: 999px; background: var(--muted); }
+.exif-frame .ef-align { flex: 1; height: 28px; border-radius: 999px; color: var(--muted-foreground); font: 500 11px/28px "Segoe UI", Tahoma, sans-serif; transition: background 140ms, color 140ms; }
+.exif-frame .ef-align:hover { color: #ffffff; }
+.exif-frame .ef-align.is-active, .exif-frame .ef-align.is-active:hover { background: var(--ink); color: var(--on-ink); }
+
+/* Ô chọn màu: chỉ hiện ô màu, không viền mặc định của trình duyệt */
+.exif-frame .ef-field input[type="color"], .exif-frame .ef-bg-color {
+    flex: 0 0 34px; width: 34px; height: 34px; padding: 3px; border: 1px solid var(--btn-line); border-radius: 999px; background: var(--background); cursor: pointer;
+}
+.exif-frame input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.exif-frame input[type="color"]::-webkit-color-swatch { border: 0; border-radius: 999px; }
+.exif-frame .ef-bg-row { display: flex; align-items: center; gap: 6px; }
+.exif-frame .ef-bg-row .ef-field { flex: 1; min-width: 0; }
+.exif-frame .ef-bg-row .ef-bg-color { margin-top: 8px; }
+.exif-frame .ef-eyedropper { flex: 0 0 34px; height: 34px; margin-top: 8px; border: 1px solid var(--btn-line); border-radius: 999px; color: var(--muted-foreground); transition: color 140ms, background 140ms; }
+.exif-frame .ef-eyedropper:hover { color: #ffffff; }
+.exif-frame .ef-eyedropper.is-picking { background: var(--edge); border-color: var(--muted-foreground); }
+.exif-frame .ef-eyedropper svg { width: 15px; height: 15px; margin: 0 auto; display: block; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.exif-frame input:disabled, .exif-frame select:disabled, .exif-frame .ef-eyedropper:disabled { opacity: .4; cursor: default; }
+
+/* Logo */
+.exif-frame .ef-logo-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.exif-frame .ef-logo-pick, .exif-frame .ef-preset-save {
+    flex: 0 0 auto; height: 34px; padding: 0 14px; border: 1px solid var(--btn-line); border-radius: 999px; background: var(--background);
+    color: #ffffff; font-size: 11.5px; font-weight: 600; transition: background 140ms, border-color 140ms;
+}
+.exif-frame .ef-logo-pick:hover, .exif-frame .ef-preset-save:hover { border-color: var(--muted-2); background: var(--muted); }
+.exif-frame .ef-logo-name { flex: 1; min-width: 0; overflow: hidden; color: var(--muted-foreground); font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+.exif-frame .ef-logo-clear, .exif-frame .ef-preset-delete { flex: 0 0 24px; height: 24px; border-radius: 999px; color: var(--muted-foreground); transition: color 140ms; }
+.exif-frame .ef-logo-clear[hidden] { display: none; }
+.exif-frame .ef-logo-clear:hover, .exif-frame .ef-preset-delete:hover { color: #ffffff; }
+.exif-frame .ef-logo-clear svg, .exif-frame .ef-preset-delete svg { display: block; width: 14px; height: 14px; margin: 0 auto; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.exif-frame .ef-preset-delete:disabled { opacity: .3; cursor: default; }
+.exif-frame .ef-preset-name { flex: 1; min-width: 0; }
+
+/* Xem trước: ảnh giả là khối màu, chữ dựng bằng HTML */
+.exif-frame .ef-preview-label { margin: 10px 0 4px; color: var(--muted-foreground); font-size: 10.5px; }
+.exif-frame .ef-preview { position: relative; margin: 0 auto; overflow: hidden; border: 1px solid var(--edge); border-radius: 6px; }
+.exif-frame .ef-preview[hidden] { display: none; }
+.exif-frame .ef-pv-photo { position: absolute; background: linear-gradient(135deg, #6b7a86, #38434c); }
+.exif-frame .ef-pv-text { position: absolute; box-sizing: border-box; display: flex; align-items: center; }
+.exif-frame .ef-pv-logo { flex: 0 0 auto; display: block; width: auto; object-fit: contain; }
+.exif-frame .ef-pv-side { position: absolute; display: flex; align-items: center; }
+.exif-frame .ef-pv-bar { align-self: stretch; flex: 0 0 auto; }
+.exif-frame .ef-pv-column { min-width: 0; }
+.exif-frame .ef-pv-row { overflow: hidden; font-family: "Segoe UI", Arial, sans-serif; white-space: nowrap; }
+
+/* Mẫu gốc Xiaomi Leica */
+.exif-frame .ef-hint { margin: 2px 0 0; color: var(--muted-foreground); font-size: 10.5px; line-height: 1.4; }
+.exif-frame .ef-wm-thumb { margin-top: 8px; padding: 6px; border: 1px solid var(--edge); border-radius: 10px; background: var(--muted); text-align: center; }
+.exif-frame .ef-wm-thumb[hidden], .exif-frame .ef-wm-layout-field[hidden] { display: none; }
+.exif-frame .ef-wm-thumb-img { display: block; max-width: 100%; max-height: 180px; margin: 0 auto; border-radius: 4px; }
+.exif-frame .ef-wm-apply {
+    display: block; width: 100%; height: 40px; margin-top: 10px; border-radius: 999px; background: var(--primary);
+    box-shadow: none; color: var(--primary-foreground); font: 600 14px/40px "Segoe UI", Tahoma, sans-serif; transition: filter 120ms, transform 120ms;
+}
+.exif-frame .ef-wm-apply:hover { opacity: .9; }
+.exif-frame .ef-wm-apply:active { transform: translateY(1px); opacity: .8; }
+.exif-frame .ef-wm-apply[disabled] { background: var(--edge); color: var(--muted-foreground); cursor: default; transform: none; opacity: 1; }

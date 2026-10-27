@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/explore.css" type="text/css">
     <link rel="stylesheet" href="css/button-icons.css" type="text/css">
     <link rel="stylesheet" href="css/artboard.css" type="text/css">
+    <link rel="stylesheet" href="css/exif-frame.css" type="text/css">
     <link rel="stylesheet" href="css/color-presets.css" type="text/css">
     <script type="text/javascript" src="./js/CSInterface.js"></script>
 
@@ -55,6 +56,7 @@
 	<nav class="tab-bar" role="tablist" aria-label="Mục chức năng">
 		<button class="tab-button is-active" role="tab" data-tab="retouch" aria-selected="true"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m11 10 3 3"/><path d="M6.5 21A3.5 3.5 0 1 0 3 17.5a2.62 2.62 0 0 1-.708 1.792A1 1 0 0 0 3 21z"/><path d="M9.969 17.031 21.378 5.624a1 1 0 0 0-3.002-3.002L6.967 14.031"/></svg><span>Retouch</span></button>
 		<button class="tab-button" role="tab" data-tab="artboard" aria-selected="false"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><line x1="22" x2="2" y1="6" y2="6"/><line x1="22" x2="2" y1="18" y2="18"/><line x1="6" x2="6" y1="2" y2="22"/><line x1="18" x2="18" y1="2" y2="22"/></svg><span>Artboard</span></button>
+		<button class="tab-button" role="tab" data-tab="frame" aria-selected="false"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg><span>Watermark</span></button>
 		<button class="tab-button" role="tab" data-tab="explore" aria-selected="false"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m16.24 7.76-1.804 5.411a2 2 0 0 1-1.265 1.265L7.76 16.24l1.804-5.411a2 2 0 0 1 1.265-1.265z"/></svg><span>Khám phá</span></button>
 		<button class="tab-button tab-support" role="tab" data-tab="support" aria-selected="false"><svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg><span>Ủng hộ</span></button>
 	</nav>
@@ -169,6 +171,97 @@
 					<div class="ab-summary-row"><svg class="ab-summary-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7"/><path d="M4.8 8.2l2.2 2.2 4.2-4.6"/></svg><span class="ab-summary"></span></div>
 					<button class="ab-create">Tạo artboard</button>
 					<p class="ab-note">RGB · sRGB · Đơn vị px</p>
+				</div>
+			</div>
+	</div>
+	<div class="tab-pane" role="tabpanel" data-tab="frame" hidden>
+			<div class="exif-frame">
+				<h2 class="ef-title">Watermark</h2>
+				<p class="ef-sub">Thêm viền, logo và dòng thông số máy ảnh làm watermark cho ảnh đang mở.</p>
+				<section class="group ef-group ef-wm">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Mẫu gốc Xiaomi Leica</div>
+					<p class="ef-hint">Vẽ đúng bố cục của app 徕卡一瞬 (54 mẫu). Chữ lấy từ EXIF, sửa được ở dưới.</p>
+					<label class="ef-field"><span>Mẫu</span><select class="ef-wm-template"></select></label>
+					<div class="ef-wm-thumb" hidden><img class="ef-wm-thumb-img" alt="Xem trước mẫu"></div>
+					<label class="ef-field ef-wm-layout-field"><span>Bố cục</span><select class="ef-wm-layout"></select></label>
+					<label class="ef-field"><span>Nền</span><select class="ef-wm-background"></select></label>
+					<label class="ef-field"><span>Hãng</span><select class="ef-wm-brand"><option value="xiaomi">Xiaomi</option><option value="redmi">Redmi</option><option value="poco">POCO</option></select></label>
+					<label class="ef-field"><span>Tên máy</span><input class="ef-wm-model" type="text" spellcheck="false" placeholder="Xiaomi 17 Ultra"></label>
+					<label class="ef-field"><span>Địa chỉ</span><input class="ef-wm-address" type="text" spellcheck="false" placeholder="Bỏ trống thì dùng toạ độ GPS"></label>
+					<button class="ef-wm-apply">Vẽ watermark mẫu gốc</button>
+					<p class="ef-note ef-wm-note">Font lấy ở mục Kiểu chữ. Cài font MiSans để độ rộng chữ đúng như app.</p>
+				</section>
+				<section class="group ef-group">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Nội dung chữ<button class="ef-reload" title="Đọc lại EXIF từ ảnh đang mở" aria-label="Đọc lại EXIF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button></div>
+					<label class="ef-field"><span>Tiền tố</span><input class="ef-prefix" type="text" spellcheck="false"></label>
+					<label class="ef-field"><span>Máy</span><input class="ef-model" type="text" spellcheck="false" placeholder="iPhone 15 Pro Max"></label>
+					<label class="ef-field"><span>Hãng</span><input class="ef-make" type="text" spellcheck="false" placeholder="Apple"></label>
+					<div class="ef-chips" role="group" aria-label="Thông số hiển thị">
+						<label class="ef-chip"><input type="checkbox" data-field="focal" checked><span>Tiêu cự</span></label>
+						<label class="ef-chip"><input type="checkbox" data-field="fnumber" checked><span>Khẩu độ</span></label>
+						<label class="ef-chip"><input type="checkbox" data-field="shutter" checked><span>Tốc độ</span></label>
+						<label class="ef-chip"><input type="checkbox" data-field="iso" checked><span>ISO</span></label>
+						<label class="ef-chip"><input type="checkbox" data-field="lens"><span>Ống kính</span></label>
+						<label class="ef-chip"><input type="checkbox" data-field="date"><span>Ngày chụp</span></label>
+					</div>
+					<label class="ef-field"><span>Ngăn cách</span><select class="ef-separator"><option value=" ">Khoảng trắng</option><option value=" · ">Chấm giữa ·</option><option value=" | ">Gạch đứng |</option><option value=", ">Phẩy ,</option></select></label>
+					<label class="ef-field"><span>Thông số</span><input class="ef-settings" type="text" spellcheck="false" placeholder="121mm f/2.8 1/40s ISO1250"></label>
+					<label class="ef-field"><span>Dòng thêm</span><input class="ef-extra" type="text" spellcheck="false" placeholder="Tác giả, địa điểm..."></label>
+				</section>
+				<section class="group ef-group">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Kiểu chữ</div>
+					<label class="ef-field"><span>Font</span><select class="ef-font"><option value="ArialMT">Arial</option></select></label>
+					<div class="ef-row">
+						<label class="ef-field"><span>Cỡ</span><input class="ef-size" type="number"><em>%</em></label>
+						<label class="ef-field"><span>Giãn dòng</span><input class="ef-gap" type="number"><em>%</em></label>
+					</div>
+					<div class="ef-segment" role="group" aria-label="Canh chữ">
+						<button class="ef-align" data-align="left" aria-pressed="false">Trái</button>
+						<button class="ef-align is-active" data-align="center" aria-pressed="true">Giữa</button>
+						<button class="ef-align" data-align="right" aria-pressed="false">Phải</button>
+					</div>
+					<div class="ef-row">
+						<label class="ef-field"><span>Chữ chính</span><input class="ef-text" type="color"></label>
+						<label class="ef-field"><span>Chữ phụ</span><input class="ef-muted" type="color"></label>
+					</div>
+				</section>
+				<section class="group ef-group">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Khung</div>
+					<label class="ef-field"><span>Kiểu</span><select class="ef-style"><option value="bottom">Viền + dải chữ dưới</option><option value="polaroid">Polaroid (dải dưới dày)</option><option value="overlay">Chữ đè lên ảnh</option></select></label>
+					<div class="ef-row">
+						<label class="ef-field"><span>Viền</span><input class="ef-border" type="number" min="1" max="20"><em>%</em></label>
+						<label class="ef-field"><span>Bo góc</span><input class="ef-radius" type="number" min="0" max="5"><em>%</em></label>
+					</div>
+					<label class="ef-field"><span>Đầu ra</span><select class="ef-output"><option value="layers">Giữ layer</option><option value="flatten">Gộp phẳng</option></select></label>
+					<div class="ef-bg-row">
+						<label class="ef-field"><span>Nền</span><select class="ef-background"><option value="white">Trắng</option><option value="gray">Xám</option><option value="black">Đen</option><option value="custom">Tùy chỉnh</option></select></label>
+						<input class="ef-bg-color" type="color" value="#ffffff" aria-label="Màu nền">
+						<button class="ef-eyedropper" title="Hút màu nền từ ảnh: bấm rồi bấm vào ảnh trong Photoshop" aria-label="Hút màu nền từ ảnh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3l.4.4Z"/></svg></button>
+					</div>
+				</section>
+				<section class="group ef-group">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Logo</div>
+					<label class="ef-field"><span>Logo hãng</span><select class="ef-logo-brand"><option value="">Chọn logo có sẵn…</option></select></label>
+					<label class="ef-field"><span>Vị trí</span><select class="ef-logo-pos"><option value="left">Bên trái chữ</option><option value="top">Phía trên chữ</option><option value="right">Mép phải</option><option value="split">Hai cột (logo + thông số bên phải)</option></select></label>
+					<div class="ef-logo-row">
+						<button class="ef-logo-pick" title="Chọn file logo PNG, JPG hoặc SVG">Chọn logo…</button>
+						<span class="ef-logo-name"></span>
+						<button class="ef-logo-clear" title="Bỏ logo" aria-label="Bỏ logo" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
+					</div>
+				</section>
+				<section class="group ef-group">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Mẫu watermark</div>
+					<label class="ef-field"><span>Kiểu có sẵn</span><select class="ef-template-list"></select></label>
+					<p class="ef-preview-label">Mẫu đã lưu</p>
+					<label class="ef-field"><span>Mẫu</span><select class="ef-preset-list"></select><button class="ef-preset-delete" title="Xoá mẫu đang chọn" aria-label="Xoá mẫu đang chọn" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M5 4.5l.5 8h5l.5-8"/></svg></button></label>
+					<div class="ef-field"><input class="ef-preset-name" type="text" maxlength="30" spellcheck="false" placeholder="Tên mẫu mới" aria-label="Tên mẫu mới"><button class="ef-preset-save">Lưu mẫu</button></div>
+				</section>
+				<p class="ef-preview-label">Xem trước (gần đúng)</p>
+				<div class="ef-preview" hidden></div>
+				<div class="ef-footer">
+					<div class="ef-summary-row"><svg class="ef-summary-icon" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7"/><path d="M4.8 8.2l2.2 2.2 4.2-4.6"/></svg><span class="ef-summary"></span></div>
+					<button class="ef-apply">Áp dụng watermark</button>
+					<p class="ef-note">Viền và chữ tính theo cạnh ngắn của ảnh · Ctrl+Z hoàn tác một lần</p>
 				</div>
 			</div>
 	</div>
@@ -303,6 +396,20 @@
 <script type="text/javascript" src="./js/artboard-facebook-album-presets.js"></script>
 <script type="text/javascript" src="./js/artboard-layout.js"></script>
 	<script type="text/javascript" src="./js/artboard-tab.js"></script>
+<script type="text/javascript" src="./js/exif-frame-fields.js"></script>
+<script type="text/javascript" src="./js/exif-frame-layout.js"></script>
+<script type="text/javascript" src="./js/exif-frame-compose.js"></script>
+<script type="text/javascript" src="./js/exif-frame-presets.js"></script>
+<script type="text/javascript" src="./js/exif-frame-templates.js"></script>
+<script type="text/javascript" src="./js/exif-frame-fonts.js"></script>
+<script type="text/javascript" src="./js/exif-frame-form.js"></script>
+<script type="text/javascript" src="./js/exif-frame-preview.js"></script>
+<script type="text/javascript" src="./js/wm-vars.js"></script>
+<script type="text/javascript" src="./js/wm-layout.js"></script>
+<script type="text/javascript" src="./js/wm-spec.js"></script>
+<script type="text/javascript" src="./js/wm-templates-data.js"></script>
+<script type="text/javascript" src="./js/wm-tab.js"></script>
+<script type="text/javascript" src="./js/exif-frame-tab.js"></script>
 	<script type="text/javascript" src="./js/explore-feed.js"></script>
 <script type="text/javascript" src="./js/explore-tab.js"></script>
 <script type="text/javascript" src="./js/color-presets.js"></script>

@@ -1,5 +1,17 @@
 # Changelog
 
+## Chưa phát hành — Tab Watermark
+
+- Tab **Watermark** (trước là Khung ảnh): đọc EXIF của ảnh đang mở rồi vẽ khung kèm chữ kiểu "Shot on **iPhone 15 Pro Max** Apple / 121mm f/2.8 1/40s ISO1250". Một lần Ctrl+Z hoàn tác cả khung; tài liệu có artboard bị từ chối.
+- **Chữ:** sửa tay được (ảnh đã Export for Web thường mất EXIF); tick chọn thông số (tiêu cự quy đổi 35mm, khẩu độ, tốc độ, ISO, ống kính, ngày chụp), dấu ngăn cách, dòng thêm (tác giả, địa điểm).
+- **Kiểu chữ:** font bất kỳ của Photoshop (bản đậm tự tìm theo họ font), cỡ chữ và giãn dòng 50–200%, canh trái/giữa/phải, màu chữ chính/phụ.
+- **Khung:** 3 kiểu — viền + dải chữ dưới, Polaroid (dải dưới dày), chữ đè lên ảnh; viền 1–20% cạnh ngắn; nền Trắng/Xám/Đen/tuỳ chỉnh (có hút màu từ ảnh); đầu ra giữ layer hoặc gộp phẳng.
+- **Bo góc và logo:** bo góc ảnh 0–5% cạnh ngắn (không áp dụng cho kiểu chữ đè); logo PNG/JPG/SVG đặt bên trái chữ, cao bằng khối chữ (tối đa 25% bề rộng), chữ tự dịch để cả cụm vẫn đúng canh trái/giữa/phải.
+- **Xem trước và mẫu:** khung xem trước gần đúng ngay trong panel (dựng từ chính spec gửi Photoshop); lưu tối đa 20 mẫu kiểu khung/chữ/màu vào localStorage rồi nạp lại bằng một lần chọn.
+- **Mẫu gốc Xiaomi Leica (54 mẫu):** vẽ đúng bố cục của app 徕卡一瞬 — nhóm Leica (13), Xiaomi 17 Ultra by Leica (30) và 17 Ultra/18 Pro Max (11). Dữ liệu là chính các `config.json` của app (cây Layout / TextView / ImageView) được chuyển bằng `scripts/build-watermark-templates.py` thành `js/wm-templates-data.js` + `img/wm/` (30 ảnh PNG dùng chung). `js/wm-layout.js` là bản port của bộ render gốc: tính kích thước và vị trí từng phần tử rồi `jsx/wm-draw.jsx` vẽ thành layer (nền, logo, chữ, khung bo, chữ dọc xoay 90/270°). Độ rộng chữ do Photoshop đo bằng font thật (`jsx/wm-measure.jsx`). Chữ lấy từ EXIF (tên máy, thông số, ngày giờ, GPS) và sửa được; chọn được bố cục (dải trái/phải, vị trí 9 ô), nền đặc và hãng (Xiaomi/Redmi/POCO). `tests/check-wm-layout.js` so kết quả với bộ render gốc cho cả 54 mẫu (kích thước và vị trí ảnh khớp từng pixel). Chưa hỗ trợ: nền mờ/gradient/họa tiết, bóng chữ, đồng hồ/ngày dạng widget có biểu tượng tuỳ chỉnh, avatar. Nên cài font MiSans (có trong gói gốc) để độ rộng chữ đúng như app.
+- **Kiểu có sẵn (Hasselblad):** 3 mẫu, 26 logo hãng đi kèm trong `img/logos/`; vị trí logo bên trái chữ, phía trên chữ, mép phải hoặc **hai cột**.
+- File mới: `js/exif-frame-templates.js`, `img/logos/`, `js/exif-frame-fields.js`, `js/exif-frame-layout.js`, `js/exif-frame-compose.js`, `js/exif-frame-presets.js`, `js/exif-frame-fonts.js`, `js/exif-frame-form.js`, `js/exif-frame-preview.js`, `js/exif-frame-tab.js`, `jsx/exif-frame.jsx`, `jsx/exif-frame-decor.jsx`, `css/exif-frame.css`, `tests/check-exif-frame.js`. Kế hoạch: `plans/261027-2137-exif-frame-tab.md`.
+
 ## v0.3.0 — Leica: thay Hasselblad bằng 7 màu MHK
 
 - Bộ **Leica** bỏ 5 màu Hasselblad (01–04, Classic) và thêm 7 màu MHK: Hàn Mặc, Lưu Niên, Thanh Nguyệt, Thiều Hoa, Ti Trúc, Trúc Kính, Xích Hà. Bộ Leica giờ có 9 màu.

@@ -6,7 +6,6 @@
     border: 0; border-radius: 0; background: none; box-shadow: none; color: inherit;
     cursor: pointer; font-family: inherit; white-space: nowrap;
 }
-.artboard button:focus-visible, .artboard input:focus-visible, .artboard select:focus-visible { outline: 2px solid var(--ring) !important; outline-offset: 2px; }
 .artboard .artboard-title { margin: 6px 0 0; color: var(--white); font: 600 18px/22px "Segoe UI", Tahoma, sans-serif; }
 .artboard .artboard-sub { margin: 2px 0 8px; color: var(--muted-foreground); font-size: 11px; }
 
@@ -48,6 +47,12 @@
     content: "✓"; position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; border-radius: 12px;
     background: var(--primary); color: var(--primary-foreground); font: 600 9px/14px "Segoe UI", Tahoma, sans-serif;
 }
+/* Sao yêu thích: hiện khi rê chuột, sáng vàng khi đã gắn */
+.ab-fav { position: absolute; top: 3px; left: 3px; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; border-radius: 50%; cursor: pointer; opacity: 0; transition: opacity 140ms, background 140ms; }
+.ab-fav svg { width: 13px; height: 13px; fill: none; stroke: #d3d3d7; stroke-width: 1.4; stroke-linejoin: round; }
+.ab-card:hover .ab-fav, .ab-fav:focus-visible, .ab-fav.is-on { opacity: 1; }
+.ab-fav:hover { background: rgba(255, 255, 255, .12); }
+.ab-fav.is-on svg { fill: #f7c948; stroke: #f7c948; }
 .ab-card-art { display: flex; align-items: center; justify-content: center; width: 100%; height: 38px; margin-bottom: 4px; }
 .ab-shape { position: relative; display: block; }
 .ab-shape i { position: absolute; box-sizing: border-box; border: 1.5px solid #ffffff; border-radius: 1px; }
@@ -94,7 +99,6 @@
 .ab-switch input:checked + i { background: var(--ink); }
 .ab-switch input:checked + i::after { background: var(--on-ink); }
 .ab-switch input:checked + i::after { transform: translateX(14px); }
-.ab-switch input:focus-visible + i { outline: 2px solid var(--edge); outline-offset: 1px; }
 
 /* Chân: tóm tắt lựa chọn + nút tạo */
 .ab-footer { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--edge); }

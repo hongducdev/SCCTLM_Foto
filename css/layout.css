@@ -278,7 +278,6 @@ button:focus-visible {
     user-select: none;
 }
 .section-title:focus { outline: none; }
-.section-title:focus-visible { outline: 1px solid rgba(255, 255, 255, .35); outline-offset: 2px; }
 .section-title:hover { color: #fff; }
 .group.is-collapsed > .section-title { margin-bottom: 0; }
 .section-chevron {
@@ -629,7 +628,8 @@ button:focus-visible {
 }
 .tab-bar .tab-button:not(.is-active):hover { color: var(--foreground); background: var(--muted-2); }
 .tab-bar .tab-button:focus { outline: none; }
-.tab-bar .tab-button:focus-visible { outline: 2px solid var(--ring); outline-offset: 1px; }
+/* Không vẽ viền focus ở bất kỳ phần tử nào trong panel */
+:focus, :focus-visible { outline: none; }
 .tab-bar .tab-button.is-active {
     color: var(--on-ink);
     background: var(--ink);

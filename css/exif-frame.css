@@ -6,7 +6,6 @@
     border: 0; border-radius: 0; background: none; box-shadow: none; color: inherit;
     cursor: pointer; font-family: inherit; white-space: nowrap;
 }
-.exif-frame button:focus-visible { outline: 2px solid var(--ring) !important; outline-offset: 2px; }
 .exif-frame .ef-title { margin: 6px 0 0; color: var(--white); font: 600 18px/22px "Segoe UI", Tahoma, sans-serif; }
 .exif-frame .ef-sub { margin: 2px 0 8px; color: var(--muted-foreground); font-size: 11px; }
 
@@ -71,7 +70,6 @@
 }
 .exif-frame .ef-chip:hover span { border-color: var(--muted-2); color: var(--foreground); }
 .exif-frame .ef-chip input:checked + span { border-color: var(--ink); background: var(--ink); color: var(--on-ink); }
-.exif-frame .ef-chip input:focus-visible + span { outline: 2px solid var(--ring); outline-offset: 2px; }
 
 /* Chuyển giữa mẫu gốc và tự tạo */
 .exif-frame .ef-mode { display: flex; margin: 8px 0; padding: 3px; border-radius: 999px; background: var(--muted); }

@@ -9,10 +9,35 @@
     var DEFAULT_NAME = 'SCCTLM_Social';
     var ICON_BOX = { w: 64, h: 34 };
     var STATUS_MS = 3000;
+    var STARS_KEY = 'dr7ArtboardFavorites';
+    var STAR_PATH = 'M8 1.8l1.9 4 4.3.5-3.2 3 .9 4.3L8 11.4l-3.9 2.2.9-4.3-3.200-3 4.300-.5z';
 
     var data = window.dr7Artboard;
-    var state = { selected: ['square'], filter: 'all', query: '', mode: 'new', customW: 1080, customH: 1080, nameEdited: false };
+    var state = { selected: ['square'], starred: loadStars(), filter: 'all', query: '', mode: 'new', customW: 1080, customH: 1080, nameEdited: false };
     var el = {};
+
+    function loadStars() {
+        try {
+            var list = JSON.parse(window.localStorage.getItem(STARS_KEY));
+            return Array.isArray(list) ? list.filter(function (id) { return typeof id === 'string'; }) : [];
+        } catch (e) { return []; }
+    }
+
+    function saveStars() {
+        try { window.localStorage.setItem(STARS_KEY, JSON.stringify(state.starred)); } catch (e) { console.warn('DR7 artboard: không lưu được mẫu yêu thích', e); }
+    }
+
+    // Ba khổ mặc định của nhóm Hay dùng luôn nằm đó, không cần gắn sao
+    function pinnedIds() {
+        return data.SECTIONS[0].cards.map(function (template) { return template.id; });
+    }
+
+    function toggleStar(id) {
+        var at = state.starred.indexOf(id);
+        if (at === -1) state.starred.push(id); else state.starred.splice(at, 1);
+        saveStars();
+        renderSections();
+    }
 
     function plain(text) {
         return String(text).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd');
@@ -65,6 +90,19 @@
         return lines;
     }
 
+    function starFor(template) {
+        var on = state.starred.indexOf(template.id) !== -1;
+        var star = document.createElement('span');
+        star.className = 'ab-fav' + (on ? ' is-on' : '');
+        star.setAttribute('role', 'button');
+        star.tabIndex = 0;
+        star.setAttribute('aria-pressed', on ? 'true' : 'false');
+        star.setAttribute('aria-label', (on ? 'Bỏ khỏi Hay dùng: ' : 'Thêm vào Hay dùng: ') + template.name);
+        star.title = on ? 'Bỏ khỏi Hay dùng' : 'Thêm vào Hay dùng';
+        star.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="' + STAR_PATH + '"/></svg>';
+        return star;
+    }
+
     function cardFor(template) {
         var card = document.createElement('button');
         var isCustom = template.id === CUSTOM_ID;
@@ -83,6 +121,7 @@
             name.appendChild(document.createTextNode(' ' + template.name));
             card.title = template.code + ' · ' + template.name + ' · ' + sizeLabel(template);
         } else name.textContent = template.name;
+        if (!isCustom && pinnedIds().indexOf(template.id) === -1) card.appendChild(starFor(template));
         card.appendChild(frame);
         card.appendChild(name);
         cardLines(template, isCustom).forEach(function (line) {
@@ -107,6 +146,11 @@
             var show = state.filter === 'all' ? true : section.tags.indexOf(state.filter) !== -1;
             if (!show) return;
             var cards = section.cards.slice();
+            if (section.id === 'favorites') {
+                data.pick(state.starred).forEach(function (template) {
+                    if (pinnedIds().indexOf(template.id) === -1) cards.push(template);
+                });
+            }
             list.push({ id: section.id, title: section.title, cards: cards });
         });
         if (state.filter === 'all' || state.filter === 'custom') list.push({ id: 'custom', title: 'Tùy chỉnh', cards: [customCard] });
@@ -125,7 +169,7 @@
             (section.id === 'favorites' ? '<svg class="ab-star" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8l1.9 4 4.3.5-3.2 3 .9 4.3L8 11.4l-3.9 2.2.9-4.3-3.200-3 4.300-.5z"/></svg>' : '');
         title.appendChild(document.createTextNode(section.title));
         var grid = document.createElement('div');
-        grid.className = 'ab-grid ab-cols-' + (section.id === 'favorites' ? 3 : 2);
+        grid.className = 'ab-grid ab-cols-' + (section.id === 'favorites' && !cards.some(function (template) { return template.code; }) ? 3 : 2);
         cards.forEach(function (template) { grid.appendChild(cardFor(template)); });
         group.appendChild(title);
         group.appendChild(grid);
@@ -230,8 +274,22 @@
         });
         el.search.addEventListener('input', function () { state.query = el.search.value.trim(); renderSections(); });
         el.sections.addEventListener('click', function (event) {
+            var star = event.target.closest ? event.target.closest('.ab-fav') : null;
+            if (star) {
+                event.stopPropagation();
+                toggleStar(star.parentNode.getAttribute('data-id'));
+                return;
+            }
             var card = event.target.closest ? event.target.closest('.ab-card') : null;
             if (card) toggle(card.getAttribute('data-id'));
+        });
+        el.sections.addEventListener('keydown', function (event) {
+            if (event.code !== 'Enter' && event.code !== 'Space') return;
+            var star = event.target.closest ? event.target.closest('.ab-fav') : null;
+            if (!star) return;
+            event.preventDefault();
+            event.stopPropagation();
+            toggleStar(star.parentNode.getAttribute('data-id'));
         });
         [[customW, 'customW'], [customH, 'customH']].forEach(function (pair) {
             pair[0].addEventListener('input', function () { state[pair[1]] = parseInt(pair[0].value, 10); refreshSelection(); });

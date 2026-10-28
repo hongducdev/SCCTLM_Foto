@@ -7,7 +7,6 @@
     border: 0; border-radius: 0; background: none; box-shadow: none; color: inherit;
     cursor: pointer; font-family: inherit; white-space: nowrap;
 }
-.explore button:focus-visible, .explore .explore-row:focus-visible { outline: 2px solid var(--ring) !important; outline-offset: 2px; }
 .explore .explore-title { margin: 6px 0 0; color: var(--white); font: 600 18px/22px "Segoe UI", Tahoma, sans-serif; }
 .explore .explore-sub { margin: 2px 0 8px; color: var(--muted-foreground); font-size: 11px; }
 

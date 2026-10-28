@@ -74,11 +74,11 @@ body {
     text-overflow: ellipsis;
 }
 .panel-version {
-    margin-left: 6px;
-    color: var(--muted-foreground);
-    font-weight: 400;
-    font-size: 11px;
+    margin-right: 4px;
+    color: var(--foreground);
+    font-weight: 500;
 }
+.panel-version:not(:empty)::after { content: " ·"; color: var(--muted-foreground); font-weight: 400; }
 .icon-button {
     position: relative;
     display: inline-flex;
@@ -879,3 +879,12 @@ button:active {
 .rim-reset:focus { outline: none; }
 .rim-reset[hidden], .rim-body[hidden] { display: none; }
 .group[hidden] { display: none; }
+
+/* --- Nút Ủng hộ trên header, biểu tượng nhỏ trong nút liên kết ngoài, thanh hành động dính đáy --- */
+.support-button.is-active { color: var(--destructive); border-color: var(--destructive); }
+.support-button:hover { color: var(--destructive); }
+.ext-icon, .play-icon { width: 11px; height: 11px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; vertical-align: -1px; }
+.play-icon { fill: currentColor; stroke: none; }
+.ab-footer, .exif-frame .ef-footer { position: sticky; bottom: 0; z-index: 2; background: var(--panel); padding-bottom: 6px; }
+
+.panel-header .icon-button { flex-basis: 28px; width: 28px; height: 28px; }

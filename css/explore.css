@@ -112,3 +112,8 @@
 .explore .explore-chip { padding: 3px 8px; border-color: var(--edge); background: var(--background); color: var(--muted-foreground); }
 .explore .explore-chip:hover { border-color: var(--muted-2); background: var(--muted); color: var(--foreground); }
 .explore .explore-chip.is-active, .explore .explore-chip.is-active:hover { border-color: var(--ink); background: var(--ink); color: var(--on-ink); box-shadow: none; }
+
+.explore .explore-row-cta::after {
+    content: ""; display: inline-block; width: 10px; height: 10px; margin-left: 4px; background: currentColor; vertical-align: -1px;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3H3v10h10v-3M9 3h4v4M13 3 7.5 8.5'/%3E%3C/svg%3E") center / contain no-repeat;
+}

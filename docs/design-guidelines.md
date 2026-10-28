@@ -34,6 +34,7 @@ Defined as CSS variables in `css/layout.css` (`:root`). Brand colours: green `#1
 - Panel width: 300px default and minimum (manifest + `PANEL_MIN_WIDTH` in `js/panel.js`); three equal columns with 4px gaps.
 - Groups are dark cards whose title has a chevron; clicking it collapses the group (`js/section-collapse.js`).
 - The tab bar is a muted pill with icon-over-label triggers; icons come from the SCCTLM icon pack (`svg/navigation`, `svg/retouch`, `svg/controls`) inlined as thin-stroke SVG.
+- Artboard and Watermark action footers (`.ab-footer`, `.ef-footer`) are sticky at the panel bottom so the primary button stays reachable; the Support tab opens from a heart icon-button in the header, not the tab bar.
 - Keep full command meaning in `title` when the visible label is shortened.
 - Hide unavailable commands instead of leaving dead controls in the main workflow.
 - Button icons that are not inline SVG use masks in `css/button-icons.css` (class `icon-btn` + `--icon`), so they follow the label colour; never put emoji or symbol characters in button text.

@@ -31,7 +31,7 @@
         thumb.alt = '';
         var info = el('div', 'explore-row-info');
         info.appendChild(el('strong', '', feed.shortTitle(video.title)));
-        info.appendChild(el('span', 'explore-row-cta', 'Xem trên YouTube ↗'));
+        info.appendChild(el('span', 'explore-row-cta', 'Xem trên YouTube'));
         item.appendChild(thumb);
         item.appendChild(info);
         item.onclick = function () { openUrl(video.url); };

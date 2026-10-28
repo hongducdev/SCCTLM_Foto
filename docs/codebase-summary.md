@@ -28,7 +28,7 @@ SCCTLM_Foto/
 │   ├── create-action-buttons.js # Nút Tạo Brush / Tạo Rim Light: nạp bộ Action nếu thiếu rồi chạy
 │   ├── shortcut-conflicts.js    # Tìm nơi phím F đang được dùng (panel, phím mặc định Photoshop, phím đã đánh dấu)
 │   ├── shortcut-key-capture.js  # Ô phím tắt cạnh nút Tạo: nghe phím F, lưu danh sách
-│   ├── tab-switcher.js          # Chuyển tab Retouch / Artboard / Watermark / Khám phá / Ủng hộ
+│   ├── tab-switcher.js          # Chuyển tab Retouch / Artboard / Watermark / Khám phá; nút Ủng hộ nằm trên header
 │   ├── brush-setup-controls.js  # Brush Lab: Thiết lập cọ / Về mặc định
 │   ├── brush-controls.js        # Brush Lab: xem trước nét cọ, thanh Cỡ / Cứng
 │   ├── brush-color-controls.js  # Brush Lab: màu cọ (Foreground) cho Stroke Brush Path

@@ -1,9 +1,9 @@
-/* Chuyển tab của panel: mỗi .tab-button[data-tab] hiện .tab-pane cùng data-tab. */
+/* Chuyển tab của panel: mỗi .tab-button[data-tab] (và nút Ủng hộ trên header) hiện .tab-pane cùng data-tab. */
 (function () {
     'use strict';
 
     function select(name) {
-        var buttons = document.querySelectorAll('.tab-button');
+        var buttons = document.querySelectorAll('.tab-button, .support-button');
         var panes = document.querySelectorAll('.tab-pane');
         Array.prototype.forEach.call(buttons, function (button) {
             var active = button.getAttribute('data-tab') === name;
@@ -18,10 +18,8 @@
     }
 
     window.dr7InitTabs = function () {
-        var bar = document.querySelector('.tab-bar');
-        if (!bar) return;
-        bar.addEventListener('click', function (event) {
-            var button = event.target.closest ? event.target.closest('.tab-button') : null;
+        document.addEventListener('click', function (event) {
+            var button = event.target.closest ? event.target.closest('.tab-button, .support-button') : null;
             if (button) select(button.getAttribute('data-tab'));
         });
     };

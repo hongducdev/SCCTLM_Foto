@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.3 — Thanh trượt gõ số, sao Hay dùng ở tab Artboard
+
+- **Thanh trượt:** bấm vào con số bên phải thanh trượt (Cỡ, Cứng, Độ sáng, độ mờ trong Mix màu) để gõ đúng giá trị; Enter áp dụng, Esc hủy, ↑/↓ chỉnh ±1 (Shift: ±10).
+- **Artboard:** mỗi thẻ khổ có nút sao; thẻ gắn sao được thêm vào nhóm **Hay dùng** ở trên cùng và nhớ lại giữa các lần mở panel.
+- **Giao diện:** bỏ viền outline khi focus ở mọi phần tử trong panel.
+
 ## v0.3.2 — Sửa watermark: cỡ chữ và chữ tràn khung
 
 - **Cỡ chữ:** chữ watermark (cả hai chế độ) giờ đúng cỡ pixel ở mọi độ phân giải. Trước đây ảnh 300 dpi bị chữ to gấp khoảng 4 lần, tràn lên ảnh và dính sát nhau (Photoshop đọc cỡ chữ theo point dù đã chọn đơn vị pixel).

@@ -79,13 +79,18 @@ $._ext_EXIFFRAME = {
         this.ensureBackdrop(doc, spec.background);
     },
 
+    // Photoshop reads textItem.size as points even with TypeUnits.PIXELS, so a pixel size grows by resolution / 72
+    textSize: function (doc, px) {
+        return px * 72 / doc.resolution;
+    },
+
     addText: function (doc, text, size, font, color, baseline) {
         var layer = doc.artLayers.add();
         layer.kind = LayerKind.TEXT;
         var item = layer.textItem;
         item.contents = text;
         item.font = font;
-        item.size = size;
+        item.size = this.textSize(doc, size);
         item.color = color;
         item.justification = Justification.LEFT;
         item.position = [UnitValue(0, 'px'), UnitValue(baseline, 'px')];
@@ -106,6 +111,7 @@ $._ext_EXIFFRAME = {
     // Segments of one line sit side by side as one row
     drawLine: function (doc, segments, metrics, spec) {
         var layers = [], total = 0, i, layer, gap = Math.round(metrics.size * this.WORD_GAP), x, bold = this.boldOf(spec.font);
+        var room = spec.layout.areaWidth - spec.layout.inset * 2, fit, size;
         for (i = 0; i < segments.length; i += 1) {
             layer = this.addText(doc, segments[i].text, metrics.size, segments[i].bold ? bold : spec.font,
                 this.color(segments[i].muted ? spec.muted : spec.text), metrics.baseline);
@@ -113,6 +119,17 @@ $._ext_EXIFFRAME = {
             layers.push(layer);
         }
         total += gap * (layers.length - 1);
+        if (total > room) {
+            // Shrink to 97% of the room so rounding and glyph side bearings cannot push the row past the margin
+            fit = room * 0.97 / total;
+            size = Math.max(1, Math.floor(metrics.size * fit));
+            gap = Math.round(size * this.WORD_GAP);
+            total = gap * (layers.length - 1);
+            for (i = 0; i < layers.length; i += 1) {
+                layers[i].textItem.size = this.textSize(doc, size);
+                total += this.width(layers[i]);
+            }
+        }
         x = this.startX(total, spec.layout, spec.align);
         for (i = 0; i < layers.length; i += 1) {
             layers[i].textItem.position = [UnitValue(Math.round(x), 'px'), UnitValue(metrics.baseline, 'px')];

@@ -1,7 +1,13 @@
 # Changelog
 
-## Chưa phát hành — Tab Watermark
+## v0.3.1 — Tab Watermark: mẫu gốc Xiaomi Leica, gỡ và vẽ lại
 
+- **Chế độ:** tab Watermark có hai chế độ — **Mẫu gốc** (54 mẫu Xiaomi Leica, mặc định) và **Tự tạo** (viền, logo, dòng thông số như trước). Phần "Preset đã lưu" thuộc chế độ Tự tạo.
+- **Mẫu gốc:** thêm ô **ISO** (bỏ trống thì lấy từ EXIF; thẻ ISOSpeed / RecommendedExposureIndex được dùng khi máy không ghi ISO chuẩn), logo hãng **Tùy chỉnh** (thay logo bằng tên máy, font LG1056), tên mẫu bỏ hậu tố mã, nền chỉ hiện khi mẫu có từ 2 lựa chọn trở lên, ảnh xem trước cao hơn, nhóm "Xiaomi 18 Pro Max" đổi tên đúng.
+- **Font:** mẫu dùng đúng font của app — MiSans (tự chọn khi đã cài và ô Font còn là Arial), LG1056 và Oxanium; thiếu font thì dùng font đang chọn và báo tên font còn thiếu. `scripts/install-watermark-fonts.ps1` cài các font trong thư mục `fonts/` (không đưa vào git) cho người dùng hiện tại, không cần quyền admin; cần khởi động lại Photoshop để nhận font.
+- **Gỡ và vẽ lại:** ảnh đã có watermark mẫu gốc thì bấm **Vẽ** sẽ hỏi có gỡ watermark cũ rồi vẽ lại không. Gỡ = xoá nhóm `Watermark` và cắt canvas về đúng khung ảnh gốc (một mục History "Gỡ watermark"). Nhận biết bằng layer rỗng `wm-meta:…` trong nhóm, nên chỉ áp dụng cho watermark vẽ từ bản này trở đi và khi canvas chưa đổi kích thước.
+- **Logo hãng:** thêm hơn 40 logo vào `img/logos/` (Apple, Asus, Hasselblad, Kodak, LG, Meizu, Nokia, Sigma, Zeiss…).
+- **Khác:** danh sách font được nhớ trong phiên làm việc của panel; focus ô nhập chỉ đổi màu viền.
 - Tab **Watermark** (trước là Khung ảnh): đọc EXIF của ảnh đang mở rồi vẽ khung kèm chữ kiểu "Shot on **iPhone 15 Pro Max** Apple / 121mm f/2.8 1/40s ISO1250". Một lần Ctrl+Z hoàn tác cả khung; tài liệu có artboard bị từ chối.
 - **Chữ:** sửa tay được (ảnh đã Export for Web thường mất EXIF); tick chọn thông số (tiêu cự quy đổi 35mm, khẩu độ, tốc độ, ISO, ống kính, ngày chụp), dấu ngăn cách, dòng thêm (tác giả, địa điểm).
 - **Kiểu chữ:** font bất kỳ của Photoshop (bản đậm tự tìm theo họ font), cỡ chữ và giãn dòng 50–200%, canh trái/giữa/phải, màu chữ chính/phụ.

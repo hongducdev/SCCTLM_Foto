@@ -99,7 +99,7 @@ SCCTLM_Foto/
 │   ├── Fix-CEP-SCCTLM_Foto.reg          # Bật PlayerDebugMode
 │   ├── Hot-reload-SCCTLM_Foto.bat       # Khởi động bộ theo dõi Hot Reload
 │   └── watch-plugin.js          # Theo dõi file và nạp lại panel bằng Node.js
-├── scripts/                     # Công cụ người phát hành: release-keygen / release-sign / release-verify + build-watermark-templates.py (chuyển pack 徕卡一瞬 thành js/wm-templates-data.js và img/wm)
+├── scripts/                     # Công cụ người phát hành: release-keygen / release-sign / release-verify + build-watermark-templates.py (chuyển pack 徕卡一瞬 thành js/wm-templates-data.js và img/wm) + install-watermark-fonts.ps1 (cài font MiSans / LG1056 / Oxanium từ `fonts/` cho người dùng hiện tại)
 ├── tests/                       # Kiểm thử tự động: script, updater, hot reload, bộ màu, artboard, Khám phá
 ├── docs/                        # Hướng dẫn thiết kế và nhật ký phát triển
 └── README.md

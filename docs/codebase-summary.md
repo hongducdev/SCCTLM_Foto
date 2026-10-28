@@ -52,6 +52,7 @@ SCCTLM_Foto/
 │   ├── explore-feed.js          # Khám phá: tải & parse RSS playlist YouTube
 │   ├── explore-tab.js           # Khám phá: giao diện tab
 │   ├── section-collapse.js      # Thu gọn / mở rộng từng nhóm
+│   ├── slider-precision.js      # Bấm số bên thanh trượt để gõ giá trị chính xác
 │   ├── eyedropper-picker.js     # Nút hút màu dùng chung: bật Eyedropper, chờ bấm vào ảnh
 │   └── rim-color-controls.js    # Rim Light: màu, hex, hút màu, Độ sáng; ẩn khi ảnh không có Rim Light
 ├── jsx/

@@ -742,7 +742,21 @@ button:focus-visible {
 .brush-gear:hover { color: #fff; background: rgba(255, 255, 255, .1); transform: rotate(45deg); }
 .brush-gear:focus { outline: none; }
 .brush-gear.is-done { color: var(--foreground); }
-.slider-row > output { flex: 0 0 42px; text-align: right; color: #ffffff; }
+.slider-row > output { flex: 0 0 42px; text-align: right; color: #ffffff; cursor: text; }
+.slider-row > .slider-value-edit {
+    flex: 0 0 42px;
+    box-sizing: border-box;
+    width: 42px;
+    height: 20px;
+    padding: 0 4px;
+    border: 1px solid var(--primary);
+    border-radius: 6px;
+    background: var(--muted);
+    color: #ffffff;
+    font: inherit;
+    text-align: right;
+}
+.slider-row > .slider-value-edit:focus { outline: none; }
 .slider-row > input[type="range"] {
     --fill: 50%;
     flex: 1;

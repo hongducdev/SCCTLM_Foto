@@ -1,4 +1,4 @@
-/* --- Tab Khung ảnh --- */
+/* --- Tab Watermark --- */
 .exif-frame { font-family: "Segoe UI", Tahoma, sans-serif; color: #ffffff; }
 /* Đặt lại luật `button` toàn cục của style.css; :where() giữ độ ưu tiên thấp để class bên dưới luôn thắng */
 :where(.exif-frame) button, :where(.exif-frame) button:hover, :where(.exif-frame) button:active {
@@ -6,7 +6,7 @@
     border: 0; border-radius: 0; background: none; box-shadow: none; color: inherit;
     cursor: pointer; font-family: inherit; white-space: nowrap;
 }
-.exif-frame button:focus-visible, .exif-frame input:focus-visible { outline: 2px solid var(--ring) !important; outline-offset: 2px; }
+.exif-frame button:focus-visible { outline: 2px solid var(--ring) !important; outline-offset: 2px; }
 .exif-frame .ef-title { margin: 6px 0 0; color: var(--white); font: 600 18px/22px "Segoe UI", Tahoma, sans-serif; }
 .exif-frame .ef-sub { margin: 2px 0 8px; color: var(--muted-foreground); font-size: 11px; }
 
@@ -18,7 +18,7 @@
     background: var(--background); color: #ffffff; font-size: 11.5px; font-weight: 600;
 }
 .exif-frame .ef-field input::placeholder { color: var(--muted-foreground); font-weight: 400; }
-.exif-frame input:focus, .exif-frame select:focus { border-color: var(--ring); outline: none; }
+.exif-frame input:focus, .exif-frame input:focus-visible, .exif-frame select:focus { border-color: var(--muted-foreground); outline: none !important; }
 .exif-frame select option { background: var(--background); color: #ffffff; }
 
 /* Ô chọn: bỏ mũi tên gốc, vẽ mũi tên riêng; không viền focus màu mà chỉ sáng viền lên */
@@ -51,14 +51,14 @@
 .exif-frame .ef-summary-icon { flex: 0 0 16px; width: 16px; height: 16px; fill: var(--primary); stroke: none; }
 .exif-frame .ef-summary-icon path { fill: none; stroke: var(--primary-foreground); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .exif-frame .ef-summary-icon.is-empty { fill: var(--muted); }
-.exif-frame .ef-apply {
+.exif-frame .ef-apply, .exif-frame .ef-wm-apply {
     display: block; width: 100%; height: 40px; margin-top: 10px; border-radius: 999px; background: var(--primary);
     box-shadow: none; color: var(--primary-foreground); font: 600 14px/40px "Segoe UI", Tahoma, sans-serif;
     transition: filter 120ms, transform 120ms;
 }
-.exif-frame .ef-apply:hover { opacity: .9; }
-.exif-frame .ef-apply:active { transform: translateY(1px); opacity: .8; }
-.exif-frame .ef-apply[disabled] { background: var(--edge); color: var(--muted-foreground); cursor: default; transform: none; opacity: 1; }
+.exif-frame .ef-apply:hover, .exif-frame .ef-wm-apply:hover { opacity: .9; }
+.exif-frame .ef-apply:active, .exif-frame .ef-wm-apply:active { transform: translateY(1px); opacity: .8; }
+.exif-frame .ef-apply[disabled], .exif-frame .ef-wm-apply[disabled] { background: var(--edge); color: var(--muted-foreground); cursor: default; transform: none; opacity: 1; }
 .exif-frame .ef-note { margin: 6px 0 0; color: var(--muted-foreground); font-size: 10.5px; text-align: center; }
 
 /* Chọn thông số hiển thị: ô tick dạng viên thuốc */
@@ -72,6 +72,12 @@
 .exif-frame .ef-chip:hover span { border-color: var(--muted-2); color: var(--foreground); }
 .exif-frame .ef-chip input:checked + span { border-color: var(--ink); background: var(--ink); color: var(--on-ink); }
 .exif-frame .ef-chip input:focus-visible + span { outline: 2px solid var(--ring); outline-offset: 2px; }
+
+/* Chuyển giữa mẫu gốc và tự tạo */
+.exif-frame .ef-mode { display: flex; margin: 8px 0; padding: 3px; border-radius: 999px; background: var(--muted); }
+.exif-frame .ef-mode-btn { flex: 1; height: 28px; border-radius: 999px; color: var(--muted-foreground); font: 500 11.5px/28px "Segoe UI", Tahoma, sans-serif; transition: background 140ms, color 140ms; }
+.exif-frame .ef-mode-btn:hover { color: #ffffff; }
+.exif-frame .ef-mode-btn.is-active, .exif-frame .ef-mode-btn.is-active:hover { background: var(--ink); color: var(--on-ink); }
 
 /* Canh chữ */
 .exif-frame .ef-segment { display: flex; margin-top: 8px; padding: 3px; border-radius: 999px; background: var(--muted); }
@@ -124,12 +130,5 @@
 /* Mẫu gốc Xiaomi Leica */
 .exif-frame .ef-hint { margin: 2px 0 0; color: var(--muted-foreground); font-size: 10.5px; line-height: 1.4; }
 .exif-frame .ef-wm-thumb { margin-top: 8px; padding: 6px; border: 1px solid var(--edge); border-radius: 10px; background: var(--muted); text-align: center; }
-.exif-frame .ef-wm-thumb[hidden], .exif-frame .ef-wm-layout-field[hidden] { display: none; }
-.exif-frame .ef-wm-thumb-img { display: block; max-width: 100%; max-height: 180px; margin: 0 auto; border-radius: 4px; }
-.exif-frame .ef-wm-apply {
-    display: block; width: 100%; height: 40px; margin-top: 10px; border-radius: 999px; background: var(--primary);
-    box-shadow: none; color: var(--primary-foreground); font: 600 14px/40px "Segoe UI", Tahoma, sans-serif; transition: filter 120ms, transform 120ms;
-}
-.exif-frame .ef-wm-apply:hover { opacity: .9; }
-.exif-frame .ef-wm-apply:active { transform: translateY(1px); opacity: .8; }
-.exif-frame .ef-wm-apply[disabled] { background: var(--edge); color: var(--muted-foreground); cursor: default; transform: none; opacity: 1; }
+.exif-frame .ef-wm-thumb[hidden], .exif-frame .ef-field[hidden], .exif-frame .ef-mode-custom[hidden] { display: none; }
+.exif-frame .ef-wm-thumb-img { display: block; max-width: 100%; max-height: 240px; margin: 0 auto; border-radius: 4px; }

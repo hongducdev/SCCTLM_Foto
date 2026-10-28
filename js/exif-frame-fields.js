@@ -51,8 +51,9 @@
         return seconds >= 1 ? trimNumber(seconds, 1) + 's' : '1/' + Math.round(1 / seconds) + 's';
     }
 
+    // Thẻ ISO chuẩn (34855) trước; một số máy chỉ ghi ISOSpeed (34867) hoặc RecommendedExposureIndex (34866)
     function isoText(tags) {
-        var value = firstNumber(tags[TAG.iso]);
+        var value = [TAG.iso, 34867, 34866].map(function (id) { return firstNumber(tags[id]); }).filter(function (n) { return n > 0; })[0];
         return value > 0 ? 'ISO' + Math.round(value) : '';
     }
 

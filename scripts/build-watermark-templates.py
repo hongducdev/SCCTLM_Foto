@@ -16,7 +16,7 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parent.parent
 OUT_JS = ROOT / "js" / "wm-templates-data.js"
 OUT_IMG = ROOT / "img" / "wm"
-GROUP_NAMES = {"leica": "Leica", "leica_17u": "Xiaomi 17 Ultra by Leica", "leica_18pm": "Xiaomi 17 Ultra (18 Pro Max)"}
+GROUP_NAMES = {"leica": "Leica", "leica_17u": "Xiaomi 17 Ultra by Leica", "leica_18pm": "Xiaomi 18 Pro Max"}
 # not drawn by the renderer: settings pictures, pickers, icons of the in-app menu
 SKIP_FILE = re.compile(r"^(icon_|img_setting_base|leica_looks_|leica_lens_|cv_lens_|custom_icon_|icon_signature_)")
 KEEP_NODE = ("type", "id", "orientation", "layout_width", "layout_height", "gravity", "layout_gravity", "margin_left", "margin_top",

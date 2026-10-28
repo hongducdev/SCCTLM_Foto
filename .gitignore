@@ -58,3 +58,6 @@ CrashReporter/
 
 # Plans & design artifacts
 plans/
+
+# Font gốc của app Xiaomi/Leica, chỉ để cài cục bộ
+fonts/

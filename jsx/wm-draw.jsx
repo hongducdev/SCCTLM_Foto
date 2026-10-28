@@ -11,6 +11,8 @@ $._ext_WMDRAW = {
     GROUP_NAME: 'Watermark',
     FILL_NAME: 'Watermark - n\u1EC1n',
     FRAME_NAME: 'Watermark - khung',
+    // Empty layer inside the group that remembers the canvas and photo box, so the watermark can be taken off again
+    META_PREFIX: 'wm-meta:',
 
     color: function (c) {
         var color = new SolidColor();
@@ -94,7 +96,7 @@ $._ext_WMDRAW = {
         layer.kind = LayerKind.TEXT;
         item = layer.textItem;
         item.contents = op.text;
-        item.font = op.bold ? this.boldFont : font.regular;
+        item.font = op.bold ? $._ext_EXIFFRAME.boldOf(op.font || font.regular) : op.font || font.regular;
         item.size = op.size;
         item.tracking = op.tracking;
         item.color = this.color(op.color);
@@ -118,14 +120,53 @@ $._ext_WMDRAW = {
         }
     },
 
+    // { group, meta: [width, height, photoX, photoY, srcW, srcH] } of the newest watermark that still matches the canvas, else null
+    find: function (doc) {
+        var sets = doc.layerSets, i, j, layers, parts;
+        for (i = 0; i < sets.length; i += 1) {
+            if (sets[i].name !== this.GROUP_NAME) continue;
+            layers = sets[i].artLayers;
+            for (j = 0; j < layers.length; j += 1) {
+                if (layers[j].name.indexOf(this.META_PREFIX) !== 0) continue;
+                parts = layers[j].name.substring(this.META_PREFIX.length).split(',');
+                if (parts.length === 6 && Math.round(doc.width.as('px')) === +parts[0] && Math.round(doc.height.as('px')) === +parts[1]) {
+                    return { group: sets[i], meta: [+parts[0], +parts[1], +parts[2], +parts[3], +parts[4], +parts[5]] };
+                }
+            }
+        }
+        return null;
+    },
+
+    // "1" when the open image carries a watermark made by this tab, else ""
+    existing: function () {
+        if (!app.documents.length) return '';
+        app.preferences.rulerUnits = Units.PIXELS;
+        return this.find(app.activeDocument) ? '1' : '';
+    },
+
+    takeOff: function () {
+        var doc = app.activeDocument, found = $._ext_WMDRAW.find(doc), m;
+        if (!found) return;
+        m = found.meta;
+        found.group.remove();
+        doc.crop([m[2], m[3], m[2] + m[4], m[3] + m[5]]);
+    },
+
+    // Removes the watermark group and crops the canvas back to the photo; one history step
+    remove: function () {
+        app.preferences.rulerUnits = Units.PIXELS;
+        if (!app.documents.length || !this.find(app.activeDocument)) return 'DR7_NONE';
+        app.activeDocument.suspendHistory('G\u1EE1 watermark', '$._ext_WMDRAW.takeOff()');
+        return 'DR7_OK';
+    },
+
     // Runs in the global scope (suspendHistory), so the spec travels on the object
     build: function () {
-        var self = $._ext_WMDRAW, spec = self.spec, doc = app.activeDocument, hole = spec.photo, under = true, made = [], i, op, result, group;
+        var self = $._ext_WMDRAW, spec = self.spec, doc = app.activeDocument, hole = spec.photo, under = true, made = [], i, op, result, group, meta;
         var savedBackground = app.backgroundColor, savedType = app.preferences.typeUnits, savedDialogs = app.displayDialogs;
         try {
             app.preferences.typeUnits = TypeUnits.PIXELS;
             app.displayDialogs = DialogModes.NO;
-            self.boldFont = $._ext_EXIFFRAME.boldOf(spec.font.regular);
             if (spec.ops[0].t === 'fill' && spec.ops[0].color.a > 0) app.backgroundColor = self.color(spec.ops[0].color);
             self.growCanvas(doc, spec);
             doc.activeLayer = doc.layers[0];
@@ -138,6 +179,9 @@ $._ext_WMDRAW = {
                 else result = self.text(doc, op, spec.font);
                 if (result) made = made.concat(result);
             }
+            meta = doc.artLayers.add();
+            meta.name = self.META_PREFIX + [spec.width, spec.height, spec.photo.x, spec.photo.y, spec.srcW, spec.srcH].join(',');
+            made.push(meta);
             group = doc.layerSets.add();
             group.name = self.GROUP_NAME;
             for (i = 0; i < made.length; i += 1) made[i].move(group, ElementPlacement.INSIDE);

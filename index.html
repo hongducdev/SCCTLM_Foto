@@ -177,21 +177,26 @@
 	<div class="tab-pane" role="tabpanel" data-tab="frame" hidden>
 			<div class="exif-frame">
 				<h2 class="ef-title">Watermark</h2>
-				<p class="ef-sub">Thêm viền, logo và dòng thông số máy ảnh làm watermark cho ảnh đang mở.</p>
+				<p class="ef-sub">Thêm watermark cho ảnh đang mở: dùng mẫu gốc của app Xiaomi Leica hoặc tự tạo viền, logo và dòng thông số.</p>
+					<div class="ef-mode" role="group" aria-label="Chế độ watermark">
+						<button class="ef-mode-btn is-active" data-mode="wm" aria-pressed="true">Mẫu gốc</button>
+						<button class="ef-mode-btn" data-mode="custom" aria-pressed="false">Tự tạo</button>
+					</div>
 				<section class="group ef-group ef-wm">
-					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Mẫu gốc Xiaomi Leica</div>
-					<p class="ef-hint">Vẽ đúng bố cục của app 徕卡一瞬 (54 mẫu). Chữ lấy từ EXIF, sửa được ở dưới.</p>
+					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Xiaomi Leica (54 mẫu)</div>
 					<label class="ef-field"><span>Mẫu</span><select class="ef-wm-template"></select></label>
 					<div class="ef-wm-thumb" hidden><img class="ef-wm-thumb-img" alt="Xem trước mẫu"></div>
 					<label class="ef-field ef-wm-layout-field"><span>Bố cục</span><select class="ef-wm-layout"></select></label>
 					<label class="ef-field"><span>Nền</span><select class="ef-wm-background"></select></label>
-					<label class="ef-field"><span>Hãng</span><select class="ef-wm-brand"><option value="xiaomi">Xiaomi</option><option value="redmi">Redmi</option><option value="poco">POCO</option></select></label>
+					<label class="ef-field"><span>Logo hãng</span><select class="ef-wm-brand"><option value="xiaomi">Xiaomi</option><option value="redmi">Redmi</option><option value="poco">POCO</option><option value="custom">Tùy chỉnh (chỉ tên máy)</option></select></label>
 					<label class="ef-field"><span>Tên máy</span><input class="ef-wm-model" type="text" spellcheck="false" placeholder="Xiaomi 17 Ultra"></label>
 					<label class="ef-field"><span>Địa chỉ</span><input class="ef-wm-address" type="text" spellcheck="false" placeholder="Bỏ trống thì dùng toạ độ GPS"></label>
+					<label class="ef-field"><span>ISO</span><input class="ef-wm-iso" type="text" inputmode="numeric" spellcheck="false" placeholder="Bỏ trống thì lấy từ EXIF"></label>
+					<div class="ef-font-slot ef-wm-font-slot"></div>
 					<button class="ef-wm-apply">Vẽ watermark mẫu gốc</button>
-					<p class="ef-note ef-wm-note">Font lấy ở mục Kiểu chữ. Cài font MiSans để độ rộng chữ đúng như app.</p>
 				</section>
-				<section class="group ef-group">
+				<div class="ef-mode-custom" hidden>
+					<section class="group ef-group">
 					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Nội dung chữ<button class="ef-reload" title="Đọc lại EXIF từ ảnh đang mở" aria-label="Đọc lại EXIF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button></div>
 					<label class="ef-field"><span>Tiền tố</span><input class="ef-prefix" type="text" spellcheck="false"></label>
 					<label class="ef-field"><span>Máy</span><input class="ef-model" type="text" spellcheck="false" placeholder="iPhone 15 Pro Max"></label>
@@ -210,7 +215,7 @@
 				</section>
 				<section class="group ef-group">
 					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Kiểu chữ</div>
-					<label class="ef-field"><span>Font</span><select class="ef-font"><option value="ArialMT">Arial</option></select></label>
+					<div class="ef-font-slot ef-custom-font-slot"><label class="ef-field ef-font-field"><span>Font</span><select class="ef-font"><option value="ArialMT">Arial</option></select></label></div>
 					<div class="ef-row">
 						<label class="ef-field"><span>Cỡ</span><input class="ef-size" type="number"><em>%</em></label>
 						<label class="ef-field"><span>Giãn dòng</span><input class="ef-gap" type="number"><em>%</em></label>
@@ -250,10 +255,9 @@
 					</div>
 				</section>
 				<section class="group ef-group">
-					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Mẫu watermark</div>
-					<label class="ef-field"><span>Kiểu có sẵn</span><select class="ef-template-list"></select></label>
-					<p class="ef-preview-label">Mẫu đã lưu</p>
-					<label class="ef-field"><span>Mẫu</span><select class="ef-preset-list"></select><button class="ef-preset-delete" title="Xoá mẫu đang chọn" aria-label="Xoá mẫu đang chọn" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M5 4.5l.5 8h5l.5-8"/></svg></button></label>
+					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Preset đã lưu</div>
+					<label class="ef-field"><span>Kiểu mẫu</span><select class="ef-template-list"></select></label>
+					<label class="ef-field"><span>Đã lưu</span><select class="ef-preset-list"></select><button class="ef-preset-delete" title="Xoá mẫu đang chọn" aria-label="Xoá mẫu đang chọn" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M5 4.5l.5 8h5l.5-8"/></svg></button></label>
 					<div class="ef-field"><input class="ef-preset-name" type="text" maxlength="30" spellcheck="false" placeholder="Tên mẫu mới" aria-label="Tên mẫu mới"><button class="ef-preset-save">Lưu mẫu</button></div>
 				</section>
 				<p class="ef-preview-label">Xem trước (gần đúng)</p>
@@ -263,6 +267,7 @@
 					<button class="ef-apply">Áp dụng watermark</button>
 					<p class="ef-note">Viền và chữ tính theo cạnh ngắn của ảnh · Ctrl+Z hoàn tác một lần</p>
 				</div>
+					</div>
 			</div>
 	</div>
 	<div class="tab-pane" role="tabpanel" data-tab="explore" hidden>

@@ -4,23 +4,33 @@
  * Thuần tính toán nên test được bằng Node; độ rộng chữ do bên gọi đo (Photoshop) qua measure(text, font).
  *
  * plan(template, options) -> { width, height, photo: { x, y, w, h }, ops: [...] }
- *   options: { layout, background (tên), brand, photo: { w, h }, refWidth, info, measure }
+ *   options: { layout, background (tên), brand, customName (tên hiện ở chỗ logo khi brand = 'custom'), photo: { w, h }, refWidth, info, measure }
  *   ops (px, gốc là góc trên trái của ảnh kết quả):
  *     { t: 'fill', x, y, w, h, color }                       color: { r, g, b, a }  (a 0..1)
  *     { t: 'rrect', x, y, w, h, radius, fill, line, lineWidth }
  *     { t: 'image', file, x, y, w, h, rot }                   file: tên ảnh trong img/wm
- *     { t: 'text', text, x, y, w, h, rot, lw, lh, dx, base, size, tracking, bold, color }   (x,y,w,h: hộp đã xoay; lw,lh,dx,base: hộp gốc)
+ *     { t: 'text', text, x, y, w, h, rot, lw, lh, dx, base, face, size, tracking, bold, color }   (x,y,w,h: hộp đã xoay; lw,lh,dx,base: hộp gốc)
  *     { t: 'photo', x, y, w, h }
  */
 (function (root) {
     'use strict';
 
-    var ASCENT = 1.044;   // MiSans, font của app; FreeType đo theo 1/64 px rồi làm tròn lên
-    var DESCENT = 0.282;
+    // Ascent/descent theo em (hhea) của từng font; FreeType đo theo 1/64 px rồi làm tròn lên. 'default' là MiSans, font hệ thống của app
+    var FACES = {
+        default: { ascent: 1.044, descent: 0.282 },
+        lg1056: { ascent: 1.009, descent: 0.211 },
+        oxanium: { ascent: 0.79, descent: 0.21 }
+    };
     var BOLD_FROM = 550;
     var HIDDEN_TYPES = { type_custom_signature: 1, type_custom_text: 1, type_leica_looks_container: 1, type_leica_lens_container: 1 };
     var DP = /^-?[\d.]+dp$/;
     var PERCENT_W = /^([\d.]+)%w$/;
+
+    // typeface trong mẫu: '@file=lg1056_regular.otf', 'oxanium' hoặc 'default' (font hệ thống)
+    function faceOf(typeface) {
+        var name = String(typeface || '').replace(/^@file=/, '').toLowerCase();
+        return name.indexOf('lg1056') === 0 ? 'lg1056' : name === 'oxanium' ? 'oxanium' : 'default';
+    }
 
     // round() của Python: làm tròn về số chẵn khi đúng .5
     function pyRound(value) {
@@ -46,6 +56,20 @@
     function place(flags, axis, slack) {
         if (axis === 'x') return flags.center || flags.center_horizontal ? slack / 2 : flags.right ? slack : 0;
         return flags.center || flags.center_vertical ? slack / 2 : flags.bottom ? slack : 0;
+    }
+
+    function isModelText(node) { return node.type === 'TextView' && String(node.text || '').indexOf('@model=') === 0; }
+
+    // Logo hãng 'custom': chỗ ảnh logo hiện tên máy bằng LG1056; hai dòng tên máy gốc (series/số, phiên bản) bị ẩn để khỏi lặp
+    function withCustomName(node, name) {
+        var children = node.childViews || [], logo = children.filter(function (c) { return c.type === 'ImageView' && c.id === 'logo'; })[0];
+        var model = children.filter(isModelText)[0], swap = !!logo && !!model;
+        return Object.assign({}, node, {
+            childViews: children.map(function (child) {
+                if (swap && child === logo) return Object.assign({}, logo, { type: 'TextView', text: name, font_ref: model.font_ref, face: 'lg1056' });
+                return swap && isModelText(child) ? null : withCustomName(child, name);
+            }).filter(Boolean)
+        });
     }
 
     function plan(template, options) {
@@ -78,9 +102,9 @@
             return file.indexOf('@') !== -1 || file.indexOf('$') !== -1 || !template.files[file] ? null : { name: file, info: template.files[file] };
         }
 
-        function fontOf(ref) {
+        function fontOf(ref, face) {
             var spec = fonts[ref], size = Math.max(1, pyRound(spec.size * u)), weight = /(\d+)/.exec(spec.variation || '');
-            return { size: size, tracking: (spec.letterSpacing || 0) * 1000, spacing: (spec.letterSpacing || 0) * size, bold: !!weight && +weight[1] >= BOLD_FROM, color: color(spec.color) };
+            return { face: face || faceOf(spec.typeface), size: size, tracking: (spec.letterSpacing || 0) * 1000, spacing: (spec.letterSpacing || 0) * size, bold: !!weight && +weight[1] >= BOLD_FROM, color: color(spec.color) };
         }
 
         function textOf(node) {
@@ -101,15 +125,15 @@
         function margin(node, key) { return dp(node[key]) || 0; }
 
         function ceil64(value) { return Math.ceil(Math.round(value * 64) / 64); }
-        function ascent(font) { return ceil64(ASCENT * font.size); }
-        function lineHeight(font) { return ascent(font) + ceil64(DESCENT * font.size); }
+        function ascent(font) { return ceil64(FACES[font.face].ascent * font.size); }
+        function lineHeight(font) { return ascent(font) + ceil64(FACES[font.face].descent * font.size); }
 
         function textWidth(text, font) {
             return options.measure(text, font) + font.spacing * text.length;
         }
 
         function textSize(node) {
-            var font = fontOf(node.font_ref), text = textOf(node), width = textWidth(text, font), rect = node.rect_params;
+            var font = fontOf(node.font_ref, node.face), text = textOf(node), width = textWidth(text, font), rect = node.rect_params;
             if (rect) {
                 var gap = rect.rect_text_width_gap * u;
                 return [pyRound(width + 2 * gap), pyRound(dp(rect.rect_height) || lineHeight(font) + 2 * (rect.rect_text_height_gap || 0) * u)];
@@ -148,7 +172,7 @@
         }
 
         function textOps(node, w, h) {
-            var font = fontOf(node.font_ref), text = textOf(node), rect = node.rect_params, ops = [], dx = 0, width = textWidth(text, font);
+            var font = fontOf(node.font_ref, node.face), text = textOf(node), rect = node.rect_params, ops = [], dx = 0, width = textWidth(text, font);
             if (rect) {
                 dx = rect.rect_text_width_gap * u;
                 ops.push({ t: 'rrect', x: 0, y: 0, w: w, h: h, radius: rect.rect_radius[0] * u,
@@ -157,7 +181,7 @@
                 dx = Math.max(dx, (w - width) / 2);
             }
             ops.push({ t: 'text', text: text, x: 0, y: 0, w: w, h: h, rot: 0, lw: w, lh: h, dx: dx,
-                base: (h - lineHeight(font)) / 2 + ascent(font), size: font.size, tracking: font.tracking, bold: font.bold, color: font.color });
+                base: (h - lineHeight(font)) / 2 + ascent(font), face: font.face, size: font.size, tracking: font.tracking, bold: font.bold, color: font.color });
             return ops;
         }
 
@@ -217,12 +241,14 @@
         }
 
         var key = options.layout || (!hasLocation && template.layouts.layout_loc_off ? 'layout_loc_off' : template.layouts.layout ? 'layout' : Object.keys(template.layouts)[0]);
-        var rootNode = template.layouts[key][0], size = measure(rootNode), ops = render(rootNode, size[0], size[1]);
+        var rootNode = template.layouts[key][0];
+        if (options.brand === 'custom' && options.customName) rootNode = withCustomName(rootNode, options.customName);
+        var size = measure(rootNode), ops = render(rootNode, size[0], size[1]);
         var photoOp = ops.filter(function (op) { return op.t === 'photo'; })[0];
         return { width: size[0], height: size[1], photo: photoOp ? { x: photoOp.x, y: photoOp.y, w: photoOp.w, h: photoOp.h } : null, ops: ops, layout: key };
     }
 
     function layoutKeys(template) { return Object.keys(template.layouts); }
 
-    root.dr7WmLayout = { plan: plan, layoutKeys: layoutKeys, pyRound: pyRound };
+    root.dr7WmLayout = { plan: plan, layoutKeys: layoutKeys, pyRound: pyRound, faceOf: faceOf };
 }(typeof window !== 'undefined' ? window : this));

@@ -12,6 +12,7 @@
     var IMAGE_FILE = /^[0-9a-f]{12}\.png$/;
     var DIR_MAX = 400;
     var OUTPUTS = ['layers', 'flatten'];
+    var FACES = ['default', 'lg1056', 'oxanium'];
     var CONTROL = new RegExp('[\\x00-\\x1f' + String.fromCharCode(0x2028, 0x2029) + ']');
 
     function inRange(value, min, max) { return typeof value === 'number' && isFinite(value) && value >= min && value <= max; }
@@ -28,7 +29,8 @@
         image: function (op) { return IMAGE_FILE.test(op.file) && isRot(op) && op.w >= 1 && op.h >= 1; },
         text: function (op) {
             return isText(op.text) && op.text !== '' && isRot(op) && inRange(op.lw, 0, MAX_SIZE) && inRange(op.lh, 0, MAX_SIZE) && inRange(op.dx, -MAX_SIZE, MAX_SIZE) &&
-                inRange(op.base, -MAX_SIZE, MAX_SIZE) && inRange(op.size, 1, 2000) && inRange(op.tracking, -1000, 1000) && typeof op.bold === 'boolean' && isColor(op.color);
+                inRange(op.base, -MAX_SIZE, MAX_SIZE) && inRange(op.size, 1, 2000) && inRange(op.tracking, -1000, 1000) && typeof op.bold === 'boolean' && isColor(op.color) &&
+                FACES.indexOf(op.face) !== -1 && (op.font === undefined || FONT.test(op.font));
         },
         photo: function () { return true; }
     };
@@ -37,6 +39,7 @@
         return !!op && Object.prototype.hasOwnProperty.call(OP, op.t) && isBox(op) && OP[op.t](op);
     }
 
+    // Mỗi op chữ mang face (font của mẫu) và font (tên PostScript cài trong Photoshop); thiếu font thì dùng font.regular
     // plan: { width, height, srcW, srcH, photo: { x, y, w, h }, font: { regular }, imageDir, output, ops }
     var plan = {
         test: function (spec) {

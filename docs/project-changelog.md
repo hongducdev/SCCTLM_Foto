@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.2 — Sửa watermark: cỡ chữ và chữ tràn khung
+
+- **Cỡ chữ:** chữ watermark (cả hai chế độ) giờ đúng cỡ pixel ở mọi độ phân giải. Trước đây ảnh 300 dpi bị chữ to gấp khoảng 4 lần, tràn lên ảnh và dính sát nhau (Photoshop đọc cỡ chữ theo point dù đã chọn đơn vị pixel).
+- **Chữ dài:** chế độ Tự tạo tự thu nhỏ dòng chữ khi rộng hơn khung ảnh, thay vì tràn ra ngoài.
+
 ## v0.3.1 — Tab Watermark: mẫu gốc Xiaomi Leica, gỡ và vẽ lại
 
 - **Chế độ:** tab Watermark có hai chế độ — **Mẫu gốc** (54 mẫu Xiaomi Leica, mặc định) và **Tự tạo** (viền, logo, dòng thông số như trước). Phần "Preset đã lưu" thuộc chế độ Tự tạo.

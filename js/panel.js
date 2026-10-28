@@ -67,6 +67,7 @@
         }
         if (busy) { if (done) done('DR7_BUSY'); return; }
         busy = true;
+        document.body.classList.add('is-busy');
         var target = kind === 'doa' ? '$.dr7Commands[' + JSON.stringify(name) + ']' :
             kind === 'preset' ? '$.dr7ApplyBundledXmp' : kind === 'colormix' ? '$.dr7ApplyColorMix' : kind === 'play' ? '$.dr7PlayBundledAction' : kind === 'ensure' ? '$.dr7EnsureBundledAction' :
             kind === 'shortcut' ? '$.dr7ShortcutSetup.install' : kind === 'artboard' ? '$._ext_ARTBOARD.run' : kind === 'frame' ? '$._ext_EXIFFRAME.run' : kind === 'wm' ? '$._ext_WMDRAW.run' : '$._ext_' + name + '.run';
@@ -87,6 +88,7 @@
         try {
             cs.evalScript(code, function (res) {
                 busy = false;
+                document.body.classList.remove('is-busy');
                 if (res === 'DR7_NO_DOCUMENT') {
                     notify('Chưa mở ảnh', 'Hãy mở ảnh trong Photoshop trước khi chạy lệnh.');
                 } else if (res !== 'DR7_OK' && res !== 'DR7_CANCEL' && res !== 'DR7_EXISTS') {
@@ -96,6 +98,7 @@
             });
         } catch (e) {
             busy = false;
+            document.body.classList.remove('is-busy');
             notify('Không kết nối được Photoshop', String(e));
             if (done) done('DR7_ERROR');
         }

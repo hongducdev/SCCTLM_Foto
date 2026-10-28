@@ -1,0 +1,22 @@
+/* Vòng focus bàn phím và trạng thái bận; nạp cuối cùng để thắng các quy tắc "outline: none" cũ. */
+html body .panel button:focus-visible,
+html body .panel [role="button"]:focus-visible,
+html body .panel input:focus-visible,
+html body .panel select:focus-visible,
+html body .panel label:focus-within .brush-color-input,
+html body .panel .ab-card:focus-visible {
+    outline: 2px solid var(--ring) !important;
+    outline-offset: 2px !important;
+}
+html body .panel .tab-bar .tab-button:focus-visible {
+    outline-offset: -2px !important;
+}
+
+body.is-busy .panel button:not(.update-button):not(.reload-panel),
+body.is-busy .panel .tab-pane [role="button"] {
+    cursor: progress;
+}
+body.is-busy .panel .tab-pane button {
+    opacity: .6;
+    pointer-events: none;
+}

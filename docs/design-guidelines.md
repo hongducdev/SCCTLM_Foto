@@ -24,7 +24,9 @@ Defined as CSS variables in `css/layout.css` (`:root`). Brand colours: green `#1
 
 - Controls (buttons, inputs, selects, chips, badges, icon buttons) are pills (`border-radius: 999px`); retouch tiles, artboard cards and list rows use 12px; groups and the header use 16px.
 - Outline controls have a transparent fill and a 1px inset `--edge` ring; hover fills with `--muted`; press moves 1px down. Transitions are 120–150ms.
-- Focus: 2px `--ring` outline with 2px offset.
+- Focus: 2px `--ring` outline with 2px offset, drawn only for keyboard focus (`:focus-visible`) by `css/focus-ring.css`, which loads last; never add `outline: none !important` elsewhere.
+- Type: 11px minimum for any visible text (badges 10px); tap targets stay at least 23px tall.
+- Busy: `js/panel.js` puts `is-busy` on `<body>` while an ExtendScript command runs; `css/focus-ring.css` dims and disables buttons.
 - Selected state is an ink (white) lozenge, never a coloured underline. Green is the accent for the primary action and slider fill.
 
 ## Layout

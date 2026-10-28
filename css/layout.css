@@ -70,7 +70,7 @@ body {
 .panel-tagline {
     overflow: hidden;
     color: var(--muted-foreground);
-    font: 400 10px/14px "Segoe UI", Tahoma, sans-serif;
+    font: 400 11px/14px "Segoe UI", Tahoma, sans-serif;
     text-overflow: ellipsis;
 }
 .panel-version {
@@ -129,7 +129,7 @@ body {
     border-radius: 12px;
     background: var(--background);
     color: var(--muted-foreground);
-    font: 10.5px/14px "Segoe UI", Tahoma, sans-serif;
+    font: 11px/14px "Segoe UI", Tahoma, sans-serif;
     white-space: pre-line;
 }
 .panel-status[hidden] { display: none; }
@@ -188,9 +188,8 @@ body {
 
 button,
 button:focus,
-button:active,
-button:focus-visible {
-    outline: none  !important;
+button:active {
+    outline: none;
 }
 
 .row > button,
@@ -237,10 +236,8 @@ button:focus-visible {
 }
 
 .row > button:focus,
-.action-grid > button:focus,
-.row > button:focus-visible,
-.action-grid > button:focus-visible {
-    outline: none  !important;
+.action-grid > button:focus {
+    outline: none;
 }
 
 .row > button[disabled],
@@ -333,8 +330,7 @@ button:focus-visible {
 }
 .group > .btn-primary:hover { filter: none; opacity: .9; }
 .group > .btn-primary:active { transform: translateY(1px); opacity: .8; }
-.group > .btn-primary:focus,
-.group > .btn-primary:focus-visible { outline: none  !important; }
+.group > .btn-primary:focus { outline: none; }
 
 /* --- Nhóm Retouch: nút chính xanh dương + lưới 3x3 icon trên chữ --- */
 .group-retouch > .btn-primary {
@@ -628,8 +624,8 @@ button:focus-visible {
 }
 .tab-bar .tab-button:not(.is-active):hover { color: var(--foreground); background: var(--muted-2); }
 .tab-bar .tab-button:focus { outline: none; }
-/* Không vẽ viền focus ở bất kỳ phần tử nào trong panel */
-:focus, :focus-visible { outline: none; }
+/* Chuột không vẽ viền focus; vòng focus bàn phím nằm ở css/focus-ring.css */
+:focus { outline: none; }
 .tab-bar .tab-button.is-active {
     color: var(--on-ink);
     background: var(--ink);
@@ -658,8 +654,8 @@ button:focus-visible {
 }
 .support-qr-img { display: block; width: 148px; height: 148px; margin: 0 auto 4px; }
 .support-qr strong { display: block; font-size: 11px; line-height: 15px; }
-.support-qr span { display: block; color: var(--muted-foreground); font-size: 10px; line-height: 13px; user-select: text; }
-.support-thanks { margin: 14px 0 0; padding-top: 8px; border-top: 1px solid var(--edge); color: var(--muted-foreground); font-size: 10px; }
+.support-qr span { display: block; color: var(--muted-foreground); font-size: 11px; line-height: 13px; user-select: text; }
+.support-thanks { margin: 14px 0 0; padding-top: 8px; border-top: 1px solid var(--edge); color: var(--muted-foreground); font-size: 11px; }
 
 /* Cốc cà phê: khói bay, tia sáng nhấp nháy, trái tim đập nhẹ */
 .support-mug .steam { animation: dr7-steam 2.6s ease-in-out infinite; }

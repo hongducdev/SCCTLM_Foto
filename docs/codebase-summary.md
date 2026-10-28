@@ -12,6 +12,7 @@ SCCTLM_Foto/
 │   ├── layout.css               # Bố cục, tab, nút viên thuốc, nhóm thu gọn
 │   ├── button-icons.css         # Icon nút (SVG mask)
 │   ├── color-presets.css        # Bộ màu MHK và Mix màu
+│   ├── focus-ring.css          # Vòng focus bàn phím, trạng thái bận (nạp cuối)
 │   ├── artboard.css             # Tab Artboard
 │   ├── exif-frame.css           # Tab Watermark
 │   └── explore.css              # Tab Khám phá

@@ -24,7 +24,7 @@
 .cp-list::-webkit-scrollbar-thumb { border-radius: 3px; background: var(--edge); }
 .cp-chip {
     width: 100%; min-width: 0; height: 24px; margin: 0; padding: 0 8px; overflow: hidden; border: 1px solid var(--edge); border-radius: 999px;
-    background: var(--background); color: #d3d3d7; font: 400 10px/22px "Segoe UI", Tahoma, sans-serif;
+    background: var(--background); color: #d3d3d7; font: 400 11px/22px "Segoe UI", Tahoma, sans-serif;
     text-align: left; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; transition: border-color 120ms, background 120ms, color 120ms;
 }
 .cp-chip:hover { border-color: var(--muted-foreground); background: var(--muted); color: #ffffff; }
@@ -34,10 +34,10 @@
 
 .cp-mix-toggle { margin-top: 8px; }
 .cp-mix[hidden] { display: none; }
-.cp-mix-hint { margin: 6px 0 4px; color: var(--muted-foreground); font-size: 10px; line-height: 14px; }
+.cp-mix-hint { margin: 6px 0 4px; color: var(--muted-foreground); font-size: 11px; line-height: 14px; }
 .cp-mix-row { margin-top: 4px; padding: 5px 8px 4px; border: 1px solid var(--edge); border-radius: 12px; background: var(--background); }
 .cp-mix-head { display: flex; align-items: center; gap: 4px; }
-.cp-mix-name { flex: 1; min-width: 0; overflow: hidden; color: #ffffff; font-size: 10.5px; text-overflow: ellipsis; white-space: nowrap; }
+.cp-mix-name { flex: 1; min-width: 0; overflow: hidden; color: #ffffff; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
 .cp-mix-remove { flex: 0 0 18px; width: 18px; height: 18px; margin: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--muted-foreground); font-size: 14px; line-height: 18px; cursor: pointer; }
 .cp-mix-remove:hover { background: var(--muted); color: #ffffff; }
 .cp-mix-row .slider-row { margin-top: 2px; }

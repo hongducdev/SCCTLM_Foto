@@ -164,7 +164,9 @@ for (const [index,name] of ['Grain','Weave','Coarse','Lines','Dots','Blossom','L
 assert.equal(offset,pat.length,'PAT records must consume the complete file');
 // Exercise actual bridge-generated code; the transport is replaced, not the handler.
 const calls = [], alerts = [];
-const panel = { JSON, alert: message => alerts.push(message), SystemPath: { EXTENSION: 0 } };
+const bodyClasses = new Set();
+const panel = { JSON, alert: message => alerts.push(message), SystemPath: { EXTENSION: 0 },
+    document: { body: { classList: { add: c => bodyClasses.add(c), remove: c => bodyClasses.delete(c) } } } };
 panel.window = panel;
 let reloads = 0;
 panel.location = { reload: () => { reloads++; } };
@@ -192,6 +194,7 @@ host.$.dr7Commands.GGXS = () => {
 panel.doa('GGXS');
 panel.doa('GGXS');
 assert.equal(calls.length, 2, 'must not queue double clicks');
+assert.ok(bodyClasses.has('is-busy'), 'panel must show the busy state while a command runs');
 assert.equal(panel.dr7Reload(), false, 'reload must not interrupt a command');
 assert.equal(reloads, 0);
 const result = vm.runInNewContext(calls[1].code, host);
@@ -200,6 +203,7 @@ assert.match(result, /test failure[\s\S]*main.jsx[\s\S]*42/);
 assert.equal(host.app.displayDialogs, 1);
 assert.equal(host.app.preferences.rulerUnits, 2);
 calls[1].callback(result);
+assert.ok(!bodyClasses.has('is-busy'), 'busy state must clear when the command ends');
 assert.equal(panel.dr7Reload(), true);
 assert.equal(reloads, 1);
 panel.doa('GGXS');

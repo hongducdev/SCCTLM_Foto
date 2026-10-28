@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.3.4 — Giao diện dễ đọc, dễ dùng bằng bàn phím
+
+- **Focus bàn phím:** nhấn Tab hiện vòng focus xanh ở nút, ô nhập và ô chọn (trước đây không có viền nào). Chuột vẫn không hiện viền.
+- **Chữ:** mọi chữ nhỏ hơn 11px trong panel nay là 11px (badge 10px).
+- **Đang chạy lệnh:** khi lệnh Photoshop đang chạy, các nút mờ đi và không bấm được để tránh bấm đúp.
+- **Header:** nút Ủng hộ chuyển thành biểu tượng trái tim trên header; số phiên bản hiện trọn vẹn ở dòng phụ.
+- **Artboard, Watermark:** nút "Tạo artboard" và "Áp dụng watermark" dính ở đáy panel, luôn thấy khi cuộn.
+- **Chi tiết nhỏ:** thay ký tự ▶ và ↗ trong nút bằng icon; rút gọn tiêu đề và placeholder tab Watermark; "Trắng răng" viết thường chữ r.
+
 ## v0.3.3 — Thanh trượt gõ số, sao Hay dùng ở tab Artboard
 
 - **Thanh trượt:** bấm vào con số bên phải thanh trượt (Cỡ, Cứng, Độ sáng, độ mờ trong Mix màu) để gõ đúng giá trị; Enter áp dụng, Esc hủy, ↑/↓ chỉnh ±1 (Shift: ±10).

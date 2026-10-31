@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.5 — Artboard, Watermark gọn hơn khi mở
+
+- **Artboard:** mở panel chỉ thấy nhóm Hay dùng và Thiết lập; Album, YouTube, Tùy chỉnh thu gọn sẵn (tìm kiếm hoặc chọn chip lọc thì tự mở).
+- **Watermark:** các phần Nội dung chữ, Kiểu chữ, Khung, Logo, Preset đã lưu thu gọn sẵn; Mẫu gốc Xiaomi Leica vẫn mở.
+
 ## v0.3.4 — Giao diện dễ đọc, dễ dùng bằng bàn phím
 
 - **Focus bàn phím:** nhấn Tab hiện vòng focus xanh ở nút, ô nhập và ô chọn (trước đây không có viền nào). Chuột vẫn không hiện viền.

@@ -176,8 +176,8 @@
 					<button class="ef-wm-apply">Vẽ watermark mẫu gốc</button>
 				</section>
 				<div class="ef-mode-custom" hidden>
-					<section class="group ef-group">
-					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Nội dung chữ<button class="ef-reload" title="Đọc lại EXIF từ ảnh đang mở" aria-label="Đọc lại EXIF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button></div>
+					<section class="group ef-group is-collapsed">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="false"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Nội dung chữ<button class="ef-reload" title="Đọc lại EXIF từ ảnh đang mở" aria-label="Đọc lại EXIF"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button></div>
 					<label class="ef-field"><span>Tiền tố</span><input class="ef-prefix" type="text" spellcheck="false"></label>
 					<label class="ef-field"><span>Máy</span><input class="ef-model" type="text" spellcheck="false" placeholder="iPhone 15 Pro Max"></label>
 					<label class="ef-field"><span>Hãng</span><input class="ef-make" type="text" spellcheck="false" placeholder="Apple"></label>
@@ -193,8 +193,8 @@
 					<label class="ef-field"><span>Thông số</span><input class="ef-settings" type="text" spellcheck="false" placeholder="121mm f/2.8 1/40s ISO1250"></label>
 					<label class="ef-field"><span>Dòng thêm</span><input class="ef-extra" type="text" spellcheck="false" placeholder="Tác giả, địa điểm..."></label>
 				</section>
-				<section class="group ef-group">
-					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Kiểu chữ</div>
+				<section class="group ef-group is-collapsed">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="false"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Kiểu chữ</div>
 					<div class="ef-font-slot ef-custom-font-slot"><label class="ef-field ef-font-field"><span>Font</span><select class="ef-font"><option value="ArialMT">Arial</option></select></label></div>
 					<div class="ef-row">
 						<label class="ef-field"><span>Cỡ</span><input class="ef-size" type="number"><em>%</em></label>
@@ -210,8 +210,8 @@
 						<label class="ef-field"><span>Chữ phụ</span><input class="ef-muted" type="color"></label>
 					</div>
 				</section>
-				<section class="group ef-group">
-					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Khung</div>
+				<section class="group ef-group is-collapsed">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="false"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Khung</div>
 					<label class="ef-field"><span>Kiểu</span><select class="ef-style"><option value="bottom">Viền + dải chữ dưới</option><option value="polaroid">Polaroid (dải dưới dày)</option><option value="overlay">Chữ đè lên ảnh</option></select></label>
 					<div class="ef-row">
 						<label class="ef-field"><span>Viền</span><input class="ef-border" type="number" min="1" max="20"><em>%</em></label>
@@ -224,8 +224,8 @@
 						<button class="ef-eyedropper" title="Hút màu nền từ ảnh: bấm rồi bấm vào ảnh trong Photoshop" aria-label="Hút màu nền từ ảnh"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m2 22 1-1h3l9-9"/><path d="M3 21v-3l9-9"/><path d="m15 6 3.4-3.4a2.1 2.1 0 1 1 3 3L18 9l.4.4a2.1 2.1 0 1 1-3 3l-3.8-3.8a2.1 2.1 0 1 1 3-3l.4.4Z"/></svg></button>
 					</div>
 				</section>
-				<section class="group ef-group">
-					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Logo</div>
+				<section class="group ef-group is-collapsed">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="false"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Logo</div>
 					<label class="ef-field"><span>Logo hãng</span><select class="ef-logo-brand"><option value="">Chọn logo có sẵn…</option></select></label>
 					<label class="ef-field"><span>Vị trí</span><select class="ef-logo-pos"><option value="left">Bên trái chữ</option><option value="top">Phía trên chữ</option><option value="right">Mép phải</option><option value="split">Hai cột (logo + thông số bên phải)</option></select></label>
 					<div class="ef-logo-row">
@@ -234,8 +234,8 @@
 						<button class="ef-logo-clear" title="Bỏ logo" aria-label="Bỏ logo" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
 					</div>
 				</section>
-				<section class="group ef-group">
-					<div class="section-title" role="button" tabindex="0" aria-expanded="true"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Preset đã lưu</div>
+				<section class="group ef-group is-collapsed">
+					<div class="section-title" role="button" tabindex="0" aria-expanded="false"><svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>Preset đã lưu</div>
 					<label class="ef-field"><span>Kiểu mẫu</span><select class="ef-template-list"></select></label>
 					<label class="ef-field"><span>Đã lưu</span><select class="ef-preset-list"></select><button class="ef-preset-delete" title="Xoá mẫu đang chọn" aria-label="Xoá mẫu đang chọn" disabled><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 4.5h10M6.5 4.5V3h3v1.5M5 4.5l.5 8h5l.5-8"/></svg></button></label>
 					<div class="ef-field"><input class="ef-preset-name" type="text" maxlength="30" spellcheck="false" placeholder="Tên mẫu mới" aria-label="Tên mẫu mới"><button class="ef-preset-save">Lưu mẫu</button></div>

@@ -164,7 +164,9 @@
         title.className = 'section-title';
         title.setAttribute('role', 'button');
         title.tabIndex = 0;
-        title.setAttribute('aria-expanded', 'true');
+        var collapsed = section.id !== 'favorites' && state.filter === 'all' && !state.query;
+        group.classList.toggle('is-collapsed', collapsed);
+        title.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
         title.innerHTML = '<svg class="section-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5"/></svg>' +
             (section.id === 'favorites' ? '<svg class="ab-star" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1.8l1.9 4 4.3.5-3.2 3 .9 4.3L8 11.4l-3.9 2.2.9-4.3-3.200-3 4.300-.5z"/></svg>' : '');
         title.appendChild(document.createTextNode(section.title));

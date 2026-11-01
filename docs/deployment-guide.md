@@ -45,3 +45,7 @@ Mỗi bản phát hành:
 - Xoay khoá có kế hoạch: bản N nhúng cả `k1` và `k2` trong `js/release-keys.js`; từ bản N+1 trở đi ký bằng `k2` (`--key-id k2`).
 - Mất khoá riêng thì không phát hành tiếp qua nút cập nhật được (người dùng cài lại thủ công).
 - Người dùng còn ở **0.1.9 trở xuống không bao giờ được bảo vệ**: updater cũ vẫn lấy danh sách file từ GitHub API mà không kiểm chữ ký. Khuyến nghị mọi người lên 0.2.0.
+
+## Trang web giới thiệu (GitHub Pages)
+
+Trang tĩnh nằm trong `site/` (không thuộc file runtime của panel nên không đổi `release-manifest.json`). Workflow `.github/workflows/pages.yml` đẩy thư mục `site/` lên GitHub Pages mỗi khi `site/**` đổi trên `main`. Bật một lần: **Settings > Pages > Source = GitHub Actions**. Địa chỉ: `https://hongducdev.github.io/SCCTLM_Foto/`. Nút tải trên trang đọc bản mới nhất qua GitHub API nên không cần sửa trang khi phát hành.

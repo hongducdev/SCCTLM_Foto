@@ -75,5 +75,8 @@ Mã do **hongducdev** viết giữ bản quyền theo [`LICENSE`](LICENSE) (All 
 Nếu SCCTLM_Foto giúp ích cho công việc của bạn, hãy đồng hành cùng SCCTLM:
 
 <img src="img/support-qr.png" alt="Mã QR ủng hộ TPBank" width="220" />
+<img src="img/support-qr-techcombank.png" alt="Mã QR ủng hộ Techcombank" width="220" />
 
 **TPBank** · TRAN THI THUONG · `9897.6386.789`
+
+**Techcombank** · NGUYEN HONG DUC · `3886.0510.2002`

@@ -652,6 +652,7 @@ button:active {
     background: #fbf8f2;
     color: var(--background);
 }
+.support-qr + .support-qr { margin-top: 10px; }
 .support-qr-img { display: block; width: 148px; height: 148px; margin: 0 auto 4px; }
 .support-qr strong { display: block; font-size: 11px; line-height: 15px; }
 .support-qr span { display: block; color: var(--muted-foreground); font-size: 11px; line-height: 13px; user-select: text; }

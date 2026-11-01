@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.6 — Thêm QR Techcombank
+
+- **Ủng hộ:** tab Ủng hộ trong panel, trang web và README có thêm mã QR Techcombank bên cạnh TPBank.
+
 ## v0.3.5 — Artboard, Watermark gọn hơn khi mở
 
 - **Artboard:** mở panel chỉ thấy nhóm Hay dùng và Thiết lập; Album, YouTube, Tùy chỉnh thu gọn sẵn (tìm kiếm hoặc chọn chip lọc thì tự mở).

@@ -31,6 +31,7 @@
 .cp-chip.is-unsupported { opacity: .35; cursor: not-allowed; }
 .cp-chip.is-unsupported:hover { border-color: var(--border); background: inherit; color: inherit; }
 .cp-chip.is-mixed { border-color: var(--primary); color: #ffffff; }
+.cp-chip.is-active, .cp-chip.is-active:hover { border-color: var(--primary); background: var(--primary); color: #ffffff; }
 
 .cp-mix-toggle { margin-top: 8px; }
 .cp-mix[hidden] { display: none; }

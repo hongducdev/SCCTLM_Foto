@@ -26,3 +26,13 @@ assert.ok(validator.test('fuji/001:60,dazz/003:40'), 'valid mix accepted');
     assert.ok(!validator.test(bad), 'rejected: ' + bad);
 });
 console.log('color presets: OK (' + total + ' colours)');
+
+const mixJsx = fs.readFileSync(path.join(root, 'jsx/color-mix.jsx'), 'utf8');
+assert.match(mixJsx, /items\.length === 1 && items\[0\]\.opacity === 100/, 'single 100% colour replaces the previous one');
+assert.ok(mixJsx.indexOf('removePreviousSingle(app.activeDocument)') < mixJsx.indexOf('applyOne(items[i].id)'), 'old colour removed before the new one is stamped');
+console.log('color presets: single-colour replace OK');
+
+const presetsJs = fs.readFileSync(path.join(root, 'js/color-presets.js'), 'utf8');
+assert.match(presetsJs, /toggle\('is-active', applied\.indexOf\(id\) >= 0\)/, 'applied colours get is-active');
+assert.match(presetsJs, /res === 'SCCTLM_OK'\) setApplied\(\[item\.id\]\)/, 'single click marks active only after success');
+console.log('color presets: applied state OK');

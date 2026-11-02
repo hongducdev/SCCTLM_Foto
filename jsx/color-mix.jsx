@@ -90,9 +90,35 @@
         return group;
     }
 
+    function findLayerById(container, id) {
+        for (var i = 0; i < container.layers.length; i++) {
+            var layer = container.layers[i];
+            if (layer.id === id) return layer;
+            if (layer.typename === 'LayerSet') {
+                var inner = findLayerById(layer, id);
+                if (inner) return inner;
+            }
+        }
+        return null;
+    }
+
+    // A single colour at 100% (the plain click, Mix off) replaces the previous single colour instead of
+    // stacking; the old layer must go first so the new look is rendered from the original picture.
+    var lastSingle = null;
+
+    function removePreviousSingle(doc) {
+        if (!lastSingle || lastSingle.doc !== doc.id) return;
+        var old = findLayerById(doc, lastSingle.layer);
+        lastSingle = null;
+        if (!old) return;
+        try { old.remove(); } catch (e) { $.writeln('SCCTLM_Foto: previous colour layer removal failed: ' + e); }
+    }
+
     function applyColorMix(spec) {
         if (typeof $.scctlmFotoApplyPresetXMP !== 'function' || typeof $.scctlmFotoStampVisible !== 'function' || typeof $.scctlmFotoToSmartObject !== 'function') throw new Error('Missing command: preset engine');
         var items = parse(spec), made = [];
+        var single = items.length === 1 && items[0].opacity === 100;
+        if (single) removePreviousSingle(app.activeDocument);
         try {
             for (var i = 0; i < items.length; i++) {
                 for (var h = 0; h < made.length; h++) made[h].visible = false;
@@ -106,6 +132,7 @@
             throw error;
         }
         for (var v = 0; v < made.length; v++) made[v].visible = true;
+        if (single) lastSingle = { doc: app.activeDocument.id, layer: made[0].id };
         return 'SCCTLM_OK';
     }
 

@@ -16,6 +16,7 @@
     var root, groupGrid, list, mixSwitch, basketBox, basketRows, applyButton;
     var activeGroup = null;
     var basket = [];                                    // [{id, name, opacity}]
+    var applied = [];                                   // ids of the colours already applied in Photoshop
 
     function el(tag, className, text) {
         var node = document.createElement(tag);
@@ -35,8 +36,22 @@
         return -1;
     }
 
+    function setApplied(ids) {
+        applied = ids;
+        markChips();
+    }
+
     function applyNow(item) {
-        window.scctlmFotoApplyColorMix(item.id + ':100');
+        window.scctlmFotoApplyColorMix(item.id + ':100', function (res) {
+            if (res === 'SCCTLM_OK') setApplied([item.id]);
+        });
+    }
+
+    function applyBasket() {
+        var ids = basket.map(function (item) { return item.id; });
+        window.scctlmFotoApplyColorMix(spec(), function (res) {
+            if (res === 'SCCTLM_OK') setApplied(ids);
+        });
     }
 
     function onChipClick(item) {
@@ -51,7 +66,9 @@
     function markChips() {
         var chips = list.querySelectorAll('.cp-chip');
         for (var i = 0; i < chips.length; i++) {
-            chips[i].classList.toggle('is-mixed', indexInBasket(chips[i].getAttribute('data-id')) >= 0);
+            var id = chips[i].getAttribute('data-id');
+            chips[i].classList.toggle('is-mixed', indexInBasket(id) >= 0);
+            chips[i].classList.toggle('is-active', applied.indexOf(id) >= 0);
         }
     }
 
@@ -169,7 +186,7 @@
         basketBox.appendChild(el('p', 'cp-mix-hint', 'Chọn tối đa ' + MAX_MIX + ' màu, kéo độ mờ từng layer. Màu sau nằm trên màu trước.'));
         basketBox.appendChild(basketRows);
         applyButton = el('button', 'cp-mix-apply', 'Áp dụng Mix');
-        applyButton.onclick = function () { if (basket.length) window.scctlmFotoApplyColorMix(spec()); };
+        applyButton.onclick = function () { if (basket.length) applyBasket(); };
         basketBox.appendChild(applyButton);
         root.appendChild(basketBox);
     }

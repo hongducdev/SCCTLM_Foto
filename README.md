@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="img/icon-large.png" alt="SCCTLM_Foto" width="96" />
+<img src="site/assets/logo.svg" alt="SCCTLM_Foto" width="96" />
 
 # 🎨 SCCTLM_Foto
 
@@ -17,9 +17,9 @@
 
 <div align="center">
 
-<img src="img/readme-thumbnail.png" alt="SCCTLM_Foto — panel retouch cho Photoshop" width="720" />
+<img src="site/assets/readme-thumbnail.png" alt="SCCTLM_Foto — panel retouch cho Photoshop" width="720" />
 
-<img src="img/readme-toi-uu-anh.png" alt="Tối ưu ảnh Photoshop với SCCTLM_Foto" width="720" />
+<img src="site/assets/readme-toi-uu-anh.png" alt="Tối ưu ảnh Photoshop với SCCTLM_Foto" width="720" />
 
 ### 🎬 Video giới thiệu
 

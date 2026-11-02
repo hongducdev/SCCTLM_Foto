@@ -92,3 +92,14 @@ Nếu SCCTLM_Foto giúp ích cho công việc của bạn, hãy đồng hành c�
 **TPBank** · TRAN THI THUONG · `9897.6386.789`
 
 **Techcombank** · NGUYEN HONG DUC · `3886.0510.2002`
+
+### 🙏 Cảm ơn người đã ủng hộ
+
+<table>
+  <tr>
+    <td align="center" width="140">
+      <a href="https://www.facebook.com/NguyenThanhLam.02"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Nguyễn Thành Lâm" width="72" height="72" /></a><br />
+      <a href="https://www.facebook.com/NguyenThanhLam.02"><sub><b>Nguyễn Thành Lâm</b></sub></a>
+    </td>
+  </tr>
+</table>

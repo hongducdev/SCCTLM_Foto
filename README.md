@@ -103,5 +103,9 @@ Nếu SCCTLM_Foto giúp ích cho công việc của bạn, hãy đồng hành c�
       <a href="https://www.facebook.com/NguyenThanhLam.02"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Nguyễn Thành Lâm" width="72" height="72" /></a><br />
       <a href="https://www.facebook.com/NguyenThanhLam.02"><sub><b>Nguyễn Thành Lâm</b></sub></a>
     </td>
+    <td align="center" width="140">
+      <a href="https://www.facebook.com/long.truong.7712"><img src="site/assets/supporters/long-truong.jpg" alt="Long Trương" width="72" height="72" /></a><br />
+      <a href="https://www.facebook.com/long.truong.7712"><sub><b>Long Trương</b></sub></a>
+    </td>
   </tr>
 </table>

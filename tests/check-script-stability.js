@@ -165,9 +165,12 @@ for (const [index,name] of ['Grain','Weave','Coarse','Lines','Dots','Blossom','L
 assert.equal(offset,pat.length,'PAT records must consume the complete file');
 // Exercise actual bridge-generated code; the transport is replaced, not the handler.
 const calls = [], alerts = [];
+// Two buttons with similar handlers: the label lookup must match the whole handler text, not a prefix or a substring.
+const button = (onclick, label) => ({ getAttribute: () => onclick, querySelector: () => ({ textContent: label }) });
+const buttons = [button("doa('GGXS2')", 'Sai nút'), button("onClickButton('GGXS')", 'Sai loại'), button("doa('GGXS')", 'Highlight')];
 const bodyClasses = new Set();
 const panel = { JSON, alert: message => alerts.push(message), SystemPath: { EXTENSION: 0 },
-    document: { querySelector: () => null, body: { classList: { add: c => bodyClasses.add(c), remove: c => bodyClasses.delete(c) } } } };
+    document: { querySelectorAll: () => buttons, body: { classList: { add: c => bodyClasses.add(c), remove: c => bodyClasses.delete(c) } } } };
 panel.window = panel;
 let reloads = 0;
 panel.location = { reload: () => { reloads++; } };
@@ -215,6 +218,8 @@ assert.equal(ran, 1, 'a non-RGB image must not reach the command');
 calls[1].callback(blocked);
 const shownBlocked = alerts[alerts.length - 1];
 assert.match(shownBlocked, /CMYK/);
+assert.match(shownBlocked, /«Highlight»/, 'the message names the button the user pressed, matched by its exact handler');
+assert.doesNotMatch(shownBlocked, /Sai/, 'a similar handler must not be picked');
 assert.match(shownBlocked, /Image > Mode > RGB Color/);
 assert.doesNotMatch(shownBlocked, /SCCTLM_|Line:|File:/, 'no code in the message shown to the user');
 calls[1].callback(result);

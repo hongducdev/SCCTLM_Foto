@@ -29,8 +29,14 @@
     window.scctlmFotoErrorLine = errorLine;
     // Tên nút người dùng thấy (từ index.html) cho lệnh doa/ext; rỗng nếu không phải nút trên panel
     function buttonLabel(kind, name) {
-        var button = document.querySelector('button[onclick*="' + (kind === 'doa' ? 'doa' : 'onClickButton') + "('" + name + "')\"] span");
-        return button ? button.textContent : '';
+        var wanted = (kind === 'doa' ? 'doa' : 'onClickButton') + "('" + name + "')";
+        var buttons = document.querySelectorAll('button[onclick]');
+        for (var i = 0; i < buttons.length; i += 1) {
+            if (buttons[i].getAttribute('onclick') !== wanted) continue;
+            var label = buttons[i].querySelector('span');
+            return label ? label.textContent : '';
+        }
+        return '';
     }
     function ask(title, message, confirmText, cancelText) {
         if (window.scctlmFotoDialog) return window.scctlmFotoDialog({ title: title, message: message, confirmText: confirmText, cancelText: cancelText });

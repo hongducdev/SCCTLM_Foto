@@ -9,7 +9,7 @@ const vm = require('node:vm');
 const calls = [], alerts = [];
 const panel = {
     JSON, alert: (message) => alerts.push(message), SystemPath: { EXTENSION: 0 },
-    document: { querySelector: () => null, body: { classList: { add() {}, remove() {} } } },
+    document: { querySelectorAll: () => [], body: { classList: { add() {}, remove() {} } } },
     location: { reload() {} }
 };
 panel.window = panel;

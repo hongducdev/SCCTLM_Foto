@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.9 — Màu & Preset: trạng thái active và thay lớp màu
+
+- **Trạng thái active:** preset vừa áp được đánh dấu trong danh sách Màu & Preset, cho cả chế độ thường và Mix màu; trạng thái "đang chọn" trong Mix vẫn là viền xanh, "đã áp" là nền xanh đậm.
+- **Thay màu khi tắt Mix:** áp preset khác thay lớp màu đơn trước đó thay vì chồng thêm lớp mới.
+- **Nút Áp dụng Mix:** nằm gọn trong khung nhóm (sửa khai báo `float: none` thiếu dấu `;` trong `style.css`), không còn đổi sang nền nâu, chữ xanh khi rê chuột.
+
 ## v0.3.8 — Biểu tượng panel SCCTLM
 
 - **Biểu tượng panel:** biểu tượng của panel trong Photoshop (`img/icon-large.png`) đổi từ chữ "h" của plugin gốc sang logo SCCTLM. Cần tắt hẳn rồi mở lại Photoshop để thấy.

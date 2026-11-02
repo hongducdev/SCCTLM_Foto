@@ -27,7 +27,7 @@
         cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.read():"SCCTLM_MISSING"', function (res) {
             if (res === 'SCCTLM_NO_DOCUMENT') { status('Hãy mở ảnh trong Photoshop trước.', true); done(null); return; }
             var size = SIZE_LINE.exec(String(res));
-            if (!size) { status('Không đọc được ảnh: ' + res, true); done(null); return; }
+            if (!size) { status(window.scctlmFotoErrorLine(res, { source: 'command', label: 'Đọc thông tin ảnh' }), true); done(null); return; }
             state.doc = { w: parseInt(size[1], 10), h: parseInt(size[2], 10) };
             done({ w: state.doc.w, h: state.doc.h, tags: fields.parseTags(String(res).slice(size[0].length)) });
         });

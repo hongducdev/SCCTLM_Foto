@@ -98,6 +98,7 @@ if ($.scctlmFotoLoading !== true) {
     try {
         $._ext_BPP.run();
     } catch (e) {
-        alert('Kh\u00f4ng \u0111\u1eb7t \u0111\u01b0\u1ee3c Pen Pressure cho c\u1ecd:\n' + e);
+        $.writeln('SCCTLM_Foto: pen pressure failed: ' + e);
+        alert('Kh\u00f4ng \u0111\u1eb7t \u0111\u01b0\u1ee3c Pen Pressure cho c\u1ecd.\nH\u00e3y ch\u1ecdn c\u00f4ng c\u1ee5 Brush trong Photoshop r\u1ed3i th\u1eed l\u1ea1i. N\u1ebfu v\u1eabn l\u1ed7i, m\u1edf Ch\u1ea9n \u0111o\u00e1n \u1edf cu\u1ed1i panel v\u00e0 g\u1eedi b\u00e1o c\u00e1o.');
     }
 }

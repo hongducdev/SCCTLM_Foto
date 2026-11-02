@@ -54,7 +54,7 @@
             storage.setItem(KEY, JSON.stringify(presets));
             return { ok: true };
         } catch (e) {
-            return { ok: false, error: 'Không lưu được mẫu: ' + e };
+            return { ok: false, error: 'Không lưu được mẫu vì bộ nhớ của panel đã đầy hoặc bị chặn. Hãy xoá bớt mẫu cũ rồi lưu lại.' };
         }
     }
 

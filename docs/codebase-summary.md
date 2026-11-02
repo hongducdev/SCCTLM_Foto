@@ -12,6 +12,7 @@ SCCTLM_Foto/
 │   ├── layout.css               # Bố cục, tab, nút viên thuốc, nhóm thu gọn
 │   ├── button-icons.css         # Icon nút (SVG mask)
 │   ├── color-presets.css        # Bộ màu MHK và Mix màu
+│   ├── diagnostics.css          # Liên kết "Chẩn đoán" ở chân panel
 │   ├── focus-ring.css          # Vòng focus bàn phím, trạng thái bận (nạp cuối)
 │   ├── artboard.css             # Tab Artboard
 │   ├── exif-frame.css           # Tab Watermark
@@ -19,6 +20,10 @@ SCCTLM_Foto/
 ├── js/
 │   ├── CSInterface.js           # Thư viện giao tiếp Adobe CEP
 │   ├── panel.js                 # Cầu nối Panel ↔ Photoshop, header Nạp lại/Cập nhật, nút .xmp
+│   ├── color-mode-guard.js      # Tiền kiểm chế độ màu: lệnh nào cần RGB, mã ExtendScript chạy trước lệnh
+│   ├── error-messages.js        # Cổng duy nhất biến lỗi thô thành câu tiếng Việt kèm việc cần làm; giữ chuỗi thô cho Chẩn đoán
+│   ├── diagnostics-report.js    # Dựng báo cáo Chẩn đoán (ẩn tên người dùng) và đọc trạng thái lõi từ ExtendScript
+│   ├── diagnostics-controls.js  # Nút Chẩn đoán: hộp thoại báo cáo, Sao chép
 │   ├── github-updater.js        # Kiểm tra & cài GitHub Release (cep.fs, không cần Node)
 │   ├── update-staging-journal.js # Thư mục tạm + journal + tự phục hồi khi cập nhật bị đứt
 │   ├── release-manifest-verifier.js # Kiểm chữ ký Ed25519 của release-manifest.json, băm SHA-512
@@ -58,7 +63,7 @@ SCCTLM_Foto/
 │   └── rim-color-controls.js    # Rim Light: màu, hex, hút màu, Độ sáng; ẩn khi ảnh không có Rim Light
 ├── jsx/
 │   ├── 4.jsxbin                 # Hộp thoại Chữ / Logo (WM, không còn nút trên panel)
-│   ├── main.jsx                 # cTID/sTID, $.scctlmFotoSkinStep (1 bước undo, chỉ RGB) và bảng lệnh Da ($.scctlmFotoBuildSkinCommands)
+│   ├── main.jsx                 # cTID/sTID, $.scctlmFotoSkinStep (1 bước undo, chỉ RGB; ảnh khác RGB ném `SCCTLM_NOT_RGB` để panel báo, không dùng `alert`) và bảng lệnh Da ($.scctlmFotoBuildSkinCommands)
 │   ├── skin-*.jsx               # Mỗi lệnh Da một file: GGXS (highlight), TJSH (blusher), JMXS (mascara), TJYY (eyeshadow), FSJH (giảm đỏ), MBPF (trắng da), ZCZQ (môi), DKACR (Camera Raw); tự đăng ký vào $.scctlmFotoSkinFns
 │   ├── mhk-replacements.jsx     # Hạt phim, Hào Quang, Hạt thô, Chấm, Chi tiết
 │   ├── Photoshop.jsx            # Tiện ích Crash Bug Fix (chạy khi mở panel)

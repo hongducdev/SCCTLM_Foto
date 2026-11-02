@@ -77,7 +77,10 @@ $._ext_DB = {
             // A failed brush preset is reported, not thrown, so the layers built above stay in History
             if (o.brush) {
                 try { L.applyBrush(self.BRUSH); }
-                catch (e) { alert($._ext_DB_DIALOG.OPTIONS[3].label + ':\n' + e, $._ext_DB_DIALOG.TITLE); }
+                catch (e) {
+                    $.writeln('SCCTLM_Foto: dodge-burn brush failed: ' + e);
+                    alert('Kh\u00f4ng \u0111\u1eb7t \u0111\u01b0\u1ee3c c\u1ecd g\u1ee3i \u00fd.\nC\u00e1c l\u1edbp \u0111\u00e3 t\u1ea1o v\u1eabn gi\u1eef nguy\u00ean. H\u00e3y ch\u1ecdn c\u00f4ng c\u1ee5 Brush r\u1ed3i \u0111\u1eb7t c\u1ecd th\u1ee7 c\u00f4ng. N\u1ebfu l\u1eb7p l\u1ea1i, m\u1edf Ch\u1ea9n \u0111o\u00e1n \u1edf cu\u1ed1i panel v\u00e0 g\u1eedi b\u00e1o c\u00e1o.', $._ext_DB_DIALOG.TITLE);
+                }
             }
         }
         if (o.view) {

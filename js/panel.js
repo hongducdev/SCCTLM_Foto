@@ -14,6 +14,24 @@
         alert(title + '\n' + message);
         return Promise.resolve(true);
     }
+    // Mọi lỗi hiện cho người dùng đi qua js/error-messages.js: câu tiếng Việt kèm việc cần làm, không bao giờ là mã hay chuỗi thô
+    // Nếu error-messages.js không nạp được (cài thiếu file, cập nhật dở) vẫn phải có câu rõ ràng, không được ném TypeError
+    var MISSING_HELPER = 'Một số file của plugin không nạp được nên chưa hiện được chi tiết lỗi. Hãy cài lại bằng install\\Cai-dat-SCCTLM_Foto.bat.';
+    function reportError(raw, ctx) {
+        if (!window.scctlmFotoErrors) return notify('Plugin chưa khởi động đủ', MISSING_HELPER);
+        var result = window.scctlmFotoErrors.explain(raw, ctx);
+        return notify(result.title, result.message + '\n\n' + result.action);
+    }
+    function errorLine(raw, ctx) {
+        return window.scctlmFotoErrors ? window.scctlmFotoErrors.line(raw, ctx) : MISSING_HELPER;
+    }
+    window.scctlmFotoReportError = reportError;
+    window.scctlmFotoErrorLine = errorLine;
+    // Tên nút người dùng thấy (từ index.html) cho lệnh doa/ext; rỗng nếu không phải nút trên panel
+    function buttonLabel(kind, name) {
+        var button = document.querySelector('button[onclick*="' + (kind === 'doa' ? 'doa' : 'onClickButton') + "('" + name + "')\"] span");
+        return button ? button.textContent : '';
+    }
     function ask(title, message, confirmText, cancelText) {
         if (window.scctlmFotoDialog) return window.scctlmFotoDialog({ title: title, message: message, confirmText: confirmText, cancelText: cancelText });
         return Promise.resolve(window.confirm(title + '\n\n' + message));
@@ -25,7 +43,7 @@
             if (window.scctlmFotoSyncDevSource) window.scctlmFotoSyncDevSource(base);
         } catch (e) {
             // Nạp lại sau khi người dùng đọc xong thông báo, không thì trang tải lại và hộp thoại biến mất
-            notify('Không đồng bộ được code', 'Không đồng bộ được code từ thư mục nguồn:\n' + e.message).then(function () {
+            reportError(e, { source: 'update' }).then(function () {
                 window.location.reload(true);
             });
             return true;
@@ -81,9 +99,10 @@
         var code = '(function(){var d=app.displayDialogs,u=app.preferences.rulerUnits;' +
             'try{' + (kind !== 'shortcut' && kind !== 'ensure' && kind !== 'artboard' && !/^(WM|BPP|BPPRESET|BUGFIX)$/.test(name) ?
                 'if(!app.documents.length)return "SCCTLM_NO_DOCUMENT";' : '') +
+            (window.scctlmFotoColorMode && window.scctlmFotoColorMode.needsRgb(kind, name) ? window.scctlmFotoColorMode.preflightCode(kind, name) : '') +
             'if(typeof ' + target + '!=="function")throw new Error("Missing command: ' + label + '");' +
             'var r=' + target + '(' + args + ');return r==="SCCTLM_EXISTS"?r:"SCCTLM_OK";}catch(e){if(e.number===8007)return "SCCTLM_CANCEL";' +
-            'return "SCCTLM_ERROR: "+e+"\\nFile: "+e.fileName+"\\nLine: "+e.line;}' +
+            'return "SCCTLM_ERROR#"+e.number+": "+e+"\\nFile: "+e.fileName+"\\nLine: "+e.line;}' +
             'finally{app.displayDialogs=d;app.preferences.rulerUnits=u;}}())';
         try {
             cs.evalScript(code, function (res) {
@@ -92,14 +111,14 @@
                 if (res === 'SCCTLM_NO_DOCUMENT') {
                     notify('Chưa mở ảnh', 'Hãy mở ảnh trong Photoshop trước khi chạy lệnh.');
                 } else if (res !== 'SCCTLM_OK' && res !== 'SCCTLM_CANCEL' && res !== 'SCCTLM_EXISTS') {
-                    notify('Photoshop — ' + label, res);
+                    reportError(res, { source: 'command', label: buttonLabel(kind, name) });
                 }
                 if (done) done(res);
             });
         } catch (e) {
             busy = false;
             document.body.classList.remove('is-busy');
-            notify('Không kết nối được Photoshop', String(e));
+            reportError(e, { source: 'cep' });
             if (done) done('SCCTLM_ERROR');
         }
     }
@@ -216,7 +235,7 @@
             if (next === 'reload') window.scctlmFotoReload();
         }, function (error) {
             finish();
-            status('Cập nhật thất bại: ' + (error && error.message || error), true);
+            status(errorLine(error, { source: 'update' }), true);
         });
     };
 
@@ -263,16 +282,16 @@
         // Finish an update that was cut short, before the core loads, so ExtendScript never sees half of two versions.
         var recovered = { status: 'none' };
         try { if (window.scctlmFotoStaging) recovered = window.scctlmFotoStaging.recover(base); }
-        catch (error) { recovered = { status: 'failed', message: 'Không kiểm tra được cập nhật dở dang: ' + error.message }; }
+        catch (error) { recovered = { status: 'failed', message: error }; }
         if (recovered.reload) { window.location.reload(); return; }   // the journal is gone now, so this reloads once
-        if (recovered.message) status(recovered.message, true);
+        if (recovered.message) status(errorLine(recovered.message, { source: 'update' }), true);
         cs.evalScript('try{$.scctlmFotoBase = ' + JSON.stringify(base) + '; var f=new File($.scctlmFotoBase + "/loader.jsx");' +
             'if(!f.exists){"SCCTLM_ERROR: thiếu file loader.jsx trong thư mục panel. Hãy cài lại bằng install/Cai-dat-SCCTLM_Foto.bat";}' +
             'else{$.evalFile(f);$.scctlmFotoReady ? "SCCTLM_READY" : $.scctlmFotoLoadErrors.join("\\n");}}' +
             'catch(e){"SCCTLM_ERROR: "+e+" ("+(f ? f.error : "")+") line "+e.line;}', function (res) {
             ready = res === 'SCCTLM_READY';
             if (!ready) {
-                notify('SCCTLM_Foto: không nạp được lõi ExtendScript', res + '\n\nThư mục panel:\n' + base);
+                reportError(res, { source: 'load' });
                 return;
             }
             // ScriptUI dialogs opened from a CEP panel (Làm Da, Hàng loạt, Tuỳ chỉnh, Chữ/Logo)

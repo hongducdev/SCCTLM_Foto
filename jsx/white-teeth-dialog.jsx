@@ -54,7 +54,8 @@ $._ext_WT_DIALOG = {
         try {
             this.applyBrush();
         } catch (e) {
-            alert(this.BRUSH_LABEL + ':\n' + e, this.TITLE);
+            $.writeln('SCCTLM_Foto: white-teeth brush failed: ' + e);
+            alert('Kh\u00f4ng \u0111\u1eb7t \u0111\u01b0\u1ee3c c\u1ecd theo th\u00f4ng s\u1ed1 khuy\u1ebfn ngh\u1ecb.\nC\u00e1c l\u1edbp l\u00e0m tr\u1eafng r\u0103ng \u0111\u00e3 t\u1ea1o xong. H\u00e3y ch\u1ecdn c\u00f4ng c\u1ee5 Brush r\u1ed3i \u0111\u1eb7t c\u1ecd th\u1ee7 c\u00f4ng. N\u1ebfu l\u1eb7p l\u1ea1i, m\u1edf Ch\u1ea9n \u0111o\u00e1n \u1edf cu\u1ed1i panel v\u00e0 g\u1eedi b\u00e1o c\u00e1o.', this.TITLE);
         }
     },
 

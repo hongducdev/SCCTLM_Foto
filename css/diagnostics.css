@@ -1,0 +1,17 @@
+.panel-footer { display: flex; justify-content: center; padding: 8px 0 12px; }
+.panel .panel-footer .diagnostics-link {
+    display: block;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    margin: 0;
+    padding: 0 8px;
+    border: 0;
+    background: none;
+    color: var(--muted-foreground);
+    font: 11px/16px "Segoe UI", Tahoma, sans-serif;
+    white-space: nowrap;
+    cursor: pointer;
+}
+.panel .panel-footer .diagnostics-link:hover { background: none; color: var(--foreground); text-decoration: underline; }
+.scctlm-foto-dialog-box p { user-select: text; }

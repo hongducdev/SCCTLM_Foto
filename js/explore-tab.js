@@ -67,7 +67,7 @@
         if (videos.length) return; // đang hiện bản lưu, giữ nguyên
         var state = $('.explore-state');
         state.hidden = false;
-        state.textContent = 'Không tải được danh sách (' + error.message + '). ';
+        state.textContent = window.scctlmFotoErrorLine(error, { source: 'explore' }) + ' ';
         var retry = el('button', 'explore-link', 'Thử lại');
         retry.onclick = refresh;
         state.appendChild(retry);

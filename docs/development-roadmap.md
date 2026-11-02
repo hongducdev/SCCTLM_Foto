@@ -23,9 +23,10 @@ Chưa có tín hiệu nào xảy ra thì không viết mã UXP (YAGNI).
 
 ### Kiểm tra khi Photoshop ra bản lớn
 
-Mỗi lần có bản Photoshop mới: mở panel, đọc `$.scctlmFotoLoadErrors` (phải rỗng) và `$.scctlmFotoLoadTotalMs`,
+Mỗi lần có bản Photoshop mới: mở panel, bấm **Chẩn đoán** ở cuối panel, lấy dòng "Lỗi khi nạp lõi" (phải là
+"không có") và "Thời gian nạp lõi" (cùng nguồn với `$.scctlmFotoLoadErrors` và `$.scctlmFotoLoadTotalMs`),
 ghi kết quả vào bảng dưới.
 
 | Ngày | Photoshop | `$.scctlmFotoLoadErrors` | `$.scctlmFotoLoadTotalMs` | Ghi chú |
 |---|---|---|---|---|
-| — | — | — | — | Chưa có bản ghi |
+| 2026-11-03 | 23.2.0 (Windows 10 64-bit) | không có | 125 ms | Đọc từ nút Chẩn đoán; chậm nhất `4.jsxbin` 67 ms |

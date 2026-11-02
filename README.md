@@ -72,7 +72,8 @@ Photoshop CC 2015 trở lên · Windows 10/11 (64-bit) hoặc macOS 10.13+ · �
 | Triệu chứng | Cách xử lý |
 |---|---|
 | Panel không có trong **Window > Extensions** | Nhấp đúp `install\Fix-CEP-SCCTLM_Foto.reg`, khởi động lại Photoshop. |
-| Bấm nút không có gì xảy ra | Mở ảnh và chuyển sang `Image > Mode > RGB Color`. |
+| Panel báo *"Ảnh chưa ở chế độ màu RGB"* | Vào `Image > Mode > RGB Color` rồi bấm lại. |
+| Panel báo lỗi nhưng chưa rõ cách xử lý, hoặc plugin không khởi động | Bấm **Chẩn đoán** ở cuối panel → **Sao chép báo cáo** rồi gửi cho SCCTLM. Báo cáo không chứa tên người dùng Windows hay ảnh của bạn. |
 | Không thấy màu Rim Light | Bấm **Tạo Rim Light** trên ảnh đang mở; phần màu chỉ hiện khi có nhóm `Rim Light` > lớp `Color`. |
 | Gán phím F2–F4 bị Photoshop hỏi *"Remove the conflicting action shortcuts?"* | Chọn **No** để phím chạy Action. |
 

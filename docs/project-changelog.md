@@ -1,5 +1,12 @@
 # Changelog
 
+## Chưa phát hành — Báo lỗi dễ hiểu, kiểm tra chế độ màu, nút Chẩn đoán
+
+- **Lỗi bằng tiếng Việt, không phải đoạn mã:** mọi lỗi hiện cho người dùng (lệnh Photoshop, nạp lõi, cập nhật, mạng, đo/gỡ watermark, tải Khám phá, đặt cọ) đi qua `js/error-messages.js` và hiện thành câu kèm việc cần làm. Chuỗi thô (`SCCTLM_ERROR`, `File:`, `Line:`…) không còn hiện ra. `tests/check-no-raw-errors.js` quét `js/` và `jsx/` để chặn lỗi quay lại.
+- **Ảnh không phải RGB:** các lệnh Da (Son môi, Highlight, Lông mi, Phủ phấn, Bóng mắt, Trắng da, Giảm đỏ) và nhóm Làm da/Trắng răng/Tẩy lông/Đánh khối/Tùy chỉnh/Hàng loạt/Làm mịn/Màu tổng/Màu da/Làm nét báo ngay "Ảnh đang ở chế độ màu X…, vào Image > Mode > RGB Color" trong panel thay vì hộp thoại Photoshop chặn script. Danh sách lệnh cần RGB nằm ở `js/color-mode-guard.js`; Hạt phim, Hào quang, Hạt thô, Chấm tự từ chối ảnh không phải RGB (đã chạy thử trên ảnh Gray/CMYK/Lab, không để lại layer dở) và cũng ra cùng kiểu thông báo.
+- **Nút Chẩn đoán** ở chân panel: hiện phiên bản panel, Photoshop, hệ điều hành, trạng thái và thời gian nạp lõi, lỗi khi nạp và chi tiết kỹ thuật các lỗi gần đây; nút **Sao chép báo cáo**. Báo cáo ẩn tên người dùng trong đường dẫn và dùng được cả khi lõi không nạp.
+- **Hộp thoại trong Photoshop:** lỗi đặt cọ ở Pen Pressure, Đánh khối và Trắng răng không còn hiện chuỗi lỗi thô của ExtendScript.
+
 ## v0.3.10 — Chữ/LOGO hàng loạt: thêm nút Đóng
 
 - **Hộp thoại Thêm chữ/LOGO hàng loạt:** thêm nút **Đóng**; phím Esc cũng đóng hộp thoại. Đóng không chạy xử lý hàng loạt và không lưu thiết lập.

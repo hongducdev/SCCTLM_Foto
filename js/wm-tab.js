@@ -83,7 +83,7 @@
         cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.read():"SCCTLM_MISSING"', function (res) {
             if (res === 'SCCTLM_NO_DOCUMENT') { status('Hãy mở ảnh trong Photoshop trước.', true); done(null); return; }
             var size = SIZE_LINE.exec(String(res));
-            if (!size) { status('Không đọc được ảnh: ' + res, true); done(null); return; }
+            if (!size) { status(window.scctlmFotoErrorLine(res, { source: 'command', label: 'Đọc thông tin ảnh' }), true); done(null); return; }
             done({ w: parseInt(size[1], 10), h: parseInt(size[2], 10), tags: fields.parseTags(String(res).slice(size[0].length)) });
         });
     }
@@ -205,7 +205,7 @@
                 if (!confirmed) { done(false); return; }
                 cs.evalScript('$._ext_WMDRAW.remove()', function (removed) {
                     if (removed === 'SCCTLM_OK') { done(true); return; }
-                    status('Không gỡ được watermark cũ: ' + removed, true);
+                    status(window.scctlmFotoErrorLine(removed, { source: 'command', label: 'Gỡ watermark cũ' }), true);
                     done(false);
                 });
             });
@@ -222,7 +222,7 @@
                 cs.evalScript('$._ext_WMMEASURE.measure(' + JSON.stringify(requests) + ')', function (res) {
                     var widths;
                     try { widths = JSON.parse(res); } catch (e) { widths = null; }
-                    if (!Array.isArray(widths) || widths.length !== requests.length) { status('Không đo được chữ: ' + res, true); finish(); return; }
+                    if (!Array.isArray(widths) || widths.length !== requests.length) { status(window.scctlmFotoErrorLine(res, { source: 'command', label: 'Đo chữ cho watermark' }), true); finish(); return; }
                     state.doc = doc;
                     draw(template, doc, font, map, widths, missing);
                 });

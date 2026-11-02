@@ -98,8 +98,9 @@ assert.throws(() => skinHost.$.scctlmFotoSkinStep('SCCTLM_Foto test', () => { th
     'a failure must reach the panel bridge');
 assert.equal(skinHost.$.scctlmFotoSkinStepBody, null, 'the step body must not leak after a failure');
 skinDoc.mode = 'CMYK';
-skinHost.$.scctlmFotoSkinStep('SCCTLM_Foto test', () => { skinRan++; })();
-assert.deepEqual([skinRan, skinNotices.length], [1, 1], 'non-RGB must explain and not run');
+assert.throws(() => skinHost.$.scctlmFotoSkinStep('SCCTLM_Foto test', () => { skinRan++; })(), /SCCTLM_NOT_RGB:CMYK/,
+    'non-RGB must not run and must hand the panel a mode it can explain');
+assert.deepEqual([skinRan, skinNotices.length], [1, 0], 'non-RGB must not open a native alert (it blocks the script)');
 assert.match(read('jsx/tone-group.jsx'),/\$\._ext_BTNPFSD2\s*=\s*\{[\s\S]*suspendHistory/, 'Mau tong registers BTNPFSD2 and runs as one history step');
 // Every skin command lives in its own skin-*.jsx and registers itself; the table is built from that registry.
 const skinNames = ['DKACR', 'FSJH', 'GGXS', 'JMXS', 'MBPF', 'TJSH', 'TJYY', 'ZCZQ'];
@@ -166,7 +167,7 @@ assert.equal(offset,pat.length,'PAT records must consume the complete file');
 const calls = [], alerts = [];
 const bodyClasses = new Set();
 const panel = { JSON, alert: message => alerts.push(message), SystemPath: { EXTENSION: 0 },
-    document: { body: { classList: { add: c => bodyClasses.add(c), remove: c => bodyClasses.delete(c) } } } };
+    document: { querySelector: () => null, body: { classList: { add: c => bodyClasses.add(c), remove: c => bodyClasses.delete(c) } } } };
 panel.window = panel;
 let reloads = 0;
 panel.location = { reload: () => { reloads++; } };
@@ -174,6 +175,8 @@ panel.CSInterface = function () {
     this.getSystemPath = () => 'D:/SCCTLM_Foto';
     this.evalScript = (code, callback) => calls.push({ code, callback });
 };
+vm.runInNewContext(read('js/color-mode-guard.js'), panel);
+vm.runInNewContext(read('js/error-messages.js'), panel);
 vm.runInNewContext(read('js/panel.js'), panel);
 panel.doa('GGXS');
 assert.equal(calls.length, 1, 'must wait for loader callback');
@@ -184,7 +187,8 @@ assert.match(calls[1].code, /\$\._ext_BUGFIX\.run/);
 assert.doesNotMatch(read('index.html'), /onClickButton\('BUGFIX'\)/, 'BUGFIX must not fire before the loader is ready');
 calls.pop().callback('SCCTLM_OK');
 let ran = 0;
-const host = { app: { documents: [{}], displayDialogs: 1, preferences: { rulerUnits: 2 } }, $: { scctlmFotoCommands: {} } };
+const host = { app: { documents: [{}], activeDocument: { mode: 'RGB' }, displayDialogs: 1, preferences: { rulerUnits: 2 } },
+    DocumentMode: { RGB: 'RGB' }, $: { scctlmFotoCommands: {} } };
 host.$.scctlmFotoCommands.GGXS = () => {
     ran++;
     host.app.displayDialogs = 9;
@@ -202,7 +206,19 @@ assert.equal(ran, 1);
 assert.match(result, /test failure[\s\S]*main.jsx[\s\S]*42/);
 assert.equal(host.app.displayDialogs, 1);
 assert.equal(host.app.preferences.rulerUnits, 2);
+// A retouch command on a non-RGB image is stopped by the bridge before it runs, and the user gets a plain sentence.
+host.app.activeDocument.mode = 'CMYK';
+const blocked = vm.runInNewContext(calls[1].code, host);
+host.app.activeDocument.mode = 'RGB';
+assert.equal(blocked, 'SCCTLM_NOT_RGB:CMYK');
+assert.equal(ran, 1, 'a non-RGB image must not reach the command');
+calls[1].callback(blocked);
+const shownBlocked = alerts[alerts.length - 1];
+assert.match(shownBlocked, /CMYK/);
+assert.match(shownBlocked, /Image > Mode > RGB Color/);
+assert.doesNotMatch(shownBlocked, /SCCTLM_|Line:|File:/, 'no code in the message shown to the user');
 calls[1].callback(result);
+assert.doesNotMatch(alerts[alerts.length - 1], /SCCTLM_|Line:|File:|test failure/, 'a Photoshop failure is shown as a plain sentence, not the raw error');
 assert.ok(!bodyClasses.has('is-busy'), 'busy state must clear when the command ends');
 assert.equal(panel.scctlmFotoReload(), true);
 assert.equal(reloads, 1);

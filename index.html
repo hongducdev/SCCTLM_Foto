@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/artboard.css" type="text/css">
     <link rel="stylesheet" href="css/exif-frame.css" type="text/css">
     <link rel="stylesheet" href="css/color-presets.css" type="text/css">
+    <link rel="stylesheet" href="css/diagnostics.css" type="text/css">
     <link rel="stylesheet" href="css/focus-ring.css" type="text/css">
     <script type="text/javascript" src="./js/CSInterface.js"></script>
 
@@ -366,6 +367,9 @@
 			<p class="support-thanks">Cảm ơn bạn đã đồng hành ♡</p>
 		</div>
 	</div>
+	<footer class="panel-footer">
+		<button type="button" class="diagnostics-link" onclick="scctlmFotoOpenDiagnostics()" title="Xem và sao chép thông tin cài đặt, lỗi gần đây để gửi cho SCCTLM">Chẩn đoán</button>
+	</footer>
 </div>
 <script type="text/javascript" src="./js/vendor/tweetnacl.min.js"></script>
 <script type="text/javascript" src="./js/release-keys.js"></script>
@@ -374,6 +378,10 @@
 <script type="text/javascript" src="./js/github-updater.js"></script>
 <script type="text/javascript" src="./js/dev-source-sync.js"></script>
 <script type="text/javascript" src="./js/dialog.js"></script>
+<script type="text/javascript" src="./js/color-mode-guard.js"></script>
+<script type="text/javascript" src="./js/error-messages.js"></script>
+<script type="text/javascript" src="./js/diagnostics-report.js"></script>
+<script type="text/javascript" src="./js/diagnostics-controls.js"></script>
 <script type="text/javascript" src="./js/shortcut-reserved-keys.js"></script>
 <script type="text/javascript" src="./js/shortcut-conflicts.js"></script>
 <script type="text/javascript" src="./js/shortcut-key-capture.js"></script>

@@ -7,13 +7,13 @@ return app.stringIDToTypeID(s);
 
 // Da card commands without a dialog: one undo step per click, and RGB only, because in
 // Gray/Lab/CMYK they stop halfway with a raw Photoshop error and leave half-built layers.
-// Errors still reach the panel bridge (message + line) after suspendHistory.
+// The panel turns SCCTLM_NOT_RGB into a plain-language message (js/error-messages.js); a native alert() here would
+// open a modal that blocks the script. Other errors still reach the panel bridge after suspendHistory.
 $.scctlmFotoSkinStep = function (title, fn) {
     return function () {
         var doc = app.activeDocument;
         if (doc.mode !== DocumentMode.RGB) {
-            alert("Xin l\u1ed7i, script ch\u1ec9 ch\u1ea1y \u1edf ch\u1ebf \u0111\u1ed9 m\u00e0u RGB. Mu\u1ed1n \u0111\u1ed5i ch\u1ebf \u0111\u1ed9 m\u00e0u, v\u00e0o Image/Mode/RGB Color.", "Th\u00f4ng b\u00e1o");
-            return;
+            throw new Error("SCCTLM_NOT_RGB:" + String(doc.mode));
         }
         $.scctlmFotoSkinStepBody = fn;
         try {

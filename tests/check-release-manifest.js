@@ -27,6 +27,8 @@ try {
     put('presets/colors/a b (1).xmp', 'preset');
     put('README.md', 'not shipped');
     put('tests/check.js', 'not shipped');
+    put('site/index.html', 'site v1');
+    put('site/assets/supporters/a.png', 'avatar v1');
     sh('init', '-q');
     sh('add', '-A');
 
@@ -45,6 +47,14 @@ try {
     assert.equal(parsed.files['index.html'], crypto.createHash('sha512').update('<html>panel</html>').digest('hex'));
     assert.equal(parsed.version, '1.2.0');
     assert.equal(manifest, lib.buildManifest(root), 'the signed bytes are reproducible');
+
+    // Website and README edits are not plugin updates: they leave the signed manifest valid and byte-identical.
+    put('site/index.html', 'site v2');
+    put('site/assets/supporters/b.png', 'new supporter');
+    put('README.md', 'readme v2');
+    sh('add', '-A');
+    assert.deepEqual(verify(manifest, signature), [], 'site and README edits must not invalidate the release');
+    assert.equal(manifest, lib.buildManifest(root), 'site and README edits must not change the manifest');
 
     // Signature failures all read the same way and never get as far as the file list.
     const bad = /không có chữ ký hợp lệ/;

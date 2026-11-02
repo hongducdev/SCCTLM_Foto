@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.10 — Chữ/LOGO hàng loạt: thêm nút Đóng
+
+- **Hộp thoại Thêm chữ/LOGO hàng loạt:** thêm nút **Đóng**; phím Esc cũng đóng hộp thoại. Đóng không chạy xử lý hàng loạt và không lưu thiết lập.
+
 ## v0.3.9 — Màu & Preset: trạng thái active và thay lớp màu
 
 - **Trạng thái active:** preset vừa áp được đánh dấu trong danh sách Màu & Preset, cho cả chế độ thường và Mix màu; trạng thái "đang chọn" trong Mix vẫn là viền xanh, "đã áp" là nền xanh đậm.

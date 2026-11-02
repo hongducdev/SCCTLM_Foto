@@ -978,6 +978,13 @@ win.grp100.bu1 = win.grp100.add("button", undefined, "H\u00e0ng lo\u1ea1t theo t
 win.grp100.bu2 = win.grp100.add("button", undefined, "H\u00e0ng lo\u1ea1t cho t\u00e0i li\u1ec7u \u0111ang m\u1edf");
 win.grp100.bu1.preferredSize = [150, 30];
 win.grp100.bu2.preferredSize = [150, 30];
+win.grp100.bu4 = win.grp100.add("button", undefined, "\u0110\u00f3ng", {
+name: "cancel"
+});
+win.grp100.bu4.preferredSize = [150, 30];
+win.grp100.bu4.onClick = function() {
+win.close(2);
+};
 win.p2 = win.add("panel");
 win.p2.preferredSize = [500, 2];
 win.grp100.bu1.onClick = function() {

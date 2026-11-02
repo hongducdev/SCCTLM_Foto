@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.8 — Biểu tượng panel SCCTLM
+
+- **Biểu tượng panel:** biểu tượng của panel trong Photoshop (`img/icon-large.png`) đổi từ chữ "h" của plugin gốc sang logo SCCTLM. Cần tắt hẳn rồi mở lại Photoshop để thấy.
+- **Gói cập nhật gọn hơn:** hai ảnh minh hoạ README (`readme-thumbnail.png`, `readme-toi-uu-anh.png`) chuyển sang `site/assets/`, không còn nằm trong gói cập nhật của panel.
+
 ## v0.3.7 — Báo lỗi nạp panel rõ hơn, đổi tên DR7 sang SCCTLM_Foto
 
 - **Lỗi nạp panel:** lõi ExtendScript được nạp bằng đối tượng `File` và kiểm `exists` trước. Thiếu `loader.jsx` thì hộp thoại báo thẳng "thiếu file loader.jsx, hãy cài lại" thay vì `IOError: I/O error line 1`; lỗi đọc file kèm `File.error`.

@@ -15,6 +15,18 @@
 
 **SCCTLM_Foto** (_Sáng chơi chữ · Tối làm màu_) là CEP Extension cho Photoshop, gom quy trình làm đẹp chân dung, ảnh cưới, thời trang và thumbnail vào một panel 4 tab: **Retouch**, **Artboard**, **Khám phá**, **Ủng hộ**.
 
+<div align="center">
+
+<img src="img/readme-thumbnail.png" alt="SCCTLM_Foto — panel retouch cho Photoshop" width="720" />
+
+<img src="img/readme-toi-uu-anh.png" alt="Tối ưu ảnh Photoshop với SCCTLM_Foto" width="720" />
+
+### 🎬 Video giới thiệu
+
+[![Xem video giới thiệu SCCTLM_Foto](https://img.youtube.com/vi/oNio__XQrMo/maxresdefault.jpg)](https://www.youtube.com/watch?v=oNio__XQrMo)
+
+</div>
+
 ## ✨ Tính năng
 
 - **Retouch** — Làm da, Son môi, Trắng răng, Tẩy lông, Highlight, Lông mi, Phủ phấn, Đánh khối, Trắng da, Hạt phim. Mọi thao tác tạo layer/mask riêng, không phá huỷ ảnh gốc; chạy trên RGB 8/16-bit.

@@ -42,9 +42,9 @@
 .cp-mix-remove:hover { background: var(--muted); color: #ffffff; }
 .cp-mix-row .slider-row { margin-top: 2px; }
 .cp-mix-apply {
-    display: block; width: 100%; height: 30px; margin: 8px 0 0; padding: 0; border: 0; border-radius: 999px;
+    display: block; float: none; width: 100%; height: 30px; margin: 8px 0 0; padding: 0; border: 0; border-radius: 999px;
     background: var(--primary); color: var(--primary-foreground); font: 600 12px/30px "Segoe UI", Tahoma, sans-serif; cursor: pointer;
 }
-.cp-mix-apply:hover { opacity: .9; }
-.cp-mix-apply[disabled] { background: var(--edge); color: var(--muted-foreground); cursor: default; opacity: 1; }
+.cp-mix-apply:hover { background: var(--primary); color: var(--primary-foreground); border: 0; opacity: .9; }
+.cp-mix-apply[disabled], .cp-mix-apply[disabled]:hover { border: 0; background: var(--edge); color: var(--muted-foreground); cursor: default; opacity: 1; }
 .cp-mix-toggle input { position: absolute; opacity: 0; width: 0; height: 0; }

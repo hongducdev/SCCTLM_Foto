@@ -26,3 +26,8 @@ assert.ok(validator.test('fuji/001:60,dazz/003:40'), 'valid mix accepted');
     assert.ok(!validator.test(bad), 'rejected: ' + bad);
 });
 console.log('color presets: OK (' + total + ' colours)');
+const legacy = fs.readFileSync(path.join(root, 'style.css'), 'utf8');
+assert.match(legacy, /float\s*:\s*none\s*;/, 'legacy button rule keeps float: none terminated');
+const mixCss = fs.readFileSync(path.join(root, 'css/color-presets.css'), 'utf8');
+assert.match(mixCss, /\.cp-mix-apply:hover\s*\{[^}]*background:\s*var\(--primary\)/, 'Mix apply hover keeps primary background');
+assert.match(mixCss, /\.cp-mix-apply\[disabled\]:hover/, 'Mix apply disabled hover is pinned');

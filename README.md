@@ -61,6 +61,8 @@ Photoshop CC 2015 trở lên · Windows 10/11 (64-bit) hoặc macOS 10.13+ · �
    - macOS: `~/Library/Application Support/Adobe/CEP/extensions/SCCTLM_Foto/`
 3. Mở Photoshop → **Window > Extensions > SCCTLM_Foto**.
 
+> 🍎 **Mac chip Apple Silicon (M1/M2/M3…) gặp lỗi?** Bật **Rosetta**: Finder → Applications → Photoshop → chuột phải **Get Info** → tick **Open using Rosetta**, rồi mở lại Photoshop. Nếu máy chưa cài Rosetta: `softwareupdate --install-rosetta --agree-to-license`.
+
 </details>
 
 **Gỡ cài đặt:** Windows chạy `install\Go-cai-dat-SCCTLM_Foto.bat` (hỏi trước khi xoá và tắt `PlayerDebugMode`). macOS xoá thư mục ở bước 2; chỉ tắt `PlayerDebugMode` (`defaults delete com.adobe.CSXS.$n PlayerDebugMode`) khi không còn extension chưa ký nào khác.

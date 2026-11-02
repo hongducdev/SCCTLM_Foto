@@ -48,12 +48,12 @@ const dialogs = [];                        // popups shown; answer(true|false) c
 const window = {
     addEventListener() {}, removeEventListener() {},
     localStorage,
-    dr7IsBusy: () => pending.length > 0,
-    dr7FlashStatus() {},
-    dr7Dialog: opts => new Promise(resolve => dialogs.push(Object.assign({ resolve }, opts))),
-    dr7EnsureAction: (spec, done) => { log.push('ensure ' + spec.split('\t')[2]); pending.push(done); },
-    dr7PlayAction: (spec, done) => { log.push('play ' + spec.split('\t')[2]); pending.push(done); },
-    dr7SetupShortcut: (text, done) => { log.push('shortcuts ' + JSON.stringify(text)); pending.push(done); }
+    scctlmFotoIsBusy: () => pending.length > 0,
+    scctlmFotoFlashStatus() {},
+    scctlmFotoDialog: opts => new Promise(resolve => dialogs.push(Object.assign({ resolve }, opts))),
+    scctlmFotoEnsureAction: (spec, done) => { log.push('ensure ' + spec.split('\t')[2]); pending.push(done); },
+    scctlmFotoPlayAction: (spec, done) => { log.push('play ' + spec.split('\t')[2]); pending.push(done); },
+    scctlmFotoSetupShortcut: (text, done) => { log.push('shortcuts ' + JSON.stringify(text)); pending.push(done); }
 };
 function CSInterface() {}
 CSInterface.prototype.evalScript = (code, done) => done('false');
@@ -66,24 +66,24 @@ const reply = res => pending.shift()(res);
 const press = (keyCode, extra) => keyListener(Object.assign({ keyCode, key: '', preventDefault() {}, stopPropagation() {} }, extra));
 const tick = () => new Promise(resolve => setImmediate(resolve));
 const answer = async yes => { dialogs[dialogs.length - 1].resolve(yes); await tick(); };
-const listen = id => { buttons['key-' + id].click(); reply('DR7_EXISTS'); };
+const listen = id => { buttons['key-' + id].click(); reply('SCCTLM_EXISTS'); };
 const F5 = 116, F6 = 117, F9 = 120;
 
 (async () => {
-    window.dr7InitCreateButtons();
+    window.scctlmFotoInitCreateButtons();
     assert.equal(buttons['key-rim'].label.textContent, '', 'no key yet: the keycap shows its keyboard icon');
 
     // Tạo khi Photoshop đã có bộ Action: chạy ngay, không dựng lại bộ phím
     buttons['create-rim'].click();
-    reply('DR7_EXISTS');
-    reply('DR7_OK');
+    reply('SCCTLM_EXISTS');
+    reply('SCCTLM_OK');
     assert.deepEqual(log.splice(0), ['ensure YouTube Rim Light', 'play YouTube Rim Light']);
 
     // Phím trống: gán ngay, không hỏi
     listen('rim');
     assert.equal(buttons['key-rim'].label.textContent, '…');
     press(F9);
-    reply('DR7_OK');
+    reply('SCCTLM_OK');
     assert.equal(dialogs.length, 0);
     assert.deepEqual(log.splice(0), ['ensure YouTube Rim Light', 'shortcuts "F9\\tThumbnail action\\tYouTube Rim Light"']);
     assert.equal(buttons['key-rim'].label.textContent, 'F9');
@@ -105,7 +105,7 @@ const F5 = 116, F6 = 117, F9 = 120;
     listen('brush');
     press(F9);
     await answer(true);
-    reply('DR7_OK');
+    reply('SCCTLM_OK');
     assert.deepEqual(log.splice(0), ['ensure Stroke Brush Path', 'shortcuts "F9\\tThumbnail action\\tStroke Brush Path"']);
     assert.equal(buttons['key-brush'].label.textContent, 'F9');
     assert.equal(buttons['key-rim'].label.textContent, '');
@@ -116,7 +116,7 @@ const F5 = 116, F6 = 117, F9 = 120;
     assert.match(dialogs[2].message, /Window > Brush Settings/);
     assert.match(dialogs[2].message, /chọn No/);
     await answer(true);
-    reply('DR7_OK');
+    reply('SCCTLM_OK');
     assert.deepEqual(log.splice(0), ['ensure YouTube Rim Light',
         'shortcuts "F9\\tThumbnail action\\tStroke Brush Path\\nF5\\tThumbnail action\\tYouTube Rim Light"']);
 
@@ -126,23 +126,23 @@ const F5 = 116, F6 = 117, F9 = 120;
     press(F6);
     assert.match(dialogs[3].message, /đánh dấu/);
     await answer(true);
-    reply('DR7_OK');
+    reply('SCCTLM_OK');
     assert.equal(store.dr7ReservedKeys, '[]');
     assert.equal(buttons['key-rim'].label.textContent, 'F6');
     log.splice(0);
 
     // Bộ Action vừa được nạp (người dùng đã xoá bộ cũ): dựng lại bộ phím XONG rồi mới chạy Action
     buttons['create-brush'].click();
-    reply('DR7_OK');
+    reply('SCCTLM_OK');
     assert.equal(log.length, 2, 'playing must wait for the shortcut set rebuild, otherwise the bridge is busy');
-    reply('DR7_OK');
-    reply('DR7_OK');
+    reply('SCCTLM_OK');
+    reply('SCCTLM_OK');
     assert.deepEqual(log.splice(0).map(l => l.split(' ')[0]), ['ensure', 'shortcuts', 'play']);
 
     // Backspace xoá phím của Rim Light
     listen('rim');
     press(8);
-    reply('DR7_OK');
+    reply('SCCTLM_OK');
     assert.deepEqual(log.splice(0), ['ensure YouTube Rim Light', 'shortcuts "F9\\tThumbnail action\\tStroke Brush Path"']);
     assert.equal(buttons['key-rim'].label.textContent, '');
     assert.equal(pending.length, 0);

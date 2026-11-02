@@ -1,7 +1,7 @@
 /*
  * Redness Reducer (FSJH): action replay moved verbatim from jsx/main.jsx.
- * Registered through $.dr7SkinFns because evalFile scopes cannot see each other's declarations;
- * jsx/main.jsx ($.dr7BuildSkinCommands) turns the registry into $.dr7Commands.
+ * Registered through $.scctlmFotoSkinFns because evalFile scopes cannot see each other's declarations;
+ * jsx/main.jsx ($.scctlmFotoBuildSkinCommands) turns the registry into $.scctlmFotoCommands.
  */
 function FSJH() {
 function step1(enabled, withDialog) {
@@ -390,5 +390,5 @@ step22();
 step23();
 }
 
-$.dr7SkinFns = $.dr7SkinFns || {};
-$.dr7SkinFns.FSJH = FSJH;
+$.scctlmFotoSkinFns = $.scctlmFotoSkinFns || {};
+$.scctlmFotoSkinFns.FSJH = FSJH;

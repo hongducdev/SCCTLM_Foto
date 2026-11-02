@@ -7,10 +7,10 @@
     var scratch = null, report = [];
     try {
         app.displayDialogs = DialogModes.NO;
-        $.dr7Base = File($.fileName).parent.parent.fsName.replace(/\\/g,'/');
-        $.evalFile($.dr7Base+'/loader.jsx');
-        if (!$.dr7Ready) throw new Error($.dr7LoadErrors.join('\n'));
-        app.load(new File($.dr7Base+'/jsx/pj/mhk-patterns.pat'));
+        $.scctlmFotoBase = File($.fileName).parent.parent.fsName.replace(/\\/g,'/');
+        $.evalFile($.scctlmFotoBase+'/loader.jsx');
+        if (!$.scctlmFotoReady) throw new Error($.scctlmFotoLoadErrors.join('\n'));
+        app.load(new File($.scctlmFotoBase+'/jsx/pj/mhk-patterns.pat'));
         report.push('PASS: Photoshop imported mhk-patterns.pat');
         var commands = ['CGYSB','MLXG','mcwl','sfb','PP_DETAIL'];
         for (var depth = 0; depth < 2; depth++) for (var i = 0; i < commands.length; i++) {
@@ -23,7 +23,7 @@
             var name = commands[i], before = scratch.layers.length;
             try {
                 if (name.indexOf('PP_') === 0) $['_ext_'+name].run();
-                else $.dr7Commands[name]();
+                else $.scctlmFotoCommands[name]();
                 if (scratch.layers.length <= before) throw new Error('No output layer');
                 if (scratch.activeLayer.name.indexOf('MHK') !== 0) throw new Error('Wrong output layer');
                 var bounds = scratch.activeLayer.bounds;

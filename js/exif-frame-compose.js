@@ -6,7 +6,7 @@
 (function (root) {
     'use strict';
 
-    var frame = root.dr7ExifFrame;
+    var frame = root.scctlmFotoExifFrame;
 
     function segment(text, bold, muted) {
         return { text: text, bold: bold, muted: muted };
@@ -48,5 +48,5 @@
         };
     }
 
-    root.dr7ExifFrameCompose = { lines: lines, compose: compose };
+    root.scctlmFotoExifFrameCompose = { lines: lines, compose: compose };
 }(typeof window !== 'undefined' ? window : this));

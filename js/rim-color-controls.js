@@ -39,7 +39,7 @@
     // Có nhóm Rim Light thì tô lại màu ngay (1 bước History)
     function applyColor() {
         if (!exists) return;
-        window.dr7RunCommand('RIMCOLOR', function () { refresh(); }, currentHex());
+        window.scctlmFotoRunCommand('RIMCOLOR', function () { refresh(); }, currentHex());
     }
 
     function pickColor(hex) {
@@ -52,7 +52,7 @@
         exists = value;
         body.hidden = !exists;
         resetButton.hidden = !exists;
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
         if (exists) {                                    // nhóm vừa xuất hiện: lấy cường độ thật của nhóm
             cs.evalScript('$._ext_RIMCOLOR.getOpacity()', function (res) {
                 if (/^\d{1,3}$/.test(res)) { slider.value = Math.min(100, Number(res)); paintTrack(); }
@@ -61,7 +61,7 @@
     }
 
     function refresh() {
-        if (pending || (window.dr7IsBusy && window.dr7IsBusy())) return;
+        if (pending || (window.scctlmFotoIsBusy && window.scctlmFotoIsBusy())) return;
         pending = true;
         cs.evalScript('typeof $._ext_RIMCOLOR=="object"?$._ext_RIMCOLOR.available():"0"', function (res) {
             pending = false;
@@ -72,11 +72,11 @@
     function writeOpacity() {
         if (!exists) return;
         cs.evalScript('$._ext_RIMCOLOR.setOpacity(' + currentOpacity() + ')', function (res) {
-            if (res !== 'ok') console.warn('DR7: không đặt được cường độ Rim Light', res);
+            if (res !== 'ok') console.warn('SCCTLM_Foto: không đặt được cường độ Rim Light', res);
         });
     }
 
-    window.dr7InitRimColor = function () {
+    window.scctlmFotoInitRimColor = function () {
         body = document.querySelector('.rim-body');
         resetButton = document.querySelector('.rim-reset');
         pill = document.querySelector('.rim-pill');
@@ -101,7 +101,7 @@
         Array.prototype.forEach.call(swatches, function (swatch) {
             swatch.addEventListener('click', function () { pickColor(swatch.getAttribute('data-color')); });
         });
-        eyedropper.addEventListener('click', function () { window.dr7Eyedropper(eyedropper, pickColor); });
+        eyedropper.addEventListener('click', function () { window.scctlmFotoEyedropper(eyedropper, pickColor); });
         resetButton.addEventListener('click', function () {   // về trắng + độ sáng 100%
             slider.value = 100;
             paintTrack();

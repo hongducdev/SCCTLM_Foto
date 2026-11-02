@@ -1,7 +1,7 @@
 /*
  * Tab Khung ảnh: nối form (js/exif-frame-form.js) với EXIF của ảnh đang mở, xem trước, mẫu đã lưu và lệnh vẽ.
  * EXIF ở js/exif-frame-fields.js, ghép spec ở js/exif-frame-compose.js, xem trước ở js/exif-frame-preview.js,
- * mẫu ở js/exif-frame-presets.js, mẫu dựng sẵn và logo ở js/exif-frame-templates.js, font ở js/exif-frame-fonts.js; phần vẽ thật ở jsx/exif-frame.jsx (qua window.dr7RunFrame).
+ * mẫu ở js/exif-frame-presets.js, mẫu dựng sẵn và logo ở js/exif-frame-templates.js, font ở js/exif-frame-fonts.js; phần vẽ thật ở jsx/exif-frame.jsx (qua window.scctlmFotoRunFrame).
  */
 (function () {
     'use strict';
@@ -11,21 +11,21 @@
     var SIZE_LINE = /^(\d+)\t(\d+)(?:\n|$)/;
     var LOGO_TYPES = ['png', 'jpg', 'jpeg', 'svg'];
 
-    var fields = window.dr7ExifFields, composer = window.dr7ExifFrameCompose, presets = window.dr7FramePresets, templates = window.dr7FrameTemplates;
+    var fields = window.scctlmFotoExifFields, composer = window.scctlmFotoExifFrameCompose, presets = window.scctlmFotoFramePresets, templates = window.scctlmFotoFrameTemplates;
     var cs = new CSInterface();
     var form, el, ui = {};
     var state = { fields: null, touched: false, doc: PLACEHOLDER_DOC };
 
     function status(text, isError) {
-        if (!window.dr7Status) return;
-        if (isError || !window.dr7FlashStatus) window.dr7Status(text, isError);
-        else window.dr7FlashStatus(text);
+        if (!window.scctlmFotoStatus) return;
+        if (isError || !window.scctlmFotoFlashStatus) window.scctlmFotoStatus(text, isError);
+        else window.scctlmFotoFlashStatus(text);
     }
 
     // done({ w, h, tags }) hoặc done(null) sau khi đã báo lỗi
     function readDocument(done) {
-        cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.read():"DR7_MISSING"', function (res) {
-            if (res === 'DR7_NO_DOCUMENT') { status('Hãy mở ảnh trong Photoshop trước.', true); done(null); return; }
+        cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.read():"SCCTLM_MISSING"', function (res) {
+            if (res === 'SCCTLM_NO_DOCUMENT') { status('Hãy mở ảnh trong Photoshop trước.', true); done(null); return; }
             var size = SIZE_LINE.exec(String(res));
             if (!size) { status('Không đọc được ảnh: ' + res, true); done(null); return; }
             state.doc = { w: parseInt(size[1], 10), h: parseInt(size[2], 10) };
@@ -55,20 +55,20 @@
         ui.apply.disabled = !spec;
         ui.summary.textContent = spec ? 'Sẵn sàng vẽ watermark cho ảnh đang mở' : 'Nhập ít nhất một dòng chữ';
         ui.summaryIcon.classList.toggle('is-empty', !spec);
-        window.dr7FramePreview.render(ui.preview, spec);
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        window.scctlmFotoFramePreview.render(ui.preview, spec);
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     }
 
     function apply() {
-        if (ui.apply.disabled || (window.dr7IsBusy && window.dr7IsBusy())) return;
+        if (ui.apply.disabled || (window.scctlmFotoIsBusy && window.scctlmFotoIsBusy())) return;
         var chosen = form.values();
         ui.apply.disabled = true;
         readDocument(function (doc) {
             var spec = doc && composer.compose(chosen, doc);
             if (!spec) { refresh(); return; }
-            window.dr7RunFrame(spec, function (res) {
+            window.scctlmFotoRunFrame(spec, function (res) {
                 refresh();
-                if (res === 'DR7_OK') status('✓ Đã vẽ watermark');
+                if (res === 'SCCTLM_OK') status('✓ Đã vẽ watermark');
             });
         });
     }
@@ -152,7 +152,7 @@
         ui.reload.addEventListener('click', function () { readDocument(fillFromExif); });
         ui.apply.addEventListener('click', apply);
         el.eyedropper.addEventListener('click', function () {
-            window.dr7Eyedropper(el.eyedropper, function (hex) { form.pickBackground(hex); refresh(); });
+            window.scctlmFotoEyedropper(el.eyedropper, function (hex) { form.pickBackground(hex); refresh(); });
         });
         el.logoPick.addEventListener('click', pickLogo);
         el.logoBrand.addEventListener('change', pickBrandLogo);
@@ -160,7 +160,7 @@
         el.separator.addEventListener('change', refreshSettings);
         Array.prototype.forEach.call(root.querySelectorAll('.ef-chip input'), function (box) { box.addEventListener('change', function () { refreshSettings(); refresh(); }); });
         [el.prefix, el.model, el.make, el.settings, el.extra].forEach(function (input) {
-            input.maxLength = window.dr7ExifFrame.TEXT_MAX;
+            input.maxLength = window.scctlmFotoExifFrame.TEXT_MAX;
             input.addEventListener('input', function () { state.touched = true; });
         });
         ui.presetSave.addEventListener('click', savePreset);
@@ -178,10 +178,10 @@
         form.onChange(refresh);
     }
 
-    window.dr7InitFrame = function () {
+    window.scctlmFotoInitFrame = function () {
         var root = document.querySelector('.exif-frame');
-        if (!root || !window.dr7ExifFrame || !fields || !composer || !presets || !templates || !window.dr7FrameForm) return;
-        form = window.dr7FrameForm(root);
+        if (!root || !window.scctlmFotoExifFrame || !fields || !composer || !presets || !templates || !window.scctlmFotoFrameForm) return;
+        form = window.scctlmFotoFrameForm(root);
         el = form.el;
         ['apply', 'summary', 'summary-icon', 'reload', 'preview', 'template-list', 'preset-list', 'preset-name', 'preset-save', 'preset-delete'].forEach(function (key) {
             ui[key.replace(/-(\w)/g, function (m, c) { return c.toUpperCase(); })] = root.querySelector('.ef-' + key);
@@ -193,7 +193,7 @@
         var tab = document.querySelector('.tab-button[data-tab="frame"]');
         if (tab) {
             tab.addEventListener('click', function () {
-                window.dr7LoadFrameFonts(el.font, DEFAULT_FONT);
+                window.scctlmFotoLoadFrameFonts(el.font, DEFAULT_FONT);
                 if (!state.touched) readDocument(fillFromExif);
                 else readDocument(function () { refresh(); });
             });

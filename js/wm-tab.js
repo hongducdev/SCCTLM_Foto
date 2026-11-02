@@ -1,7 +1,7 @@
 /*
  * Tab Watermark, mục "Mẫu gốc Xiaomi Leica": chọn một trong 54 mẫu của app 徕卡一瞬 rồi vẽ đúng bố cục của nó.
  * Luồng: đọc EXIF của ảnh đang mở -> bố cục lượt 1 để gom mọi dòng chữ cần đo -> Photoshop đo bằng font thật (jsx/wm-measure.jsx)
- * -> bố cục lượt 2 với độ rộng thật (js/wm-layout.js) -> js/wm-spec.js kiểm tra -> jsx/wm-draw.jsx vẽ (qua window.dr7RunWm).
+ * -> bố cục lượt 2 với độ rộng thật (js/wm-layout.js) -> js/wm-spec.js kiểm tra -> jsx/wm-draw.jsx vẽ (qua window.scctlmFotoRunWm).
  * Dữ liệu mẫu ở js/wm-templates-data.js (sinh bởi scripts/build-watermark-templates.py), ảnh logo ở img/wm.
  */
 (function () {
@@ -20,14 +20,14 @@
     };
     var BACKGROUND_NAMES = { white: 'Trắng', black: 'Đen', transparent: 'Trong suốt', transparent_white: 'Chữ sáng trên ảnh', transparent_black: 'Chữ tối trên ảnh' };
 
-    var data = window.dr7WmData, layout = window.dr7WmLayout, spec = window.dr7WmSpec, fields = window.dr7ExifFields, vars = window.dr7WmVars;
+    var data = window.scctlmFotoWmData, layout = window.scctlmFotoWmLayout, spec = window.scctlmFotoWmSpec, fields = window.scctlmFotoExifFields, vars = window.scctlmFotoWmVars;
     var cs = new CSInterface();
     var ui = {}, state = { busy: false, manual: false, installed: null };
 
     function status(text, isError) {
-        if (!window.dr7Status) return;
-        if (isError || !window.dr7FlashStatus) window.dr7Status(text, isError);
-        else window.dr7FlashStatus(text);
+        if (!window.scctlmFotoStatus) return;
+        if (isError || !window.scctlmFotoFlashStatus) window.scctlmFotoStatus(text, isError);
+        else window.scctlmFotoFlashStatus(text);
     }
 
     function templateOf(value) {
@@ -80,8 +80,8 @@
 
     // done({ w, h, tags }) hoặc done(null) sau khi đã báo lỗi
     function readDocument(done) {
-        cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.read():"DR7_MISSING"', function (res) {
-            if (res === 'DR7_NO_DOCUMENT') { status('Hãy mở ảnh trong Photoshop trước.', true); done(null); return; }
+        cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.read():"SCCTLM_MISSING"', function (res) {
+            if (res === 'SCCTLM_NO_DOCUMENT') { status('Hãy mở ảnh trong Photoshop trước.', true); done(null); return; }
             var size = SIZE_LINE.exec(String(res));
             if (!size) { status('Không đọc được ảnh: ' + res, true); done(null); return; }
             done({ w: parseInt(size[1], 10), h: parseInt(size[2], 10), tags: fields.parseTags(String(res).slice(size[0].length)) });
@@ -116,7 +116,7 @@
     }
 
     function extensionRoot() {
-        return window.dr7FrameTemplates.extensionRoot(cs.getSystemPath(SystemPath.EXTENSION));
+        return window.scctlmFotoFrameTemplates.extensionRoot(cs.getSystemPath(SystemPath.EXTENSION));
     }
 
     // Font Photoshop cho từng font của mẫu: font riêng của mẫu nếu đã cài, còn lại (gồm 'default') dùng font đang chọn
@@ -135,10 +135,10 @@
     // { postScriptName: true } của mọi font Photoshop đang thấy
     function readInstalled(done) {
         if (state.installed) { done(state.installed); return; }
-        cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.fonts():"DR7_MISSING"', function (res) {
+        cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.fonts():"SCCTLM_MISSING"', function (res) {
             var installed = {};
             String(res).split('\n').forEach(function (line) { installed[line.split('\t')[0]] = true; });
-            if (res !== 'DR7_MISSING' && !/^EvalScript error/.test(String(res))) state.installed = installed;
+            if (res !== 'SCCTLM_MISSING' && !/^EvalScript error/.test(String(res))) state.installed = installed;
             done(installed);
         });
     }
@@ -157,9 +157,9 @@
             imageDir: extensionRoot() + '/img/wm', output: 'layers', ops: result.ops
         };
         if (!spec.plan.test(plan)) { status('Kế hoạch vẽ không hợp lệ cho mẫu này.', true); finish(); return; }
-        window.dr7RunWm(plan, function (res) {
+        window.scctlmFotoRunWm(plan, function (res) {
             finish();
-            if (res !== 'DR7_OK') return;
+            if (res !== 'SCCTLM_OK') return;
             if (missing.length) status('Đã vẽ ' + template.name + ' nhưng chưa cài font ' + missing.join(', ') + ' nên dùng font đang chọn.', true);
             else status('✓ Đã vẽ watermark ' + template.name + (infoOf(doc.tags).iso ? '' : '. Ảnh không có ISO, nhập vào ô ISO nếu cần.'));
         });
@@ -184,7 +184,7 @@
     }
 
     function apply() {
-        if (state.busy || (window.dr7IsBusy && window.dr7IsBusy())) return;
+        if (state.busy || (window.scctlmFotoIsBusy && window.scctlmFotoIsBusy())) return;
         var template = templateOf(ui.template.value);
         if (!template) { status('Hãy chọn một mẫu.', true); return; }
         state.busy = true;
@@ -198,13 +198,13 @@
     // Ảnh đã có watermark của tab này: hỏi gỡ rồi mới vẽ lại; false = người dùng huỷ hoặc gỡ lỗi
     function askTakeOff(done) {
         cs.evalScript('typeof $._ext_WMDRAW=="object"?$._ext_WMDRAW.existing():""', function (res) {
-            if (res !== '1' || !window.dr7Dialog) { done(true); return; }
-            window.dr7Dialog({
+            if (res !== '1' || !window.scctlmFotoDialog) { done(true); return; }
+            window.scctlmFotoDialog({
                 title: 'Ảnh đã có watermark', message: 'Gỡ watermark trước đó rồi vẽ lại?', confirmText: 'Gỡ và vẽ lại', cancelText: 'Huỷ'
             }).then(function (confirmed) {
                 if (!confirmed) { done(false); return; }
                 cs.evalScript('$._ext_WMDRAW.remove()', function (removed) {
-                    if (removed === 'DR7_OK') { done(true); return; }
+                    if (removed === 'SCCTLM_OK') { done(true); return; }
                     status('Không gỡ được watermark cũ: ' + removed, true);
                     done(false);
                 });
@@ -230,9 +230,9 @@
         });
     }
 
-    window.dr7InitWm = function () {
+    window.scctlmFotoInitWm = function () {
         var root = document.querySelector('.exif-frame .ef-wm');
-        if (!root || !data || !layout || !spec || !vars || !fields || !window.dr7FrameTemplates) return;
+        if (!root || !data || !layout || !spec || !vars || !fields || !window.scctlmFotoFrameTemplates) return;
         [['template', 'wm-template'], ['layout', 'wm-layout'], ['layoutField', 'wm-layout-field'], ['background', 'wm-background'], ['brand', 'wm-brand'],
             ['model', 'wm-model'], ['address', 'wm-address'], ['iso', 'wm-iso'], ['apply', 'wm-apply'], ['thumb', 'wm-thumb'], ['thumbImage', 'wm-thumb-img']].forEach(function (pair) {
             ui[pair[0]] = root.querySelector('.ef-' + pair[1]);

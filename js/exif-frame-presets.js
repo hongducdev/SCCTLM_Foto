@@ -12,7 +12,7 @@
     var BACKGROUNDS = ['white', 'gray', 'black', 'custom'];
     var HEX = /^#[0-9a-f]{6}$/i;
 
-    var frame = root.dr7ExifFrame, fields = root.dr7ExifFields;
+    var frame = root.scctlmFotoExifFrame, fields = root.scctlmFotoExifFields;
 
     function oneOf(list) { return function (value) { return list.indexOf(value) !== -1; }; }
     function range(min, max) { return function (value) { return typeof value === 'number' && isFinite(value) && value >= min && value <= max; }; }
@@ -74,5 +74,5 @@
         return write(storage, presets);
     }
 
-    root.dr7FramePresets = { MAX_PRESETS: MAX_PRESETS, NAME_MAX: NAME_MAX, sanitize: sanitize, load: load, save: save, remove: remove };
+    root.scctlmFotoFramePresets = { MAX_PRESETS: MAX_PRESETS, NAME_MAX: NAME_MAX, sanitize: sanitize, load: load, save: save, remove: remove };
 }(typeof window !== 'undefined' ? window : this));

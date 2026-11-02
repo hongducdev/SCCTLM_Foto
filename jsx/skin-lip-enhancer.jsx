@@ -1,7 +1,7 @@
 /*
  * Lip Enhancer (ZCZQ): action replay moved verbatim from jsx/main.jsx.
- * Registered through $.dr7SkinFns because evalFile scopes cannot see each other's declarations;
- * jsx/main.jsx ($.dr7BuildSkinCommands) turns the registry into $.dr7Commands.
+ * Registered through $.scctlmFotoSkinFns because evalFile scopes cannot see each other's declarations;
+ * jsx/main.jsx ($.scctlmFotoBuildSkinCommands) turns the registry into $.scctlmFotoCommands.
  */
 function ZCZQ() {
 function step1(enabled, withDialog) {
@@ -484,5 +484,5 @@ step24();
 step25();
 }
 
-$.dr7SkinFns = $.dr7SkinFns || {};
-$.dr7SkinFns.ZCZQ = ZCZQ;
+$.scctlmFotoSkinFns = $.scctlmFotoSkinFns || {};
+$.scctlmFotoSkinFns.ZCZQ = ZCZQ;

@@ -4,8 +4,8 @@
 // Returns one name per line.
 (function () {
     var names = [];
-    if (typeof $.dr7Commands != 'object') return 'Core not loaded: open the panel first';
-    for (var name in $.dr7Commands) if ($.dr7Commands.hasOwnProperty(name)) names.push(name);
+    if (typeof $.scctlmFotoCommands != 'object') return 'Core not loaded: open the panel first';
+    for (var name in $.scctlmFotoCommands) if ($.scctlmFotoCommands.hasOwnProperty(name)) names.push(name);
     names.sort();
     return names.join('\n');
 }());

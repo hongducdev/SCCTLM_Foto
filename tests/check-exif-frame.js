@@ -10,7 +10,7 @@ const context = vm.createContext({ window });
 for (const file of ['exif-frame-fields.js', 'exif-frame-layout.js', 'exif-frame-compose.js', 'exif-frame-presets.js', 'exif-frame-templates.js']) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../js', file), 'utf8'), context);
 }
-const exif = window.dr7ExifFields, frame = window.dr7ExifFrame, compose = window.dr7ExifFrameCompose, presets = window.dr7FramePresets, templates = window.dr7FrameTemplates;
+const exif = window.scctlmFotoExifFields, frame = window.scctlmFotoExifFrame, compose = window.scctlmFotoExifFrameCompose, presets = window.scctlmFotoFramePresets, templates = window.scctlmFotoFrameTemplates;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 const describe = (text) => plain(exif.describe(exif.parseTags(text)));
 

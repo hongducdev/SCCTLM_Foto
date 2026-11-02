@@ -1,4 +1,4 @@
-// DR7: Apply Camera Raw Presets (.xmp) - picked by the user or bundled in /presets
+// SCCTLM_Foto: Apply Camera Raw Presets (.xmp) - picked by the user or bundled in /presets
 (function () {
     var C = charIDToTypeID, S = stringIDToTypeID;
 
@@ -79,10 +79,10 @@
             var targetFolder = new Folder(Folder.userData.fsName + '/Adobe/CameraRaw/Settings/SCCTLM_Foto Presets');
             if (!targetFolder.exists) targetFolder.create();
             if (!file.copy(new File(targetFolder.fsName + '/' + file.name))) {
-                $.writeln('DR7: could not copy preset to Camera Raw: ' + file.error);
+                $.writeln('SCCTLM_Foto: could not copy preset to Camera Raw: ' + file.error);
             }
         } catch (e) {
-            $.writeln('DR7: could not copy preset to Camera Raw: ' + e);
+            $.writeln('SCCTLM_Foto: could not copy preset to Camera Raw: ' + e);
         }
     }
 
@@ -108,7 +108,7 @@
     function applyPresetXMP(fileOrPath, withDialog, asSmartObject) {
         document();
         var picked = resolveFile(fileOrPath, 'Chon Preset Camera Raw (.xmp)',
-            'Camera Raw Preset:*.xmp,All Files:*.*', new Folder($.dr7Base + '/presets'));
+            'Camera Raw Preset:*.xmp,All Files:*.*', new Folder($.scctlmFotoBase + '/presets'));
         var file = picked[0];
         var xmpPayload = readText(file);
         if (!xmpPayload) throw new Error('Preset file is empty: ' + file.fsName);
@@ -131,17 +131,17 @@
 
         try {
             runAcr(DialogModes.NO);
-            return 'DR7_OK';
+            return 'SCCTLM_OK';
         } catch (errSilent) {
             if (withDialog === false) {
-                try { layer.remove(); } catch (eClean) { $.writeln('DR7: preset layer cleanup failed: ' + eClean); }
+                try { layer.remove(); } catch (eClean) { $.writeln('SCCTLM_Foto: preset layer cleanup failed: ' + eClean); }
                 throw errSilent;
             }
             try {
                 runAcr(DialogModes.ALL);
-                return 'DR7_OK';
+                return 'SCCTLM_OK';
             } catch (errDialog) {
-                try { layer.remove(); } catch (eRem) { $.writeln('DR7: preset layer cleanup failed: ' + eRem); }
+                try { layer.remove(); } catch (eRem) { $.writeln('SCCTLM_Foto: preset layer cleanup failed: ' + eRem); }
                 if (errDialog.number === 8007 || String(errDialog).toLowerCase().indexOf('cancel') !== -1) {
                     throw cancelled();
                 }
@@ -155,21 +155,21 @@
     var BUNDLED_PRESET = /^[A-Za-z0-9 _()-]+(\.[A-Za-z0-9 _()-]+)*\.xmp$/i;
     function applyBundledXmp(fileName) {
         if (!BUNDLED_PRESET.test(String(fileName))) throw new Error('Invalid preset name: ' + fileName);
-        var file = new File($.dr7Base + '/presets/' + fileName);
+        var file = new File($.scctlmFotoBase + '/presets/' + fileName);
         if (!file.exists) throw new Error('Missing bundled preset: ' + file.fsName);
         return applyPresetXMP(file, false);
     }
 
     var APPLY_PRESET_XMP = applyPresetXMP;
 
-    // loader.jsx copies these into $.dr7Commands for the panel bridge.
+    // loader.jsx copies these into $.scctlmFotoCommands for the panel bridge.
     $.presetLutCommands = {
         APPLY_PRESET_XMP: APPLY_PRESET_XMP
     };
 
-    $.dr7ApplyPresetXMP = applyPresetXMP;
-    $.dr7StampVisible = stamp;
-    $.dr7ToSmartObject = toSmartObject;
-    $.dr7ApplyBundledXmp = applyBundledXmp;
-    $.dr7SanitizeAcrXmp = sanitizeAcrXmp;
+    $.scctlmFotoApplyPresetXMP = applyPresetXMP;
+    $.scctlmFotoStampVisible = stamp;
+    $.scctlmFotoToSmartObject = toSmartObject;
+    $.scctlmFotoApplyBundledXmp = applyBundledXmp;
+    $.scctlmFotoSanitizeAcrXmp = sanitizeAcrXmp;
 }());

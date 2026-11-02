@@ -11,6 +11,6 @@
         grid.hidden = !open;
         button.setAttribute('aria-expanded', open ? 'true' : 'false');
         button.title = open ? 'Thu gọn công cụ' : 'Hiện thêm công cụ';
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     });
 }());

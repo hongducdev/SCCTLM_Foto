@@ -10,9 +10,9 @@
     var VALID_NAME = /^[A-Za-z0-9_.+-]{1,80}$/;
 
     // select: <select> cần điền; preferred: tên PostScript chọn sẵn nếu có trong danh sách
-    window.dr7LoadFrameFonts = function (select, preferred) {
+    window.scctlmFotoLoadFrameFonts = function (select, preferred) {
         if (loaded) return;
-        cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.fonts():"DR7_MISSING"', function (res) {
+        cs.evalScript('typeof $._ext_EXIFFRAME=="object"?$._ext_EXIFFRAME.fonts():"SCCTLM_MISSING"', function (res) {
             if (loaded || !/\t/.test(String(res))) return;
             loaded = true;
             var fonts = String(res).split('\n').map(function (line) {

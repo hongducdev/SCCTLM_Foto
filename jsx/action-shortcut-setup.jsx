@@ -9,7 +9,7 @@
  * The user's own actions are never touched.
  * .atn layout: Adobe Photoshop File Formats, "Actions file format".
  */
-$.dr7ShortcutSetup = {
+$.scctlmFotoShortcutSetup = {
     SET_NAME: 'SCCTLM_Foto',
     LEGACY_SET_NAME: 'MHK DR7',                                // set name before the rename; removed on the next install
     PLAY_PREFIX: '\u25B6 ',
@@ -73,7 +73,7 @@ $.dr7ShortcutSetup = {
 
     // "set\taction\n..." for the panel's picker, without our own play wrappers
     listActions: function () {
-        var self = $.dr7ShortcutSetup, out = [];
+        var self = $.scctlmFotoShortcutSetup, out = [];
         self.eachAction(function (setName, actionName) {
             if (setName === self.SET_NAME || setName === self.LEGACY_SET_NAME) return false;   // our generated play wrappers
             out.push(setName + '\t' + actionName);
@@ -84,8 +84,8 @@ $.dr7ShortcutSetup = {
 
     // true while our set still holds a play wrapper for a bundled action (made before keys went onto the bundled set)
     hasBundledWrapper: function () {
-        var self = $.dr7ShortcutSetup, found = false;
-        var bundled = typeof $.dr7BundledSets === 'function' ? $.dr7BundledSets() : {};
+        var self = $.scctlmFotoShortcutSetup, found = false;
+        var bundled = typeof $.scctlmFotoBundledSets === 'function' ? $.scctlmFotoBundledSets() : {};
         self.eachAction(function (setName, actionName) {
             if (setName !== self.SET_NAME) return false;
             for (var name in bundled) {
@@ -107,12 +107,12 @@ $.dr7ShortcutSetup = {
     },
 
     // bindings: "key\tset\taction\n..." (built by js/shortcut-key-capture.js)
-    // Keys for actions of a set bundled in presets/ go straight onto that set ($.dr7InstallBundledKeys);
+    // Keys for actions of a set bundled in presets/ go straight onto that set ($.scctlmFotoInstallBundledKeys);
     // only other actions get a play wrapper.
     install: function (bindings) {
-        var self = $.dr7ShortcutSetup;
+        var self = $.scctlmFotoShortcutSetup;
         var actions = [];
-        var bundled = typeof $.dr7BundledSets === 'function' ? $.dr7BundledSets() : {};
+        var bundled = typeof $.scctlmFotoBundledSets === 'function' ? $.scctlmFotoBundledSets() : {};
         var baked = {}, bakedCount = 0;
         var lines = String(bindings).split('\n');
         for (var i = 0; i < lines.length; i += 1) {
@@ -137,11 +137,11 @@ $.dr7ShortcutSetup = {
         // Every bundled set in Photoshop is rebuilt, so a removed key (or a key an older copy carried) goes away too
         for (var setName in bundled) {
             if (bundled.hasOwnProperty(setName) && self.exists(setName, null)) {
-                bakedCount += $.dr7InstallBundledKeys(setName, bundled[setName], baked[setName] || {});
+                bakedCount += $.scctlmFotoInstallBundledKeys(setName, bundled[setName], baked[setName] || {});
             }
         }
         if (!actions.length) return bakedCount;                   // no wrappers left: no empty set
-        var atn = new File(Folder.temp + '/dr7-shortcut.atn');
+        var atn = new File(Folder.temp + '/scctlm-foto-shortcut.atn');
         atn.encoding = 'BINARY';
         if (!atn.open('w')) throw new Error('Kh\u00F4ng ghi \u0111\u01B0\u1EE3c ' + atn.fsName);
         atn.write(self.u32(16) + self.unicode(self.SET_NAME) + self.u8(1) + self.u32(actions.length) + actions.join(''));

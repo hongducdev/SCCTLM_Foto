@@ -17,7 +17,7 @@
 
     function single(id, name, w, h) { return { id: id, name: name, w: w, h: h, rows: [[box(w, h)]] }; }
 
-    var ALBUMS = root.dr7ArtboardAlbums || [];
+    var ALBUMS = root.scctlmFotoArtboardAlbums || [];
 
     var SECTIONS = [
         { id: 'favorites', title: 'Hay dùng', tags: [], cards: [
@@ -130,7 +130,7 @@
         }
     };
 
-    root.dr7Artboard = {
+    root.scctlmFotoArtboard = {
         SECTIONS: SECTIONS, MAX_SIZE: MAX_SIZE, MAX_GAP: MAX_GAP, MAX_BOARDS: MAX_BOARDS, NAME_MAX: NAME_MAX,
         countBoards: countBoards, extentOf: extentOf, pick: pick, layout: layout, isSize: isSize, spec: validator
     };

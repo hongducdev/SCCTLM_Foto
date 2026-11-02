@@ -59,5 +59,5 @@
         }
     };
 
-    root.dr7WmSpec = { plan: plan, measureList: measureList, FONT: FONT };
+    root.scctlmFotoWmSpec = { plan: plan, measureList: measureList, FONT: FONT };
 }(typeof window !== 'undefined' ? window : this));

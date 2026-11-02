@@ -58,7 +58,7 @@ $._ext_LS_LAYERS = {
     // Fallback when Merge Visible cannot add a layer: flatten a scratch copy of the document instead (hidden layers drop out).
     // The copy lands at the top of `doc`, so it is read back from there rather than from doc.activeLayer.
     stampViaCopy: function (doc) {
-        var scratch = doc.duplicate('dr7-ls-scratch', false);
+        var scratch = doc.duplicate('scctlm-foto-ls-scratch', false);
         try {
             if (scratch.layers.length > 1) scratch.flatten();
             scratch.layers[0].duplicate(doc, ElementPlacement.PLACEATBEGINNING);
@@ -187,7 +187,7 @@ $._ext_LS_LAYERS = {
     // Selection -> temporary channel (filters must not be limited by it); returns the channel
     saveSelection: function (doc) {
         var ch = doc.channels.add();
-        ch.name = '__dr7_ls_selection__';
+        ch.name = '__scctlm_foto_ls_selection__';
         doc.selection.store(ch);
         doc.activeChannels = doc.componentChannels;
         return ch;

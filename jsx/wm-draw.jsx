@@ -155,9 +155,9 @@ $._ext_WMDRAW = {
     // Removes the watermark group and crops the canvas back to the photo; one history step
     remove: function () {
         app.preferences.rulerUnits = Units.PIXELS;
-        if (!app.documents.length || !this.find(app.activeDocument)) return 'DR7_NONE';
+        if (!app.documents.length || !this.find(app.activeDocument)) return 'SCCTLM_NONE';
         app.activeDocument.suspendHistory('G\u1EE1 watermark', '$._ext_WMDRAW.takeOff()');
-        return 'DR7_OK';
+        return 'SCCTLM_OK';
     },
 
     // Runs in the global scope (suspendHistory), so the spec travels on the object

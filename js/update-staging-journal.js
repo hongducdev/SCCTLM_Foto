@@ -1,5 +1,5 @@
-/* DR7 update staging: downloads are written to <panel>/.dr7-update/, then moved into place under a journal
- * (<panel>/.dr7-update.json). A crash or a failed move midway is finished by recover(), which panel.js calls
+/* SCCTLM_Foto update staging: downloads are written to <panel>/.scctlm-foto-update/, then moved into place under a journal
+ * (<panel>/.scctlm-foto-update.json). A crash or a failed move midway is finished by recover(), which panel.js calls
  * before the ExtendScript core loads, so the panel never runs on a mix of two versions.
  * Pure logic (no DOM). cep.fs facts (measured in Photoshop): rename() refuses to overwrite and a missing target
  * folder is an error; deleteFile() refuses directories and read-only files, so staging folders stay (empty).
@@ -7,9 +7,9 @@
 (function () {
     'use strict';
 
-    var STAGING = '.dr7-update';
-    var JOURNAL = '.dr7-update.json';
-    var RECORD = '.dr7-version.json';
+    var STAGING = '.scctlm-foto-update';
+    var JOURNAL = '.scctlm-foto-update.json';
+    var RECORD = '.scctlm-foto-version.json';
     var JOURNAL_VERSION = 1;
     var NOT_FOUND = 3;
     var HEX512 = /^[0-9a-f]{128}$/;
@@ -54,7 +54,7 @@
         return result.err ? null : result.data;
     }
 
-    function hashOf(base64) { return window.dr7Release.sha512Sync(window.dr7Release.fromBase64(base64)); }
+    function hashOf(base64) { return window.scctlmFotoRelease.sha512Sync(window.scctlmFotoRelease.fromBase64(base64)); }
 
     function remove(path) {
         if (fs().stat(path).err) return;
@@ -100,7 +100,7 @@
     function verifyStaged(base, path, sha512) {
         var data = readBase64(base + '/' + STAGING + '/' + path);
         if (data === null) return Promise.reject(new Error('Không đọc lại được file tạm: ' + path));
-        return window.dr7Release.sha512(window.dr7Release.fromBase64(data)).then(function (hash) {
+        return window.scctlmFotoRelease.sha512(window.scctlmFotoRelease.fromBase64(data)).then(function (hash) {
             if (hash !== sha512) throw new Error('File tạm ghi sai: ' + path + ' — đã huỷ, không thay đổi file nào.');
         });
     }
@@ -108,7 +108,7 @@
     function begin(base, journal) { write(base, JOURNAL, JSON.stringify(journal, null, 1), window.cep.encoding.UTF8); }
 
     function validJournal(journal) {
-        var isPath = window.dr7Release.isRuntimePath;
+        var isPath = window.scctlmFotoRelease.isRuntimePath;
         if (!journal || journal.journalVersion !== JOURNAL_VERSION || typeof journal.tag !== 'string' ||
             !Array.isArray(journal.move) || !Array.isArray(journal.remove) || !journal.record ||
             typeof journal.record.version !== 'string' || !journal.record.files || typeof journal.record.files !== 'object') return false;
@@ -180,6 +180,6 @@
         }
     }
 
-    window.dr7Staging = { stage: stage, verifyStaged: verifyStaged, begin: begin, recover: recover,
+    window.scctlmFotoStaging = { stage: stage, verifyStaged: verifyStaged, begin: begin, recover: recover,
         clearStaging: clearStaging, order: order, stamp: stamp, write: write };
 }());

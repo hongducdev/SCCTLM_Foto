@@ -14,14 +14,14 @@
     // Phần của form được lưu trong mẫu: kiểu và giao diện, không phải chữ của từng ảnh (máy, hãng, thông số, dòng thêm)
     var PRESET_FIELDS = ['style', 'logoPos', 'output', 'background', 'prefix', 'separator', 'border', 'radius', 'size', 'gap', 'font', 'text', 'muted'];
 
-    var data = window.dr7ExifFrame, fields = window.dr7ExifFields;
+    var data = window.scctlmFotoExifFrame, fields = window.scctlmFotoExifFields;
 
     function number(input, fallback, min, max) {
         var value = parseInt(input.value, 10);
         return isFinite(value) ? Math.max(min, Math.min(max, value)) : fallback;
     }
 
-    window.dr7FrameForm = function (root) {
+    window.scctlmFotoFrameForm = function (root) {
         var el = {}, state = { align: 'center', logo: '' }, listeners = [];
 
         CONTROLS.forEach(function (key) {

@@ -1,6 +1,6 @@
 /*
  * EXIFFRAME - frames the active image and writes the camera lines under it (panel tab "Watermark").
- * read():  "<width>\t<height>" then one "<tag id>\t<value>" per EXIF entry, or DR7_NO_DOCUMENT.
+ * read():  "<width>\t<height>" then one "<tag id>\t<value>" per EXIF entry, or SCCTLM_NO_DOCUMENT.
  * fonts(): one "<PostScript name>\t<family> <style>" per installed font.
  * run(spec): spec is validated and laid out by js/exif-frame-layout.js (every size is in px):
  *   { srcW, srcH, style: 'bottom' | 'polaroid' | 'overlay', align: 'left' | 'center' | 'right', logoPos: 'left' | 'top' | 'right' | 'split', font (PostScript name),
@@ -18,7 +18,7 @@ $._ext_EXIFFRAME = {
     WORD_GAP: 0.3,
 
     read: function () {
-        if (!app.documents.length) return 'DR7_NO_DOCUMENT';
+        if (!app.documents.length) return 'SCCTLM_NO_DOCUMENT';
         var doc = app.activeDocument, exif = doc.info.exif, lines = [], i;
         lines.push(Math.round(doc.width.as('px')) + '\t' + Math.round(doc.height.as('px')));
         for (i = 0; i < exif.length; i += 1) {

@@ -20,31 +20,31 @@
     // done(ok): true khi Action đã có trong Photoshop (sẵn có hoặc vừa nạp).
     // Vừa nạp thì dựng lại bộ phím tắt: phím gán trước đó cho Action này mới trỏ tới được
     function ensure(item, done) {
-        window.dr7EnsureAction(specOf(item), function (res) {
-            if (res === 'DR7_OK') {
-                if (window.dr7FlashStatus) window.dr7FlashStatus('✓ Đã nạp bộ Action ' + SET);
-                window.dr7ReinstallShortcuts(function () { done(true); });
+        window.scctlmFotoEnsureAction(specOf(item), function (res) {
+            if (res === 'SCCTLM_OK') {
+                if (window.scctlmFotoFlashStatus) window.scctlmFotoFlashStatus('✓ Đã nạp bộ Action ' + SET);
+                window.scctlmFotoReinstallShortcuts(function () { done(true); });
                 return;
             }
-            done(res === 'DR7_EXISTS');
+            done(res === 'SCCTLM_EXISTS');
         });
     }
 
-    window.dr7InitCreateButtons = function () {
+    window.scctlmFotoInitCreateButtons = function () {
         ITEMS.forEach(function (item) {
             var create = document.querySelector('.create-btn[data-create="' + item.id + '"]');
             var key = document.querySelector('.create-key[data-create="' + item.id + '"]');
             if (!create || !key) return;
             create.addEventListener('click', function () {
-                if (window.dr7IsBusy && window.dr7IsBusy()) return;
+                if (window.scctlmFotoIsBusy && window.scctlmFotoIsBusy()) return;
                 ensure(item, function (ok) {
                     if (!ok) return;
-                    window.dr7PlayAction(specOf(item), function (res) {
-                        if (res === 'DR7_OK' && window.dr7FlashStatus) window.dr7FlashStatus('✓ Đã tạo ' + item.name);
+                    window.scctlmFotoPlayAction(specOf(item), function (res) {
+                        if (res === 'SCCTLM_OK' && window.scctlmFotoFlashStatus) window.scctlmFotoFlashStatus('✓ Đã tạo ' + item.name);
                     });
                 });
             });
-            window.dr7AttachShortcutKey(key, { set: SET, action: item.action }, function (done) { ensure(item, done); });
+            window.scctlmFotoAttachShortcutKey(key, { set: SET, action: item.action }, function (done) { ensure(item, done); });
         });
     };
 }());

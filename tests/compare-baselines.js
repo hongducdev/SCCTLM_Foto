@@ -2,7 +2,7 @@
 // Compares two files written by tests/photoshop-baseline-record.jsx: same runs, same layer structure
 // (type, kind, visibility, opacity, blend mode, child count; names are not compared), and a composite
 // histogram within the threshold (half the L1 distance between the normalised histograms, 0..1).
-// --samples [mean=1.5 over4=0.05 max=20] also checks the `samples` grids (recorded with $.dr7BaselineSamples): mean of the
+// --samples [mean=1.5 over4=0.05 max=20] also checks the `samples` grids (recorded with $.scctlmFotoBaselineSamples): mean of the
 // per-point max channel difference, share of points differing by more than 4 levels, and the largest difference.
 const fs = require('node:fs');
 

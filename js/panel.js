@@ -1,4 +1,4 @@
-/* DR7 bridge: explicit command namespace, loader readiness, host error details. */
+/* SCCTLM_Foto bridge: explicit command namespace, loader readiness, host error details. */
 (function () {
     'use strict';
 
@@ -6,23 +6,23 @@
     var PANEL_MIN_WIDTH = 300;
     var ready = false;
     var busy = false;
-    window.dr7IsBusy = function () { return busy; };
+    window.scctlmFotoIsBusy = function () { return busy; };
 
     // Hộp thoại chung (js/dialog.js); alert/confirm của trình duyệt chỉ là đường lui nếu hộp thoại chưa nạp được
     function notify(title, message) {
-        if (window.dr7Dialog) return window.dr7Dialog({ title: title, message: message, tone: 'error' });
+        if (window.scctlmFotoDialog) return window.scctlmFotoDialog({ title: title, message: message, tone: 'error' });
         alert(title + '\n' + message);
         return Promise.resolve(true);
     }
     function ask(title, message, confirmText, cancelText) {
-        if (window.dr7Dialog) return window.dr7Dialog({ title: title, message: message, confirmText: confirmText, cancelText: cancelText });
+        if (window.scctlmFotoDialog) return window.scctlmFotoDialog({ title: title, message: message, confirmText: confirmText, cancelText: cancelText });
         return Promise.resolve(window.confirm(title + '\n\n' + message));
     }
-    window.dr7Reload = function () {
+    window.scctlmFotoReload = function () {
         if (busy) return false;
         // Máy dev: chép code mới từ thư mục nguồn sang bản cài trước khi nạp lại
         try {
-            if (window.dr7SyncDevSource) window.dr7SyncDevSource(base);
+            if (window.scctlmFotoSyncDevSource) window.scctlmFotoSyncDevSource(base);
         } catch (e) {
             // Nạp lại sau khi người dùng đọc xong thông báo, không thì trang tải lại và hộp thoại biến mất
             notify('Không đồng bộ được code', 'Không đồng bộ được code từ thư mục nguồn:\n' + e.message).then(function () {
@@ -54,23 +54,23 @@
         }
     };
 
-    // done(res): tuỳ chọn, gọi sau khi Photoshop chạy xong (res = "DR7_OK" / "DR7_CANCEL" / lỗi)
+    // done(res): tuỳ chọn, gọi sau khi Photoshop chạy xong (res = "SCCTLM_OK" / "SCCTLM_CANCEL" / lỗi)
     // arg: tuỳ chọn, màu "#rrggbb" truyền cho lệnh $._ext_<name>.run
     function run(kind, name, done, arg) {
         var valid = kind === 'preset' ? PRESET_FILE : (kind === 'play' || kind === 'ensure') ? BUNDLED_ACTION : kind === 'colormix' ? COLOR_MIX : kind === 'shortcut' ? SHORTCUT_LIST :
-            kind === 'artboard' ? window.dr7Artboard.spec : kind === 'frame' ? window.dr7ExifFrame.spec : kind === 'wm' ? window.dr7WmSpec.plan : /^[A-Za-z_][A-Za-z0-9_]*$/;
-        if (!valid.test(name) || (arg !== undefined && !HEX_COLOR.test(arg))) { if (done) done('DR7_INVALID'); return; }
+            kind === 'artboard' ? window.scctlmFotoArtboard.spec : kind === 'frame' ? window.scctlmFotoExifFrame.spec : kind === 'wm' ? window.scctlmFotoWmSpec.plan : /^[A-Za-z_][A-Za-z0-9_]*$/;
+        if (!valid.test(name) || (arg !== undefined && !HEX_COLOR.test(arg))) { if (done) done('SCCTLM_INVALID'); return; }
         if (!ready) {
             notify('Photoshop chưa sẵn sàng', 'Lõi Photoshop chưa sẵn sàng. Hãy đóng và mở lại panel.');
-            if (done) done('DR7_NOT_READY');
+            if (done) done('SCCTLM_NOT_READY');
             return;
         }
-        if (busy) { if (done) done('DR7_BUSY'); return; }
+        if (busy) { if (done) done('SCCTLM_BUSY'); return; }
         busy = true;
         document.body.classList.add('is-busy');
-        var target = kind === 'doa' ? '$.dr7Commands[' + JSON.stringify(name) + ']' :
-            kind === 'preset' ? '$.dr7ApplyBundledXmp' : kind === 'colormix' ? '$.dr7ApplyColorMix' : kind === 'play' ? '$.dr7PlayBundledAction' : kind === 'ensure' ? '$.dr7EnsureBundledAction' :
-            kind === 'shortcut' ? '$.dr7ShortcutSetup.install' : kind === 'artboard' ? '$._ext_ARTBOARD.run' : kind === 'frame' ? '$._ext_EXIFFRAME.run' : kind === 'wm' ? '$._ext_WMDRAW.run' : '$._ext_' + name + '.run';
+        var target = kind === 'doa' ? '$.scctlmFotoCommands[' + JSON.stringify(name) + ']' :
+            kind === 'preset' ? '$.scctlmFotoApplyBundledXmp' : kind === 'colormix' ? '$.scctlmFotoApplyColorMix' : kind === 'play' ? '$.scctlmFotoPlayBundledAction' : kind === 'ensure' ? '$.scctlmFotoEnsureBundledAction' :
+            kind === 'shortcut' ? '$.scctlmFotoShortcutSetup.install' : kind === 'artboard' ? '$._ext_ARTBOARD.run' : kind === 'frame' ? '$._ext_EXIFFRAME.run' : kind === 'wm' ? '$._ext_WMDRAW.run' : '$._ext_' + name + '.run';
         var args = kind === 'preset' || kind === 'play' || kind === 'ensure' || kind === 'colormix' || kind === 'shortcut' || kind === 'artboard' || kind === 'frame' || kind === 'wm' ? JSON.stringify(name) :
             arg !== undefined ? JSON.stringify(arg) : '';
         // name đã qua kiểm tra; riêng danh sách phím tắt (nhiều dòng, tên Action tuỳ ý) không được
@@ -80,18 +80,18 @@
         // BA processes every open document, so it needs at least one.
         var code = '(function(){var d=app.displayDialogs,u=app.preferences.rulerUnits;' +
             'try{' + (kind !== 'shortcut' && kind !== 'ensure' && kind !== 'artboard' && !/^(WM|BPP|BPPRESET|BUGFIX)$/.test(name) ?
-                'if(!app.documents.length)return "DR7_NO_DOCUMENT";' : '') +
+                'if(!app.documents.length)return "SCCTLM_NO_DOCUMENT";' : '') +
             'if(typeof ' + target + '!=="function")throw new Error("Missing command: ' + label + '");' +
-            'var r=' + target + '(' + args + ');return r==="DR7_EXISTS"?r:"DR7_OK";}catch(e){if(e.number===8007)return "DR7_CANCEL";' +
-            'return "DR7_ERROR: "+e+"\\nFile: "+e.fileName+"\\nLine: "+e.line;}' +
+            'var r=' + target + '(' + args + ');return r==="SCCTLM_EXISTS"?r:"SCCTLM_OK";}catch(e){if(e.number===8007)return "SCCTLM_CANCEL";' +
+            'return "SCCTLM_ERROR: "+e+"\\nFile: "+e.fileName+"\\nLine: "+e.line;}' +
             'finally{app.displayDialogs=d;app.preferences.rulerUnits=u;}}())';
         try {
             cs.evalScript(code, function (res) {
                 busy = false;
                 document.body.classList.remove('is-busy');
-                if (res === 'DR7_NO_DOCUMENT') {
+                if (res === 'SCCTLM_NO_DOCUMENT') {
                     notify('Chưa mở ảnh', 'Hãy mở ảnh trong Photoshop trước khi chạy lệnh.');
-                } else if (res !== 'DR7_OK' && res !== 'DR7_CANCEL' && res !== 'DR7_EXISTS') {
+                } else if (res !== 'SCCTLM_OK' && res !== 'SCCTLM_CANCEL' && res !== 'SCCTLM_EXISTS') {
                     notify('Photoshop — ' + label, res);
                 }
                 if (done) done(res);
@@ -100,29 +100,29 @@
             busy = false;
             document.body.classList.remove('is-busy');
             notify('Không kết nối được Photoshop', String(e));
-            if (done) done('DR7_ERROR');
+            if (done) done('SCCTLM_ERROR');
         }
     }
 
     // --- API cho index.html ---
     window.doa = function (name) { run('doa', name); };
     window.onClickButton = function (name) { run('ext', name); };
-    window.dr7ApplyPreset = function (fileName) { run('preset', fileName); };
+    window.scctlmFotoApplyPreset = function (fileName) { run('preset', fileName); };
     // spec "fuji/001:60,dazz/003:40": mỗi màu 1 layer, độ mờ theo %, xem js/color-presets.js
-    window.dr7ApplyColorMix = function (spec, done) { run('colormix', spec, done); };
+    window.scctlmFotoApplyColorMix = function (spec, done) { run('colormix', spec, done); };
     // spec "file.atn<TAB>bộ<TAB>Action": nạp bộ Action đi kèm nếu Photoshop chưa có (ensure), rồi chạy nó (play)
-    window.dr7EnsureAction = function (spec, done) { run('ensure', spec, done); };
-    window.dr7PlayAction = function (spec, done) { run('play', spec, done); };
+    window.scctlmFotoEnsureAction = function (spec, done) { run('ensure', spec, done); };
+    window.scctlmFotoPlayAction = function (spec, done) { run('play', spec, done); };
     // Gọi từ js/shortcut-key-capture.js sau khi người dùng ấn phím
-    window.dr7SetupShortcut = function (list, done) { run('shortcut', list, done); };
-    // spec đã qua window.dr7Artboard.spec; tạo artboard bằng jsx/artboard-create.jsx
-    window.dr7RunArtboard = function (spec, done) { run('artboard', spec, done); };
-    // spec đã qua window.dr7ExifFrame.spec; vẽ khung bằng jsx/exif-frame.jsx
-    window.dr7RunFrame = function (spec, done) { run('frame', spec, done); };
-    // kế hoạch đã qua window.dr7WmSpec.plan; vẽ watermark mẫu gốc bằng jsx/wm-draw.jsx
-    window.dr7RunWm = function (plan, done) { run('wm', plan, done); };
+    window.scctlmFotoSetupShortcut = function (list, done) { run('shortcut', list, done); };
+    // spec đã qua window.scctlmFotoArtboard.spec; tạo artboard bằng jsx/artboard-create.jsx
+    window.scctlmFotoRunArtboard = function (spec, done) { run('artboard', spec, done); };
+    // spec đã qua window.scctlmFotoExifFrame.spec; vẽ khung bằng jsx/exif-frame.jsx
+    window.scctlmFotoRunFrame = function (spec, done) { run('frame', spec, done); };
+    // kế hoạch đã qua window.scctlmFotoWmSpec.plan; vẽ watermark mẫu gốc bằng jsx/wm-draw.jsx
+    window.scctlmFotoRunWm = function (plan, done) { run('wm', plan, done); };
     // Cho module khác (js/brush-setup-controls.js, js/rim-color-controls.js) chạy lệnh $._ext_<name> và nhận kết quả
-    window.dr7RunCommand = function (name, done, arg) { run('ext', name, done, arg); };
+    window.scctlmFotoRunCommand = function (name, done, arg) { run('ext', name, done, arg); };
 
     // One button per .xmp dropped into /presets, labelled with the file name.
     function renderPresets() {
@@ -136,7 +136,7 @@
             button.className = 'ba-preset';
             button.title = 'Áp nhanh preset ' + label;
             button.textContent = label;
-            button.onclick = function () { window.dr7ApplyPreset(file); };
+            button.onclick = function () { window.scctlmFotoApplyPreset(file); };
             grid.appendChild(button);
         });
     }
@@ -161,9 +161,9 @@
         box.className = 'panel-status' + (isError ? ' is-error' : '');
         fitHeight();
     }
-    window.dr7Status = status;
-    window.dr7FitHeight = fitHeight;
-    window.dr7FlashStatus = flashStatus;
+    window.scctlmFotoStatus = status;
+    window.scctlmFotoFitHeight = fitHeight;
+    window.scctlmFotoFlashStatus = flashStatus;
     // Thông báo ngắn, tự ẩn nếu chưa bị thông báo khác thay
     var flashTimer = 0;
     function flashStatus(text) {
@@ -185,11 +185,11 @@
             'Kiểm tra cập nhật từ GitHub';
     }
     function checkRelease() {
-        return window.dr7Updater.check(base).then(function (result) { showRelease(result); return result; });
+        return window.scctlmFotoUpdater.check(base).then(function (result) { showRelease(result); return result; });
     }
-    window.dr7Update = function () {
+    window.scctlmFotoUpdate = function () {
         var button = document.querySelector('.update-button');
-        if (busy || !window.dr7Updater || !base) return;
+        if (busy || !window.scctlmFotoUpdater || !base) return;
         busy = true;
         if (button) { button.disabled = true; button.classList.add('working'); }
         status('Đang kiểm tra bản mới...');
@@ -201,7 +201,7 @@
             return ask('Cập nhật SCCTLM_Foto lên ' + result.latest.tag + '?', notes.trim(), 'Cập nhật', 'Để sau').then(function (accepted) {
                 if (!accepted) { status(''); return null; }
                 status('Đang kiểm tra file...');   // the first update after 0.1.9 hashes every installed file (~4 s)
-                return window.dr7Updater.update(base, result.latest.tag, function (done, total) {
+                return window.scctlmFotoUpdater.update(base, result.latest.tag, function (done, total) {
                     status('Đang tải ' + done + '/' + total + ' file...');
                 }).then(function (installed) {
                     if (installed.restart) {
@@ -213,7 +213,7 @@
             });
         }).then(function (next) {
             finish();
-            if (next === 'reload') window.dr7Reload();
+            if (next === 'reload') window.scctlmFotoReload();
         }, function (error) {
             finish();
             status('Cập nhật thất bại: ' + (error && error.message || error), true);
@@ -221,23 +221,23 @@
     };
 
     window.onLoaded = function () {
-        if (window.dr7InitTabs) window.dr7InitTabs();
-        if (window.dr7InitExplore) window.dr7InitExplore();
-        if (window.dr7InitArtboard) window.dr7InitArtboard();
-        if (window.dr7InitFrame) window.dr7InitFrame();
-        if (window.dr7InitWm) window.dr7InitWm();
-        if (window.dr7InitColorPresets) window.dr7InitColorPresets(base);
+        if (window.scctlmFotoInitTabs) window.scctlmFotoInitTabs();
+        if (window.scctlmFotoInitExplore) window.scctlmFotoInitExplore();
+        if (window.scctlmFotoInitArtboard) window.scctlmFotoInitArtboard();
+        if (window.scctlmFotoInitFrame) window.scctlmFotoInitFrame();
+        if (window.scctlmFotoInitWm) window.scctlmFotoInitWm();
+        if (window.scctlmFotoInitColorPresets) window.scctlmFotoInitColorPresets(base);
         renderPresets();
-        if (window.dr7InitCreateButtons) window.dr7InitCreateButtons();
-        if (window.dr7InitBrushSetup) window.dr7InitBrushSetup();
-        if (window.dr7InitBrushControls) window.dr7InitBrushControls();
-        if (window.dr7InitBrushColor) window.dr7InitBrushColor();
-        if (window.dr7InitRimColor) window.dr7InitRimColor();
+        if (window.scctlmFotoInitCreateButtons) window.scctlmFotoInitCreateButtons();
+        if (window.scctlmFotoInitBrushSetup) window.scctlmFotoInitBrushSetup();
+        if (window.scctlmFotoInitBrushControls) window.scctlmFotoInitBrushControls();
+        if (window.scctlmFotoInitBrushColor) window.scctlmFotoInitBrushColor();
+        if (window.scctlmFotoInitRimColor) window.scctlmFotoInitRimColor();
         fitHeight();
         // Silent check: an offline panel simply shows no badge.
-        if (window.dr7Updater && base && window.cep) {
-            showRelease({ current: window.dr7Updater.installedVersion(base), latest: null, available: false });
-            checkRelease().catch(function (error) { window.console.warn('DR7 update check:', error); });
+        if (window.scctlmFotoUpdater && base && window.cep) {
+            showRelease({ current: window.scctlmFotoUpdater.installedVersion(base), latest: null, available: false });
+            checkRelease().catch(function (error) { window.console.warn('SCCTLM_Foto update check:', error); });
         }
     };
 
@@ -256,19 +256,21 @@
     }
 
     var base = extensionDir();
-    window.dr7Base = base;                                  // tiện kiểm tra trong console
+    window.scctlmFotoBase = base;                                  // tiện kiểm tra trong console
     if (!base) {
         notify('SCCTLM_Foto', 'Không xác định được thư mục panel.\nHãy cài lại bằng install/Cai-dat-SCCTLM_Foto.bat');
     } else {
         // Finish an update that was cut short, before the core loads, so ExtendScript never sees half of two versions.
         var recovered = { status: 'none' };
-        try { if (window.dr7Staging) recovered = window.dr7Staging.recover(base); }
+        try { if (window.scctlmFotoStaging) recovered = window.scctlmFotoStaging.recover(base); }
         catch (error) { recovered = { status: 'failed', message: 'Không kiểm tra được cập nhật dở dang: ' + error.message }; }
         if (recovered.reload) { window.location.reload(); return; }   // the journal is gone now, so this reloads once
         if (recovered.message) status(recovered.message, true);
-        cs.evalScript('try{$.dr7Base = ' + JSON.stringify(base) + '; $.evalFile($.dr7Base + "/loader.jsx");' +
-            '$.dr7Ready ? "DR7_READY" : $.dr7LoadErrors.join("\\n");}catch(e){"DR7_ERROR: "+e+" line "+e.line;}', function (res) {
-            ready = res === 'DR7_READY';
+        cs.evalScript('try{$.scctlmFotoBase = ' + JSON.stringify(base) + '; var f=new File($.scctlmFotoBase + "/loader.jsx");' +
+            'if(!f.exists){"SCCTLM_ERROR: thiếu file loader.jsx trong thư mục panel. Hãy cài lại bằng install/Cai-dat-SCCTLM_Foto.bat";}' +
+            'else{$.evalFile(f);$.scctlmFotoReady ? "SCCTLM_READY" : $.scctlmFotoLoadErrors.join("\\n");}}' +
+            'catch(e){"SCCTLM_ERROR: "+e+" ("+(f ? f.error : "")+") line "+e.line;}', function (res) {
+            ready = res === 'SCCTLM_READY';
             if (!ready) {
                 notify('SCCTLM_Foto: không nạp được lõi ExtendScript', res + '\n\nThư mục panel:\n' + base);
                 return;
@@ -278,7 +280,7 @@
             // body onload, which always lands before this async callback and was silently dropped.
             // Dọn phím tắt kiểu cũ sau khi lõi vừa nạp xong (js/shortcut-key-capture.js); chạy sau BUGFIX vì 1 lệnh mỗi lúc
             run('ext', 'BUGFIX', function () {
-                if (window.dr7CleanupShortcuts) window.dr7CleanupShortcuts();
+                if (window.scctlmFotoCleanupShortcuts) window.scctlmFotoCleanupShortcuts();
             });
         });
     }

@@ -22,7 +22,7 @@ const context = vm.createContext({
         send(message) {
             const expression = JSON.parse(message).params.expression;
             let value = !busy;
-            if (expression === 'dr7Reload()') { value = !race; if (value) reloads++; }
+            if (expression === 'scctlmFotoReload()') { value = !race; if (value) reloads++; }
             queueMicrotask(() => this.onmessage({data:JSON.stringify({id:1,result:{result:{value}}})}));
         }
         close() {}

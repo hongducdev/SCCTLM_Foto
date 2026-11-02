@@ -1,6 +1,6 @@
 /*
  * Tab Artboard: chọn một khổ, tìm kiếm, lọc theo chip, thiết lập rồi tạo artboard trong Photoshop.
- * Dữ liệu mẫu và cách xếp nằm ở js/artboard-layout.js; phần tạo thật ở jsx/artboard-create.jsx (qua window.dr7RunArtboard).
+ * Dữ liệu mẫu và cách xếp nằm ở js/artboard-layout.js; phần tạo thật ở jsx/artboard-create.jsx (qua window.scctlmFotoRunArtboard).
  */
 (function () {
     'use strict';
@@ -12,7 +12,7 @@
     var STARS_KEY = 'dr7ArtboardFavorites';
     var STAR_PATH = 'M8 1.8l1.9 4 4.3.5-3.2 3 .9 4.3L8 11.4l-3.9 2.2.9-4.3-3.200-3 4.300-.5z';
 
-    var data = window.dr7Artboard;
+    var data = window.scctlmFotoArtboard;
     var state = { selected: ['square'], starred: loadStars(), filter: 'all', query: '', mode: 'new', customW: 1080, customH: 1080, nameEdited: false };
     var el = {};
 
@@ -24,7 +24,7 @@
     }
 
     function saveStars() {
-        try { window.localStorage.setItem(STARS_KEY, JSON.stringify(state.starred)); } catch (e) { console.warn('DR7 artboard: không lưu được mẫu yêu thích', e); }
+        try { window.localStorage.setItem(STARS_KEY, JSON.stringify(state.starred)); } catch (e) { console.warn('SCCTLM_Foto artboard: không lưu được mẫu yêu thích', e); }
     }
 
     // Ba khổ mặc định của nhóm Hay dùng luôn nằm đó, không cần gắn sao
@@ -208,7 +208,7 @@
         el.create.disabled = !boards || tooMany;
         el.summaryIcon.classList.toggle('is-empty', !boards || tooMany);
         if (!state.nameEdited) el.name.value = chosen.length === 1 && chosen[0].code ? 'MHK_FB_' + chosen[0].code : DEFAULT_NAME;
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     }
 
     // Chỉ một mẫu được chọn mỗi lần; bấm lại mẫu đang chọn thì bỏ chọn
@@ -223,14 +223,14 @@
     }
 
     function status(text, isError) {
-        if (!window.dr7Status) return;
-        window.dr7Status(text, isError);
-        if (!isError && text) setTimeout(function () { window.dr7Status(''); }, STATUS_MS);
+        if (!window.scctlmFotoStatus) return;
+        window.scctlmFotoStatus(text, isError);
+        if (!isError && text) setTimeout(function () { window.scctlmFotoStatus(''); }, STATUS_MS);
     }
 
     function create() {
         var templates = chosenTemplates();
-        if (!templates.length || (window.dr7IsBusy && window.dr7IsBusy())) return;
+        if (!templates.length || (window.scctlmFotoIsBusy && window.scctlmFotoIsBusy())) return;
         var gap = readNumber(el.gap, 40, 0, data.MAX_GAP);
         el.gap.value = gap;
         var spec = {
@@ -242,9 +242,9 @@
             boards: data.layout(templates, gap, { prefix: templates.length > 1 || state.mode === 'current' })
         };
         el.create.disabled = true;
-        window.dr7RunArtboard(spec, function (res) {
+        window.scctlmFotoRunArtboard(spec, function (res) {
             refreshSelection();
-            if (res === 'DR7_OK') status('✓ Đã tạo ' + spec.boards.length + ' artboard');
+            if (res === 'SCCTLM_OK') status('✓ Đã tạo ' + spec.boards.length + ' artboard');
         });
     }
 
@@ -258,7 +258,7 @@
         el.name.disabled = mode === 'current';
     }
 
-    window.dr7InitArtboard = function () {
+    window.scctlmFotoInitArtboard = function () {
         var root = document.querySelector('.artboard');
         if (!root || !data) return;
         ['sections', 'empty', 'customGroup', 'summary', 'summaryIcon', 'create', 'name', 'gap', 'background', 'guides', 'search'].forEach(function (key) {

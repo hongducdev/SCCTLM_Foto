@@ -12,7 +12,7 @@
         return doc;
     }
     function patterns() {
-        var file = new File($.dr7Base + '/jsx/pj/mhk-patterns.pat');
+        var file = new File($.scctlmFotoBase + '/jsx/pj/mhk-patterns.pat');
         if (!file.exists) throw new Error('Missing mhk-patterns.pat');
         var stamp = String(file.modified) + ':' + file.length;
         var ref = new ActionReference();

@@ -3,10 +3,10 @@
  * (Size Jitter, Angle Jitter, Roundness Jitter) to Pen Pressure.
  *
  * Two entry points:
- *  - DR7 panel "Setup Brush" / "Reset default" buttons (loader evaluates this file and only
+ *  - SCCTLM_Foto panel "Setup Brush" / "Reset default" buttons (loader evaluates this file and only
  *    registers $._ext_BPP / $._ext_BPPRESET).
  *  - Run directly (File > Scripts > Browse) -> runs immediately because the loader's
- *    $.dr7Loading flag is not set.
+ *    $.scctlmFotoLoading flag is not set.
  */
 $._ext_BPP = {
     // Photoshop bVTy: 0 Off, 1 Fade, 2 Pen Pressure, 3 Pen Tilt, 4 Stylus Wheel
@@ -94,7 +94,7 @@ $._ext_BPP = {
 // Panel "Reset default" button (run('ext', 'BPPRESET'))
 $._ext_BPPRESET = { run: function () { $._ext_BPP.reset(); } };
 
-if ($.dr7Loading !== true) {
+if ($.scctlmFotoLoading !== true) {
     try {
         $._ext_BPP.run();
     } catch (e) {

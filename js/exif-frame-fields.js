@@ -78,5 +78,5 @@
         return { make: make, model: model, fields: fields, settings: join(fields, DEFAULT_PICKS, ' ') };
     }
 
-    root.dr7ExifFields = { FIELDS: FIELDS, DEFAULT_PICKS: DEFAULT_PICKS, parseTags: parseTags, describe: describe, join: join };
+    root.scctlmFotoExifFields = { FIELDS: FIELDS, DEFAULT_PICKS: DEFAULT_PICKS, parseTags: parseTags, describe: describe, join: join };
 }(typeof window !== 'undefined' ? window : this));

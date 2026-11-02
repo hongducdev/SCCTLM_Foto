@@ -36,7 +36,7 @@
     }
 
     function applyNow(item) {
-        window.dr7ApplyColorMix(item.id + ':100');
+        window.scctlmFotoApplyColorMix(item.id + ':100');
     }
 
     function onChipClick(item) {
@@ -84,7 +84,7 @@
             cards[i].classList.toggle('is-selected', !!activeGroup && cards[i].getAttribute('data-group') === activeGroup.id);
         }
         renderList();
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     }
 
     function renderGroups() {
@@ -146,7 +146,7 @@
         });
         basketBox.hidden = !mixMode();
         applyButton.disabled = basket.length === 0;
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     }
 
     function buildMixControls() {
@@ -169,20 +169,20 @@
         basketBox.appendChild(el('p', 'cp-mix-hint', 'Chọn tối đa ' + MAX_MIX + ' màu, kéo độ mờ từng layer. Màu sau nằm trên màu trước.'));
         basketBox.appendChild(basketRows);
         applyButton = el('button', 'cp-mix-apply', 'Áp dụng Mix');
-        applyButton.onclick = function () { if (basket.length) window.dr7ApplyColorMix(spec()); };
+        applyButton.onclick = function () { if (basket.length) window.scctlmFotoApplyColorMix(spec()); };
         basketBox.appendChild(applyButton);
         root.appendChild(basketBox);
     }
 
-    window.dr7InitColorPresets = function (base) {
+    window.scctlmFotoInitColorPresets = function (base) {
         root = document.querySelector('.color-presets');
         if (!root || !window.cep || !window.cep.fs || !base) return;
         var file = window.cep.fs.readFile(base + '/presets/colors/manifest.json', window.cep.encoding.UTF8);
-        if (file.err) { window.console.warn('DR7 colour manifest:', file.err); return; }
+        if (file.err) { window.console.warn('SCCTLM_Foto colour manifest:', file.err); return; }
         try {
             manifest = JSON.parse(file.data);
         } catch (error) {
-            window.console.warn('DR7 colour manifest is not valid JSON:', error);
+            window.console.warn('SCCTLM_Foto colour manifest is not valid JSON:', error);
             return;
         }
         groupGrid = el('div', 'cp-groups');

@@ -39,7 +39,7 @@ public class DialogFinder {
 
 $root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path.Replace('\', '/')
 $commandList = ($Commands | ForEach-Object { '"' + $_ + '"' }) -join ','
-$js = '$.dr7BaselineCommands=[' + $commandList + ']; $.dr7BaselineName="' + $Name + '"; $.dr7BaselineSamples=' + ([string]$Samples.IsPresent).ToLower() +
+$js = '$.scctlmFotoBaselineCommands=[' + $commandList + ']; $.scctlmFotoBaselineName="' + $Name + '"; $.scctlmFotoBaselineSamples=' + ([string]$Samples.IsPresent).ToLower() +
     '; $.evalFile(new File("' + $root + '/tests/photoshop-baseline-record.jsx"))'
 $send = if ($Key -eq 'Esc') { '{ESC}' } else { '{ENTER}' }
 $processId = (Get-Process Photoshop | Select-Object -First 1).Id

@@ -74,7 +74,7 @@
 
     function plan(template, options) {
         var photo = options.photo, u = photo.w / (options.refWidth || 1080), info = options.info;
-        var strings = template.strings, resolver = root.dr7WmVars.resolver(info, strings), fonts = template.fonts;
+        var strings = template.strings, resolver = root.scctlmFotoWmVars.resolver(info, strings), fonts = template.fonts;
         var backgrounds = template.backgrounds.length ? template.backgrounds : [{ name: 'none', value: '@color=#00FFFFFF', foreground: [] }];
         var bg = backgrounds.filter(function (b) { return b.name === options.background; })[0] || backgrounds[0];
         var hasLocation = resolver.hasLocation();
@@ -250,5 +250,5 @@
 
     function layoutKeys(template) { return Object.keys(template.layouts); }
 
-    root.dr7WmLayout = { plan: plan, layoutKeys: layoutKeys, pyRound: pyRound, faceOf: faceOf };
+    root.scctlmFotoWmLayout = { plan: plan, layoutKeys: layoutKeys, pyRound: pyRound, faceOf: faceOf };
 }(typeof window !== 'undefined' ? window : this));

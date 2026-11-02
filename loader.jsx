@@ -12,7 +12,7 @@ if (typeof $ == 'undefined') { $ = {}; }
 $._ext = $._ext || {};
 
 // Thư mục chứa loader.jsx, chuẩn hoá từ mọi dạng $.fileName trả về
-function dr7ScriptDir() {
+function scctlmFotoScriptDir() {
     var p = String($.fileName == null ? '' : $.fileName);
     try { p = decodeURI(p); } catch (e) { }
     p = p.replace(/\\/g, '/');                        // \ -> /
@@ -25,28 +25,28 @@ function dr7ScriptDir() {
     return i > 0 ? p.substring(0, i) : '';
 }
 
-// Thư mục panel: ưu tiên $.dr7Base do js/panel.js truyền vào (lấy từ CEP),
+// Thư mục panel: ưu tiên $.scctlmFotoBase do js/panel.js truyền vào (lấy từ CEP),
 // chỉ suy từ $.fileName khi chạy tay từ File > Scripts.
-function dr7Here() {
-    if (typeof $.dr7Base == 'string' && $.dr7Base.length > 0) {
-        return String($.dr7Base).replace(/\\/g, '/').replace(/\/+$/, '');
+function scctlmFotoHere() {
+    if (typeof $.scctlmFotoBase == 'string' && $.scctlmFotoBase.length > 0) {
+        return String($.scctlmFotoBase).replace(/\\/g, '/').replace(/\/+$/, '');
     }
-    return dr7ScriptDir();
+    return scctlmFotoScriptDir();
 }
 
-$.dr7LoadErrors = [];
-$.dr7LoadTimes = [];                                   // { file, ms } per evalFile, to see what a panel open costs
-$.dr7LoadTotalMs = 0;
-$.dr7Ready = false;
-$.dr7Commands = {};
+$.scctlmFotoLoadErrors = [];
+$.scctlmFotoLoadTimes = [];                                   // { file, ms } per evalFile, to see what a panel open costs
+$.scctlmFotoLoadTotalMs = 0;
+$.scctlmFotoReady = false;
+$.scctlmFotoCommands = {};
 $._ext.evalFile = function (path) {
     $.hiresTimer;                                        // reading it resets it
     try {
         $.evalFile(path);
     } catch (e) {
-        $.dr7LoadErrors.push(String(path) + ': ' + e + ' (line ' + e.line + ')');
+        $.scctlmFotoLoadErrors.push(String(path) + ': ' + e + ' (line ' + e.line + ')');
     }
-    $.dr7LoadTimes.push({ file: String(path), ms: Math.round($.hiresTimer / 1000) });
+    $.scctlmFotoLoadTimes.push({ file: String(path), ms: Math.round($.hiresTimer / 1000) });
 };
 
 // Originals replaced by clean-room rewrites. An install that was unzipped over an old one, or updated by a pre-0.2.0
@@ -67,28 +67,28 @@ $._ext.evalFiles = function (jsxFolderPath) {
 };
 
 (function () {
-    var here = dr7Here();
-    $.dr7Base = here;                                    // lưu lại để lần sau/tiện debug
+    var here = scctlmFotoHere();
+    $.scctlmFotoBase = here;                                    // lưu lại để lần sau/tiện debug
     // Cờ cho các file jsx/ chạy được độc lập (vd brush-pen-pressure.jsx):
     // đang nạp từ loader thì chỉ đăng ký lệnh, không tự chạy.
-    $.dr7Loading = true;
+    $.scctlmFotoLoading = true;
     var startedAt = new Date().getTime();
-    $.dr7SkinFns = {};                                   // a reload must not keep closures of a skin file that no longer loads
+    $.scctlmFotoSkinFns = {};                                   // a reload must not keep closures of a skin file that no longer loads
     try {
         $._ext.evalFile(here + '/jsx/4.jsxbin');
         $._ext.evalFiles(here + '/jsx');
     } finally {
-        $.dr7Loading = false;
+        $.scctlmFotoLoading = false;
     }
-    // jsx/main.jsx: skin-*.jsx register in $.dr7SkinFns while loading, the command table is built once all are in
-    if (typeof $.dr7BuildSkinCommands === 'function') $.dr7BuildSkinCommands();
-    else $.dr7LoadErrors.push('jsx/main.jsx did not define $.dr7BuildSkinCommands');
+    // jsx/main.jsx: skin-*.jsx register in $.scctlmFotoSkinFns while loading, the command table is built once all are in
+    if (typeof $.scctlmFotoBuildSkinCommands === 'function') $.scctlmFotoBuildSkinCommands();
+    else $.scctlmFotoLoadErrors.push('jsx/main.jsx did not define $.scctlmFotoBuildSkinCommands');
     for (var name in $.mhkReplacements) {
-        if ($.mhkReplacements.hasOwnProperty(name)) $.dr7Commands[name] = $.mhkReplacements[name];
+        if ($.mhkReplacements.hasOwnProperty(name)) $.scctlmFotoCommands[name] = $.mhkReplacements[name];
     }
     for (var pName in $.presetLutCommands) {
-        if ($.presetLutCommands.hasOwnProperty(pName)) $.dr7Commands[pName] = $.presetLutCommands[pName];
+        if ($.presetLutCommands.hasOwnProperty(pName)) $.scctlmFotoCommands[pName] = $.presetLutCommands[pName];
     }
-    $.dr7LoadTotalMs = new Date().getTime() - startedAt;
-    $.dr7Ready = $.dr7LoadErrors.length === 0;
+    $.scctlmFotoLoadTotalMs = new Date().getTime() - startedAt;
+    $.scctlmFotoReady = $.scctlmFotoLoadErrors.length === 0;
 }());

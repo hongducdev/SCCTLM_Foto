@@ -1,6 +1,6 @@
 /*
  * Hộp thoại dùng chung của panel (thay alert/confirm của trình duyệt):
- *   dr7Dialog({ title, message, confirmText, cancelText, tone }) → Promise<boolean>   (tone: 'error' = viền/tiêu đề đỏ)
+ *   scctlmFotoDialog({ title, message, confirmText, cancelText, tone }) → Promise<boolean>   (tone: 'error' = viền/tiêu đề đỏ)
  * Chỉ có confirmText: hộp thông báo (1 nút), luôn trả true. Có thêm cancelText: hộp hỏi, true = xác nhận.
  * Chỉ mở 1 hộp mỗi lúc: hộp mới đóng hộp cũ (hộp cũ trả false). Esc = huỷ, đóng xong trả focus về nơi đang giữ trước đó.
  */
@@ -9,23 +9,23 @@
 
     var closeCurrent = null;
 
-    window.dr7Dialog = function (options) {
+    window.scctlmFotoDialog = function (options) {
         var opts = options || {};
         if (closeCurrent) closeCurrent(false);
         return new Promise(function (resolve) {
             var previous = document.activeElement;
             var overlay = document.createElement('div');
-            overlay.className = 'dr7-dialog';
+            overlay.className = 'scctlm-foto-dialog';
             overlay.setAttribute('role', 'alertdialog');
             overlay.setAttribute('aria-modal', 'true');
             var box = document.createElement('div');
-            box.className = 'dr7-dialog-box' + (opts.tone === 'error' ? ' is-error' : '');
+            box.className = 'scctlm-foto-dialog-box' + (opts.tone === 'error' ? ' is-error' : '');
             var title = document.createElement('strong');
             title.textContent = opts.title || '';
             var message = document.createElement('p');
             message.textContent = opts.message || '';
             var actions = document.createElement('div');
-            actions.className = 'dr7-dialog-actions';
+            actions.className = 'scctlm-foto-dialog-actions';
 
             function close(result) {
                 closeCurrent = null;

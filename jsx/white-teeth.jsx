@@ -8,7 +8,7 @@ $._ext_WT = {
     GROUP_NAME: 'L\u00E0m tr\u1EAFng r\u0103ng',
     CURVES_NAME: 'T\u0103ng \u0111\u1ED9 b\u00F3ng',
     HUESAT_NAME: 'Whiten Teeth',
-    HISTORY_NAME: 'DR7 Whiten Teeth',
+    HISTORY_NAME: 'SCCTLM_Foto Whiten Teeth',
     CURVES_OPACITY: 50,
     // Curves: [input, output] on the composite RGB channel, measured at layer opacity 100
     CURVES_POINTS: [[0, 0], [32, 32], [64, 66], [96, 103], [128, 142], [160, 178], [192, 208], [224, 230], [255, 255]],

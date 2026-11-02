@@ -27,15 +27,15 @@
 
     function pickColor(hex) {
         setColor(hex);
-        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.setColor("' + hex.toLowerCase() + '"):"DR7_MISSING"', function (res) {
-            if (res !== 'ok') console.warn('DR7: không đặt được màu Foreground cho cọ', res);
+        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.setColor("' + hex.toLowerCase() + '"):"SCCTLM_MISSING"', function (res) {
+            if (res !== 'ok') console.warn('SCCTLM_Foto: không đặt được màu Foreground cho cọ', res);
         });
     }
 
     function readForeground(onColor) {
-        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.getColor():"DR7_MISSING"', function (res) {
+        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.getColor():"SCCTLM_MISSING"', function (res) {
             if (HEX.test(res)) onColor(res);
-            else console.warn('DR7: không đọc được màu Foreground', res);
+            else console.warn('SCCTLM_Foto: không đọc được màu Foreground', res);
         });
     }
 
@@ -45,22 +45,22 @@
     }
 
     function writeOpacity() {
-        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.setOpacity(' + Math.round(Number(slider.value)) + '):"DR7_MISSING"', function (res) {
-            if (res !== 'ok') console.warn('DR7: không đặt được Opacity cho cọ', res);
+        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.setOpacity(' + Math.round(Number(slider.value)) + '):"SCCTLM_MISSING"', function (res) {
+            if (res !== 'ok') console.warn('SCCTLM_Foto: không đặt được Opacity cho cọ', res);
         });
     }
 
     function refresh() {
         if (document.activeElement !== hexInput) readForeground(setColor);
         if (document.activeElement === slider) return;
-        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.getOpacity():"DR7_MISSING"', function (res) {
+        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.getOpacity():"SCCTLM_MISSING"', function (res) {
             if (!/^\d{1,3}$/.test(res)) return;           // "none": công cụ hiện tại không có Opacity, giữ giá trị đang hiện
             slider.value = Math.min(100, Number(res));
             paintTrack();
         });
     }
 
-    window.dr7InitBrushColor = function () {
+    window.scctlmFotoInitBrushColor = function () {
         picker = document.querySelector('.brush-color-input');
         hexInput = document.querySelector('.brush-hex');
         pill = document.querySelector('.brush-pill');
@@ -83,7 +83,7 @@
         Array.prototype.forEach.call(swatches, function (swatch) {
             swatch.addEventListener('click', function () { pickColor(swatch.getAttribute('data-color')); });
         });
-        eyedropper.addEventListener('click', function () { window.dr7Eyedropper(eyedropper, setColor); });
+        eyedropper.addEventListener('click', function () { window.scctlmFotoEyedropper(eyedropper, setColor); });
         slider.addEventListener('input', function () {
             paintTrack();
             clearTimeout(writeTimer);

@@ -10,7 +10,7 @@ Adobe đang đưa Photoshop sang **UXP**; CEP ở chế độ duy trì, không c
 Chỉ bắt đầu chuyển đổi khi xảy ra một trong hai điều:
 
 1. Adobe công bố ngày bỏ hỗ trợ CEP trong Photoshop.
-2. Một bản Photoshop mới không nạp được panel (mở panel, `$.dr7LoadErrors` khác rỗng hoặc panel
+2. Một bản Photoshop mới không nạp được panel (mở panel, `$.scctlmFotoLoadErrors` khác rỗng hoặc panel
    không hiện trong Window > Extensions).
 
 Chưa có tín hiệu nào xảy ra thì không viết mã UXP (YAGNI).
@@ -23,9 +23,9 @@ Chưa có tín hiệu nào xảy ra thì không viết mã UXP (YAGNI).
 
 ### Kiểm tra khi Photoshop ra bản lớn
 
-Mỗi lần có bản Photoshop mới: mở panel, đọc `$.dr7LoadErrors` (phải rỗng) và `$.dr7LoadTotalMs`,
+Mỗi lần có bản Photoshop mới: mở panel, đọc `$.scctlmFotoLoadErrors` (phải rỗng) và `$.scctlmFotoLoadTotalMs`,
 ghi kết quả vào bảng dưới.
 
-| Ngày | Photoshop | `$.dr7LoadErrors` | `$.dr7LoadTotalMs` | Ghi chú |
+| Ngày | Photoshop | `$.scctlmFotoLoadErrors` | `$.scctlmFotoLoadTotalMs` | Ghi chú |
 |---|---|---|---|---|
 | — | — | — | — | Chưa có bản ghi |

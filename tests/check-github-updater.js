@@ -8,7 +8,7 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { signBytes, publicKeyBase64 } = require('../scripts/release-lib');
 const source = name => fs.readFileSync(path.join(__dirname, '../js', name), 'utf8');
-const BASE = 'C:/ext/DR7';
+const BASE = 'C:/ext/SCCTLM_Foto';
 const manifest = (version, id) => '<ExtensionManifest ExtensionBundleVersion="' + version + '"><ExtensionList>' +
     '<Extension Id="' + (id || 'com.retouchpanel.panel') + '" Version="' + version + '" /></ExtensionList></ExtensionManifest>';
 const sha512 = data => crypto.createHash('sha512').update(data).digest('hex');
@@ -51,7 +51,7 @@ function setup(routes, disk, stamps = {}, faults = {}) {
         fs: {
             readFile: (p, enc) => {
                 if (!files.has(p)) return { err: 3 };
-                if (enc === 'Base64') { if (!p.includes('/.dr7-update')) hashedReads.push(p); return { err: 0, data: files.get(p).toString('base64') }; }
+                if (enc === 'Base64') { if (!p.includes('/.scctlm-foto-update')) hashedReads.push(p); return { err: 0, data: files.get(p).toString('base64') }; }
                 return { err: 0, data: files.get(p).toString('utf8') };
             },
             stat: p => files.has(p)
@@ -85,18 +85,18 @@ function setup(routes, disk, stamps = {}, faults = {}) {
     window.window = window;
     window.self = window;
     vm.runInNewContext(source('vendor/tweetnacl.min.js'), window);
-    window.dr7ReleaseKeys = KEYS;
+    window.scctlmFotoReleaseKeys = KEYS;
     vm.runInNewContext(source('release-manifest-verifier.js'), window);
     vm.runInNewContext(source('update-staging-journal.js'), window);
     vm.runInNewContext(source('github-updater.js'), window);
-    return { updater: window.dr7Updater, staging: window.dr7Staging, requests, files, mtimes, dirs, writes, hashedReads, read: p => files.get(BASE + '/' + p) };
+    return { updater: window.scctlmFotoUpdater, staging: window.scctlmFotoStaging, requests, files, mtimes, dirs, writes, hashedReads, read: p => files.get(BASE + '/' + p) };
 }
 
 // Objects from the vm realm have foreign prototypes; compare their JSON shape.
 const plain = value => JSON.parse(JSON.stringify(value));
 const API = 'https://api.github.com/repos/hongducdev/SCCTLM_Foto';
 const rawOf = tag => 'https://raw.githubusercontent.com/hongducdev/SCCTLM_Foto/' + tag + '/';
-const release = JSON.stringify({ tag_name: 'v1.1.0', name: 'DR7 1.1.0', body: 'notes', html_url: 'u' });
+const release = JSON.stringify({ tag_name: 'v1.1.0', name: 'SCCTLM_Foto 1.1.0', body: 'notes', html_url: 'u' });
 
 // Routes for a signed release: manifest + signature + the files themselves.
 function signedRelease(version, content, { key = pem, extra = {}, minVersion = '0.2.0', tag = 'v' + version } = {}) {
@@ -129,7 +129,7 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     const record = JSON.stringify({ version: 'v1.0.0', files: { 'index.html': 'h1', 'jsx/main.jsx': 'same',
         'jsx/old.jsx': 'o1', 'CSXS/manifest.xml': 'm1' } });
     const disk = { 'CSXS/manifest.xml': manifest('1.0.0'), 'index.html': '<html>old</html>', 'jsx/main.jsx': 'keep',
-        'jsx/old.jsx': 'stale', 'jsx/user-notes.txt': 'not tracked', '.dr7-version.json': record };
+        'jsx/old.jsx': 'stale', 'jsx/user-notes.txt': 'not tracked', '.scctlm-foto-version.json': record };
     t = setup(routes, disk);
     const progress = [];
     result = await t.updater.update(BASE, 'v1.1.0', (done, total) => progress.push(done + '/' + total));
@@ -144,7 +144,7 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     assert.equal(t.read('jsx/user-notes.txt').toString(), 'not tracked', 'unknown files are never deleted');
     assert.ok(!t.requests.some(u => /git\/trees/.test(u)), 'the file list comes from the signed manifest, not the GitHub API');
     assert.equal(t.requests.length, 2 + 3, 'manifest + signature + the 3 changed files');
-    const saved = JSON.parse(t.read('.dr7-version.json'));
+    const saved = JSON.parse(t.read('.scctlm-foto-version.json'));
     assert.equal(saved.version, 'v1.1.0');
     assert.equal(saved.files['jsx/main.jsx'].sha512, sha512('keep'), 'the record keeps hashes for unchanged files too');
     assert.ok(saved.files['index.html'].mtime > MTIME, 'the record stores the mtime of what was just written');
@@ -216,7 +216,7 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     const lightRecord = { version: 'v1.0.0', files: { 'index.html': stampOf('i'), 'CSXS/manifest.xml': stampOf(manifest('1.0.0')), 'js/panel.js': stampOf('old panel') } };
     const lightDisk = { 'CSXS/manifest.xml': manifest('1.0.0'), 'index.html': 'i', 'js/panel.js': 'old panel' };
     for (const [p, data] of Object.entries(presets)) { lightRecord.files[p] = stampOf(data); lightDisk[p] = data; }
-    lightDisk['.dr7-version.json'] = JSON.stringify(lightRecord);
+    lightDisk['.scctlm-foto-version.json'] = JSON.stringify(lightRecord);
     t = setup(lightRoutes, lightDisk);
     result = await t.updater.update(BASE, 'v1.1.0');
     assert.deepEqual(plain(result.changed).sort(), ['CSXS/manifest.xml', 'js/panel.js']);
@@ -250,13 +250,13 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
         'js/github-updater.js': 'updater 2', 'jsx/a.jsx': 'a2', 'jsx/b.jsx': 'b2' };
     const stagedDisk = { 'index.html': '<html>1.0</html>', 'CSXS/manifest.xml': manifest('1.0.0'), 'js/panel.js': 'panel 1',
         'js/github-updater.js': 'updater 1', 'jsx/a.jsx': 'a1', 'jsx/b.jsx': 'b1', 'jsx/gone.jsx': 'old',
-        '.dr7-version.json': JSON.stringify({ version: 'v1.0.0', files: { 'jsx/gone.jsx': 'g' } }) };
+        '.scctlm-foto-version.json': JSON.stringify({ version: 'v1.0.0', files: { 'jsx/gone.jsx': 'g' } }) };
     const stagedRoutes = signedRelease('2.0.0', staged);
     const snapshot = run => ({
         disk: Object.fromEntries([...run.files].map(([p, data]) => [p.slice(BASE.length + 1), data])),
         stamps: Object.fromEntries([...run.mtimes].map(([p, m]) => [p.slice(BASE.length + 1), m]))
     });
-    const leftovers = run => [...run.files.keys()].filter(p => p.startsWith(BASE + '/.dr7-update/'));
+    const leftovers = run => [...run.files.keys()].filter(p => p.startsWith(BASE + '/.scctlm-foto-update/'));
     const onDisk = run => Object.fromEntries(Object.keys(staged).map(p => [p, run.read(p).toString()]));
     const installedOld = Object.fromEntries(Object.entries(stagedDisk).filter(([p]) => staged[p] !== undefined).map(([p, v]) => [p, String(v)]));
 
@@ -265,12 +265,12 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     await assert.rejects(t.updater.update(BASE, 'v2.0.0'), /Không ghi được/);
     assert.deepEqual(onDisk(t), installedOld, 'the installed files are untouched');
     assert.deepEqual(leftovers(t), [], 'staged files are removed');
-    assert.equal(t.read('.dr7-update.json'), undefined, 'no journal is left behind');
+    assert.equal(t.read('.scctlm-foto-update.json'), undefined, 'no journal is left behind');
 
     // A move failing after two files: update() reports it, the journal stays, recover() finishes the job.
     t = setup(stagedRoutes, stagedDisk, {}, { crashRename: 3 });
     await assert.rejects(t.updater.update(BASE, 'v2.0.0'), /Chưa hoàn tất cập nhật v2.0.0.*process died/);
-    const journal = JSON.parse(t.read('.dr7-update.json'));
+    const journal = JSON.parse(t.read('.scctlm-foto-update.json'));
     assert.equal(journal.journalVersion, 1);
     assert.deepEqual(journal.move.map(m => m.path), ['js/panel.js', 'jsx/a.jsx', 'jsx/b.jsx', 'js/github-updater.js', 'index.html', 'CSXS/manifest.xml'],
         'the code that runs recover(), index.html and the manifest are moved last');
@@ -284,13 +284,13 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     assert.deepEqual(onDisk(t), Object.fromEntries(Object.entries(staged).map(([p, v]) => [p, String(v)])), 'every file now matches the release');
     assert.equal(t.read('jsx/gone.jsx'), undefined);
     assert.deepEqual(leftovers(t), []);
-    assert.equal(t.read('.dr7-update.json'), undefined, 'journal removed once finished');
-    const finished = JSON.parse(t.read('.dr7-version.json'));
+    assert.equal(t.read('.scctlm-foto-update.json'), undefined, 'journal removed once finished');
+    const finished = JSON.parse(t.read('.scctlm-foto-version.json'));
     assert.equal(finished.version, 'v2.0.0');
     assert.equal(finished.files['jsx/a.jsx'].sha512, sha512('a2'));
     assert.equal(t.updater.installedVersion(BASE), '2.0.0');
     assert.equal(t.staging.recover(BASE).status, 'none', 'a second recover() finds nothing to do');
-    assert.deepEqual(t.writes, [...t.writes].filter(p => p.endsWith('.dr7-version.json')), 'recover only writes the record');
+    assert.deepEqual(t.writes, [...t.writes].filter(p => p.endsWith('.scctlm-foto-version.json')), 'recover only writes the record');
 
     // A move that fails without the process dying (staged file locked): the file is copied instead and the update completes.
     t = setup(stagedRoutes, stagedDisk, {}, { failRename: 2 });
@@ -302,7 +302,7 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     t = setup(stagedRoutes, stagedDisk, {}, { crashRename: 1 });
     await assert.rejects(t.updater.update(BASE, 'v2.0.0'), /process died/);
     const tamperedState = snapshot(t);
-    tamperedState.disk['.dr7-update/jsx/b.jsx'] = 'b-evil';
+    tamperedState.disk['.scctlm-foto-update/jsx/b.jsx'] = 'b-evil';
     t = setup({}, tamperedState.disk, tamperedState.stamps);
     outcome = t.staging.recover(BASE);
     assert.equal(outcome.status, 'discarded');
@@ -310,16 +310,16 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     assert.equal(t.read('jsx/b.jsx').toString(), 'b1', 'the tampered file never reaches the install');
     assert.equal(t.read('jsx/a.jsx').toString(), 'a1', 'nothing was moved');
     assert.deepEqual(leftovers(t), []);
-    assert.equal(t.read('.dr7-update.json'), undefined);
+    assert.equal(t.read('.scctlm-foto-update.json'), undefined);
     assert.equal(t.read('index.html').toString(), '<html>1.0</html>', 'index.html was not replaced');
 
     // Damaged or unknown journals are discarded, and the panel still loads.
     for (const [label, text] of [['broken json', '{"journalVersion": 1, "move": ['], ['future journalVersion', JSON.stringify({ journalVersion: 2, tag: 'v9.0.0', move: [], remove: [], record: { version: 'v9.0.0', files: {} } })],
         ['path outside the runtime set', JSON.stringify({ ...journal, remove: ['../../evil.dll'] })]]) {
-        t = setup({}, { ...installedOld, '.dr7-update.json': text, '.dr7-update/jsx/a.jsx': 'a2' });
+        t = setup({}, { ...installedOld, '.scctlm-foto-update.json': text, '.scctlm-foto-update/jsx/a.jsx': 'a2' });
         outcome = t.staging.recover(BASE);
         assert.equal(outcome.status, 'discarded', label);
-        assert.equal(t.read('.dr7-update.json'), undefined, label + ': journal removed');
+        assert.equal(t.read('.scctlm-foto-update.json'), undefined, label + ': journal removed');
         assert.deepEqual(leftovers(t), [], label + ': staging removed');
         assert.deepEqual(onDisk(t), installedOld, label + ': install untouched');
     }

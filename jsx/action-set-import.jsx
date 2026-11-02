@@ -4,7 +4,7 @@
  *
  * The set name is read from the start of the .atn (Adobe Photoshop File Formats, "Actions file
  * format": version u32, then the set name as a Unicode string) so it is never loaded twice: when a
- * set with that name already exists, the user's copy (possibly edited) is kept and "DR7_EXISTS" is returned.
+ * set with that name already exists, the user's copy (possibly edited) is kept and "SCCTLM_EXISTS" is returned.
  */
 (function () {
     // Bundled file names: plain characters only, so a name can never climb out of presets/
@@ -29,9 +29,9 @@
     }
 
     // { setName: File } for every .atn bundled in presets/ (js/create-action-buttons.js uses "Thumbnail action")
-    $.dr7BundledSets = function () {
+    $.scctlmFotoBundledSets = function () {
         var out = {};
-        var files = new Folder($.dr7Base + '/presets').getFiles('*.atn');
+        var files = new Folder($.scctlmFotoBase + '/presets').getFiles('*.atn');
         for (var i = 0; i < files.length; i += 1) {
             if (files[i] instanceof File && BUNDLED_ATN.test(files[i].name)) out[actionSetName(files[i])] = files[i];
         }
@@ -41,8 +41,8 @@
     // Replaces the bundled set in Photoshop by a copy of its .atn whose action headers carry the panel's keys, so a
     // shortcut lives on the action itself (no play wrapper in the SCCTLM_Foto set). keys: { actionName: "Ctrl+Shift+F5" },
     // actions not listed get no key. Action header: key u16, shift u8, ctrl u8, colour u16, name (u32 length incl. 0, UTF-16BE, 0).
-    $.dr7InstallBundledKeys = function (setName, file, keys) {
-        var setup = $.dr7ShortcutSetup;
+    $.scctlmFotoInstallBundledKeys = function (setName, file, keys) {
+        var setup = $.scctlmFotoShortcutSetup;
         file.encoding = 'BINARY';
         if (!file.open('r')) throw new Error('Cannot open ' + file.fsName);
         var data = file.read();
@@ -65,7 +65,7 @@
             desc.putReference(charIDToTypeID('null'), ref);
             executeAction(charIDToTypeID('Dlt '), desc, DialogModes.NO);
         }
-        var copy = new File(Folder.temp + '/dr7-bundled-keys.atn');
+        var copy = new File(Folder.temp + '/scctlm-foto-bundled-keys.atn');
         copy.encoding = 'BINARY';
         if (!copy.open('w')) throw new Error('Cannot write ' + copy.fsName);
         copy.write(data);
@@ -75,13 +75,13 @@
         return count;
     };
 
-    $.dr7ImportBundledAtn = function (fileName) {
+    $.scctlmFotoImportBundledAtn = function (fileName) {
         if (!BUNDLED_ATN.test(String(fileName))) throw new Error('Invalid action file name: ' + fileName);
-        var file = new File($.dr7Base + '/presets/' + fileName);
+        var file = new File($.scctlmFotoBase + '/presets/' + fileName);
         if (!file.exists) throw new Error('Missing bundled actions file: ' + file.fsName);
-        if ($.dr7ShortcutSetup.exists(actionSetName(file), null)) return 'DR7_EXISTS';
+        if ($.scctlmFotoShortcutSetup.exists(actionSetName(file), null)) return 'SCCTLM_EXISTS';
         app.load(file);
-        return 'DR7_OK';
+        return 'SCCTLM_OK';
     };
 
     // spec "file.atn	set	action" from js/create-action-buttons.js: imports the bundled file when the
@@ -92,23 +92,23 @@
         return { file: f[0], set: f[1], action: f[2] };
     }
 
-    $.dr7EnsureBundledAction = function (spec) {
+    $.scctlmFotoEnsureBundledAction = function (spec) {
         var want = parseSpec(spec);
-        if ($.dr7ShortcutSetup.exists(want.set, want.action)) return 'DR7_EXISTS';
-        if ($.dr7ShortcutSetup.exists(want.set, null)) throw new Error('Set "' + want.set + '" has no action "' + want.action + '"');
-        $.dr7ImportBundledAtn(want.file);
-        return 'DR7_OK';
+        if ($.scctlmFotoShortcutSetup.exists(want.set, want.action)) return 'SCCTLM_EXISTS';
+        if ($.scctlmFotoShortcutSetup.exists(want.set, null)) throw new Error('Set "' + want.set + '" has no action "' + want.action + '"');
+        $.scctlmFotoImportBundledAtn(want.file);
+        return 'SCCTLM_OK';
     };
 
-    $.dr7PlayBundledAction = function (spec) {
+    $.scctlmFotoPlayBundledAction = function (spec) {
         var want = parseSpec(spec);
-        $.dr7EnsureBundledAction(spec);
+        $.scctlmFotoEnsureBundledAction(spec);
         var ref = new ActionReference();
         ref.putName(charIDToTypeID('Actn'), want.action);
         ref.putName(charIDToTypeID('ASet'), want.set);
         var desc = new ActionDescriptor();
         desc.putReference(charIDToTypeID('null'), ref);
         executeAction(charIDToTypeID('Ply '), desc, DialogModes.NO);
-        return 'DR7_OK';
+        return 'SCCTLM_OK';
     };
 }());

@@ -63,7 +63,7 @@
         SIX_TEN.push(album(('0' + count).slice(-2) + 'B', '2 trái + 3 phải', withExtras(MAIN_B, count)));
     });
 
-    root.dr7ArtboardAlbums = [
+    root.scctlmFotoArtboardAlbums = [
         { id: 'album-single', title: 'Album · 1 ảnh & Story', cards: ONE_AND_STORY },
         { id: 'album-2-3', title: 'Album · 2–3 ảnh', cards: TWO_THREE },
         { id: 'album-4-5', title: 'Album · 4–5 ảnh', cards: FOUR_FIVE },

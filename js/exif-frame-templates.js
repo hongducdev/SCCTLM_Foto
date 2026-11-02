@@ -49,5 +49,5 @@
         return file ? extensionRoot(base) + '/img/logos/' + file : '';
     }
 
-    root.dr7FrameTemplates = { LOGOS: LOGOS, TEMPLATES: TEMPLATES, logoPath: logoPath, extensionRoot: extensionRoot };
+    root.scctlmFotoFrameTemplates = { LOGOS: LOGOS, TEMPLATES: TEMPLATES, logoPath: logoPath, extensionRoot: extensionRoot };
 }(typeof window !== 'undefined' ? window : this));

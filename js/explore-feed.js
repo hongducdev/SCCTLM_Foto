@@ -90,7 +90,7 @@
             var data = JSON.parse(window.localStorage.getItem(CACHE_KEY));
             return data && data.videos ? data : null;
         } catch (error) {
-            window.console.warn('DR7 explore cache:', error);
+            window.console.warn('SCCTLM_Foto explore cache:', error);
             return null;
         }
     }
@@ -99,11 +99,11 @@
         try {
             window.localStorage.setItem(CACHE_KEY, JSON.stringify(data));
         } catch (error) {
-            window.console.warn('DR7 explore cache:', error);
+            window.console.warn('SCCTLM_Foto explore cache:', error);
         }
     }
 
-    window.dr7ExploreFeed = {
+    window.scctlmFotoExploreFeed = {
         CHANNEL_URL: 'https://www.youtube.com/@scctlm',
         PLAYLIST_URL: 'https://www.youtube.com/playlist?list=' + PLAYLIST_ID,
         FACEBOOK_URL: 'https://www.facebook.com/groups/397097171270586/user/61567413460933/',

@@ -1,4 +1,4 @@
-/* DR7 release verifier: checks the Ed25519 signature of release-manifest.json and hashes file contents.
+/* SCCTLM_Foto release verifier: checks the Ed25519 signature of release-manifest.json and hashes file contents.
  * Pure logic (no DOM). Signature verification uses vendored tweetnacl (CEP's Chromium has no
  * WebCrypto Ed25519); hashing prefers crypto.subtle. Paths in a signed manifest are still validated. */
 (function () {
@@ -68,5 +68,5 @@
         return manifest;
     }
 
-    window.dr7Release = { parse: parse, sha512: sha512, sha512Sync: sha512Sync, isRuntimePath: isRuntimePath, fromBase64: fromBase64 };
+    window.scctlmFotoRelease = { parse: parse, sha512: sha512, sha512Sync: sha512Sync, isRuntimePath: isRuntimePath, fromBase64: fromBase64 };
 }());

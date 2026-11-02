@@ -12,7 +12,7 @@ for (const file of ['wm-vars.js', 'wm-layout.js', 'wm-templates-data.js']) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../js', file), 'utf8'), context);
 }
 const reference = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/wm-reference.json'), 'utf8'));
-const layout = window.dr7WmLayout, vars = window.dr7WmVars;
+const layout = window.scctlmFotoWmLayout, vars = window.scctlmFotoWmVars;
 const plain = (value) => JSON.parse(JSON.stringify(value));
 
 const measure = (text, font) => [...text].reduce((sum, ch) => sum + reference.advance[font.size][ch], 0);
@@ -37,7 +37,7 @@ assert.equal(vars.stamp({}), '');
 
 let checked = 0;
 const wrong = [];
-for (const group of window.dr7WmData.groups) {
+for (const group of window.scctlmFotoWmData.groups) {
     for (const template of group.templates) {
         const want = reference.templates[template.id];
         const got = run(template);

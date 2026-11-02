@@ -62,7 +62,7 @@
     }
 
     // box: phần tử chứa; spec: kết quả composer.compose (hoặc null để ẩn)
-    window.dr7FramePreview = {
+    window.scctlmFotoFramePreview = {
         render: function (box, spec) {
             box.textContent = '';
             box.hidden = !spec;

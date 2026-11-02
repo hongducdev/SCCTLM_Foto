@@ -1,4 +1,4 @@
-// DR7: Apply one or more bundled colour presets (presets/colors/<group>/NNN.xmp), one layer each.
+// SCCTLM_Foto: Apply one or more bundled colour presets (presets/colors/<group>/NNN.xmp), one layer each.
 // Every preset is rendered from the original picture (earlier colour layers are hidden while the
 // next one is stamped), so lowering the opacity of the layers blends the looks into a new colour.
 (function () {
@@ -20,7 +20,7 @@
 
     function removeAll(layers) {
         for (var i = layers.length - 1; i >= 0; i--) {
-            try { layers[i].remove(); } catch (e) { $.writeln('DR7: colour layer cleanup failed: ' + e); }
+            try { layers[i].remove(); } catch (e) { $.writeln('SCCTLM_Foto: colour layer cleanup failed: ' + e); }
         }
     }
 
@@ -65,15 +65,15 @@
     // opacity slider and the mix work on a single unit. Returns the layer the caller names / fades.
     function applyOne(id) {
         var doc = app.activeDocument;
-        var xmp = new File($.dr7Base + '/presets/colors/' + id + '.xmp');
-        var icc = new File($.dr7Base + '/presets/colors/' + id + '.icc');
+        var xmp = new File($.scctlmFotoBase + '/presets/colors/' + id + '.xmp');
+        var icc = new File($.scctlmFotoBase + '/presets/colors/' + id + '.icc');
         if (!xmp.exists) throw new Error('Missing colour preset: ' + id);
-        if (!icc.exists) { $.dr7ApplyPresetXMP(xmp, false, true); return doc.activeLayer; }
+        if (!icc.exists) { $.scctlmFotoApplyPresetXMP(xmp, false, true); return doc.activeLayer; }
         if (needsAcr(xmp)) {
-            $.dr7ApplyPresetXMP(xmp, false, true);
+            $.scctlmFotoApplyPresetXMP(xmp, false, true);
         } else {
-            $.dr7StampVisible('Preset - ' + id);
-            $.dr7ToSmartObject();
+            $.scctlmFotoStampVisible('Preset - ' + id);
+            $.scctlmFotoToSmartObject();
         }
         var base = doc.activeLayer;
         var group = doc.layerSets.add();
@@ -83,7 +83,7 @@
             var look = addLookTable(icc);
             look.name = 'Look ' + id.replace('/', ' ');
         } catch (error) {
-            try { group.remove(); } catch (eClean) { $.writeln('DR7: colour group cleanup failed: ' + eClean); }
+            try { group.remove(); } catch (eClean) { $.writeln('SCCTLM_Foto: colour group cleanup failed: ' + eClean); }
             throw error;
         }
         doc.activeLayer = group;
@@ -91,7 +91,7 @@
     }
 
     function applyColorMix(spec) {
-        if (typeof $.dr7ApplyPresetXMP !== 'function' || typeof $.dr7StampVisible !== 'function' || typeof $.dr7ToSmartObject !== 'function') throw new Error('Missing command: preset engine');
+        if (typeof $.scctlmFotoApplyPresetXMP !== 'function' || typeof $.scctlmFotoStampVisible !== 'function' || typeof $.scctlmFotoToSmartObject !== 'function') throw new Error('Missing command: preset engine');
         var items = parse(spec), made = [];
         try {
             for (var i = 0; i < items.length; i++) {
@@ -106,8 +106,8 @@
             throw error;
         }
         for (var v = 0; v < made.length; v++) made[v].visible = true;
-        return 'DR7_OK';
+        return 'SCCTLM_OK';
     }
 
-    $.dr7ApplyColorMix = applyColorMix;
+    $.scctlmFotoApplyColorMix = applyColorMix;
 }());

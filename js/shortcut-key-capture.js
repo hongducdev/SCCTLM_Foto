@@ -6,7 +6,7 @@
  * CEP chuyển các phím đó cho panel (registerKeyEventsInterest) để Photoshop không nuốt mất (vd F5 mở Brush Settings).
  *
  * Danh sách phím lưu ở localStorage; mỗi lần đổi, toàn bộ danh sách được dựng lại thành bộ
- * Action "SCCTLM_Foto" bởi jsx/action-shortcut-setup.jsx (qua window.dr7SetupShortcut, js/panel.js).
+ * Action "SCCTLM_Foto" bởi jsx/action-shortcut-setup.jsx (qua window.scctlmFotoSetupShortcut, js/panel.js).
  */
 (function () {
     'use strict';
@@ -27,7 +27,7 @@
         try {
             return localStorage.getItem(name);
         } catch (e) {
-            console.warn('DR7: không đọc được ' + name, e);
+            console.warn('SCCTLM_Foto: không đọc được ' + name, e);
             return null;
         }
     }
@@ -37,12 +37,12 @@
             if (value === null) localStorage.removeItem(name);
             else localStorage.setItem(name, value);
         } catch (e) {
-            console.warn('DR7: không lưu được ' + name, e);
+            console.warn('SCCTLM_Foto: không lưu được ' + name, e);
         }
     }
 
     function hint(text) {
-        if (window.dr7FlashStatus) window.dr7FlashStatus(text);
+        if (window.scctlmFotoFlashStatus) window.scctlmFotoFlashStatus(text);
     }
 
     function bindings() {
@@ -50,7 +50,7 @@
         try {
             list = JSON.parse(load(BINDINGS_KEY) || '[]');
         } catch (e) {
-            console.warn('DR7: danh sách phím tắt hỏng, bỏ qua', e);
+            console.warn('SCCTLM_Foto: danh sách phím tắt hỏng, bỏ qua', e);
         }
         // Bộ "SCCTLM_Foto" (và tên cũ "MHK DR7") do panel tự dựng (Action ▶) nên không thể là đích;
         // bản cũ từng gán Pen Pressure ở đó
@@ -88,8 +88,8 @@
             raw.indexOf('"set":"' + LEGACY_SET + '"') >= 0;
         if (stale) { apply(bindings()); return; }
         // Bản trước gán phím cho Action đóng gói qua Action "▶ …" trong bộ SCCTLM_Foto: dựng lại để phím nằm thẳng trên Action đó
-        cs.evalScript('typeof $.dr7ShortcutSetup=="object"?($.dr7ShortcutSetup.exists(' + JSON.stringify(LEGACY_SET) +
-            ',null)||$.dr7ShortcutSetup.hasBundledWrapper()):false', function (res) {
+        cs.evalScript('typeof $.scctlmFotoShortcutSetup=="object"?($.scctlmFotoShortcutSetup.exists(' + JSON.stringify(LEGACY_SET) +
+            ',null)||$.scctlmFotoShortcutSetup.hasBundledWrapper()):false', function (res) {
             if (res === 'true') apply(bindings());
         });
     }
@@ -110,7 +110,7 @@
         try {
             cs.registerKeyEventsInterest(JSON.stringify(keys));
         } catch (e) {
-            console.warn('DR7: registerKeyEventsInterest lỗi', e);
+            console.warn('SCCTLM_Foto: registerKeyEventsInterest lỗi', e);
         }
     }
 
@@ -127,8 +127,8 @@
         stop();
         if (message) hint(message);
         var text = next.map(function (b) { return b.key + '\t' + b.set + '\t' + b.action; }).join('\n');
-        window.dr7SetupShortcut(text, function (res) {
-            if (res === 'DR7_OK') {
+        window.scctlmFotoSetupShortcut(text, function (res) {
+            if (res === 'SCCTLM_OK') {
                 save(BINDINGS_KEY, JSON.stringify(next));
                 save(LEGACY_KEY, null);
             }
@@ -156,10 +156,10 @@
         if (event.altKey) { hint('Không dùng Alt'); return; }
         var combo = (event.ctrlKey || event.metaKey ? 'Ctrl+' : '') + (event.shiftKey ? 'Shift+' : '') +
             'F' + (code - KEY_F2 + 2);
-        var conflicts = window.dr7ShortcutConflicts.find(combo, target, others,
-            window.dr7ReservedKeys ? window.dr7ReservedKeys.list() : []);
+        var conflicts = window.scctlmFotoShortcutConflicts.find(combo, target, others,
+            window.scctlmFotoReservedKeys ? window.scctlmFotoReservedKeys.list() : []);
         var assign = function () {
-            if (conflicts.some(function (c) { return c.kind === 'reserved'; })) window.dr7ReservedKeys.flip(combo);
+            if (conflicts.some(function (c) { return c.kind === 'reserved'; })) window.scctlmFotoReservedKeys.flip(combo);
             // 1 phím chỉ Play 1 Action: ghi đè thì Action đang giữ phím đó mất phím
             var next = others.filter(function (b) { return b.key !== combo; });
             next.push({ key: combo, set: target.set, action: target.action });
@@ -177,7 +177,7 @@
     function askOverwrite(combo, conflicts) {
         var lines = conflicts.map(function (c) { return '• ' + c.label; });
         var menu = conflicts.some(function (c) { return c.kind === 'photoshop'; });
-        return window.dr7Dialog({
+        return window.scctlmFotoDialog({
             title: 'Phím ' + combo + ' đang được dùng',
             message: 'Phím ' + combo + ' đang dùng cho:\n' + lines.join('\n') + '\n\nGhi đè để phím này chạy Action đã chọn.' +
                 (menu ? '\nPhotoshop sẽ hỏi "Remove the conflicting action shortcuts?": chọn No để Action giữ phím.' : ''),
@@ -192,7 +192,7 @@
             stop();
             if (same) return;
         }
-        if (window.dr7IsBusy && window.dr7IsBusy()) return;
+        if (window.scctlmFotoIsBusy && window.scctlmFotoIsBusy()) return;
         // Action phải có trong Photoshop thì bộ phím mới trỏ được tới nó: nạp bộ đi kèm nếu chưa có
         cap.ensure(function (ok) {
             if (!ok || active) return;
@@ -205,7 +205,7 @@
     }
 
     // button: ô phím; target: { set, action }; ensure(done(ok)): nạp bộ Action đi kèm nếu Photoshop chưa có
-    window.dr7AttachShortcutKey = function (button, target, ensure) {
+    window.scctlmFotoAttachShortcutKey = function (button, target, ensure) {
         var label = button.querySelector('.create-key-text');
         if (!label) return;
         var cap = { button: button, label: label, target: target, ensure: ensure };
@@ -213,10 +213,10 @@
         button.addEventListener('click', function () { start(cap); });
         render();
     };
-    window.dr7CleanupShortcuts = cleanupLegacy;                 // js/panel.js gọi khi lõi ExtendScript đã sẵn sàng
+    window.scctlmFotoCleanupShortcuts = cleanupLegacy;                 // js/panel.js gọi khi lõi ExtendScript đã sẵn sàng
     // Sau khi panel vừa nạp bộ Action đi kèm: dựng lại bộ "SCCTLM_Foto", vì lần dựng trước đã bỏ các phím
     // trỏ tới Action chưa có (jsx/action-shortcut-setup.jsx install)
-    window.dr7ReinstallShortcuts = function (after) {
+    window.scctlmFotoReinstallShortcuts = function (after) {
         var list = bindings();
         if (list.length) apply(list, null, after);
         else after();

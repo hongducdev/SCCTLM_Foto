@@ -2,7 +2,7 @@
  * Đồng bộ code từ thư mục nguồn (vd D:\DR7) sang bản cài trước khi nút ↻ nạp lại,
  * để không cần chạy install\Hot-reload-SCCTLM_Foto.bat.
  *
- * Chỉ bật khi bản cài có file `.dr7-dev-source` chứa đường dẫn thư mục nguồn
+ * Chỉ bật khi bản cài có file `.scctlm-foto-dev-source` chứa đường dẫn thư mục nguồn
  * (Cai-dat-SCCTLM_Foto.bat tự ghi khi cài từ một git checkout). Người dùng thường không có file này
  * → ↻ chỉ nạp lại như cũ.
  *
@@ -11,9 +11,9 @@
 (function () {
     'use strict';
 
-    var SOURCE_RECORD = '.dr7-dev-source';
-    var UPDATER_RECORD = '.dr7-version.json';
-    var UPDATER_JOURNAL = '.dr7-update.json';
+    var SOURCE_RECORD = '.scctlm-foto-dev-source';
+    var UPDATER_RECORD = '.scctlm-foto-version.json';
+    var UPDATER_JOURNAL = '.scctlm-foto-update.json';
     // Cùng danh sách file runtime với install/watch-plugin.js
     var FILES = ['index.html', 'style.css', 'loader.jsx'];
     var FOLDERS = ['js', 'jsx', 'css', 'img', 'presets'];
@@ -67,7 +67,7 @@
     }
 
     // Trả về số file đã chép (0 nếu không cấu hình nguồn). Ném lỗi nếu chép thất bại.
-    window.dr7SyncDevSource = function (base) {
+    window.scctlmFotoSyncDevSource = function (base) {
         if (!fs() || !base) return 0;
         var src = readSourceDir(base);
         if (!src || mtime(src + '/loader.jsx') < 0) return 0;  // thư mục nguồn đã bị xoá/di chuyển

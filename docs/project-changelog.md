@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.7 — Báo lỗi nạp panel rõ hơn, đổi tên DR7 sang SCCTLM_Foto
+
+- **Lỗi nạp panel:** lõi ExtendScript được nạp bằng đối tượng `File` và kiểm `exists` trước. Thiếu `loader.jsx` thì hộp thoại báo thẳng "thiếu file loader.jsx, hãy cài lại" thay vì `IOError: I/O error line 1`; lỗi đọc file kèm `File.error`.
+- **Đổi tên DR7:** mã trạng thái trong hộp thoại lỗi (`DR7_ERROR` thành `SCCTLM_ERROR`…), tên bước History (Dodge & Burn, Local Smoother, Whiten Teeth, Remover, Sharpening, Surface Smoother, Tone Changer), tên nội bộ `$.dr7*` / `window.dr7*` thành `$.scctlmFoto*` / `window.scctlmFoto*`, class CSS `.dr7-dialog*` thành `.scctlm-foto-dialog*`, biến môi trường `DR7_*` của bộ cài thành `SCCTLM_FOTO_*`.
+- **File trạng thái cập nhật:** `.dr7-version.json`, `.dr7-update.json`, `.dr7-update/`, `.dr7-dev-source` đổi thành `.scctlm-foto-*`. Lần cập nhật đầu tiên lên bản này tải lại toàn bộ file một lần; máy dev chạy lại bộ cài để bật đồng bộ ↻.
+- **Giữ nguyên để không mất dữ liệu:** khoá localStorage (`dr7.frame.presets`, `dr7ActionShortcuts`, `dr7ArtboardFavorites`, `dr7ReservedKeys`, `dr7ShortcutKey`, `dr7.explore.playlist`), tên preset trong `.tpl` (`DR7 Soft Brush`, `DR7 Eyedropper`, `DR7 Dodge & Burn`), action `DR7 Liquify CC2014 FIX`, bộ phím tắt cũ `MHK DR7` và thư mục cài cũ `DR7`.
+
 ## v0.3.6 — Thêm QR Techcombank
 
 - **Ủng hộ:** tab Ủng hộ trong panel, trang web và README có thêm mã QR Techcombank bên cạnh TPBank.

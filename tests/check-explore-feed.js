@@ -11,7 +11,7 @@ const window = {
     localStorage: { getItem: k => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, v) }
 };
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../js/explore-feed.js'), 'utf8'), { window });
-const feed = window.dr7ExploreFeed;
+const feed = window.scctlmFotoExploreFeed;
 
 const entry = (id, title) => '<entry><id>yt:video:' + id + '</id><yt:videoId>' + id + '</yt:videoId><title>' + title +
     '</title><published>2026-09-29T01:00:27+00:00</published></entry>';

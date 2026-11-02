@@ -10,7 +10,7 @@ const context = vm.createContext({ window });
 for (const file of ['artboard-facebook-album-presets.js', 'artboard-layout.js']) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '../js', file), 'utf8'), context);
 }
-const ab = window.dr7Artboard;
+const ab = window.scctlmFotoArtboard;
 // Objects built inside the vm context have another Object prototype; compare plain copies
 const plain = (value) => JSON.parse(JSON.stringify(value));
 

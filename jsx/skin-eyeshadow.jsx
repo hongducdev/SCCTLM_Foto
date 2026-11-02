@@ -1,7 +1,7 @@
 /*
  * Eyeshadow (TJYY): action replay moved verbatim from jsx/main.jsx.
- * Registered through $.dr7SkinFns because evalFile scopes cannot see each other's declarations;
- * jsx/main.jsx ($.dr7BuildSkinCommands) turns the registry into $.dr7Commands.
+ * Registered through $.scctlmFotoSkinFns because evalFile scopes cannot see each other's declarations;
+ * jsx/main.jsx ($.scctlmFotoBuildSkinCommands) turns the registry into $.scctlmFotoCommands.
  */
 function TJYY() {
 function step1(enabled, withDialog) {
@@ -315,5 +315,5 @@ step17();
 step18();
 }
 
-$.dr7SkinFns = $.dr7SkinFns || {};
-$.dr7SkinFns.TJYY = TJYY;
+$.scctlmFotoSkinFns = $.scctlmFotoSkinFns || {};
+$.scctlmFotoSkinFns.TJYY = TJYY;

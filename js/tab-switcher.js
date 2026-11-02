@@ -14,10 +14,10 @@
             pane.hidden = pane.getAttribute('data-tab') !== name;
         });
         // Mỗi tab cao khác nhau: co cửa sổ panel theo tab đang mở
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     }
 
-    window.dr7InitTabs = function () {
+    window.scctlmFotoInitTabs = function () {
         document.addEventListener('click', function (event) {
             var button = event.target.closest ? event.target.closest('.tab-button, .support-button') : null;
             if (button) select(button.getAttribute('data-tab'));

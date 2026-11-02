@@ -91,5 +91,5 @@
         return { text: text, vars: vars, hasLocation: function () { return location('@location=location_latlng') !== '' || String(info.address || '').trim() !== ''; } };
     }
 
-    root.dr7WmVars = { resolver: resolver, formatDate: formatDate, modelVars: modelVars, dms: dms, latlng: latlng, stamp: stamp };
+    root.scctlmFotoWmVars = { resolver: resolver, formatDate: formatDate, modelVars: modelVars, dms: dms, latlng: latlng, stamp: stamp };
 }(typeof window !== 'undefined' ? window : this));

@@ -1,7 +1,7 @@
 // Requires Photoshop with the installed SCCTLM_Foto panel open on CEP port 9004.
 // Temporarily adds an HTML comment; always restores source. Does not touch images.
-// Skipped unless DR7_LIVE=1 so the suite can run without Photoshop (e.g. in CI).
-if (!process.env.DR7_LIVE) { console.log('SKIP: needs Photoshop with the panel open (set DR7_LIVE=1)'); process.exit(0); }
+// Skipped unless SCCTLM_FOTO_LIVE=1 so the suite can run without Photoshop (e.g. in CI).
+if (!process.env.SCCTLM_FOTO_LIVE) { console.log('SKIP: needs Photoshop with the panel open (set SCCTLM_FOTO_LIVE=1)'); process.exit(0); }
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const {spawn}=require('node:child_process');
 const root=path.resolve(__dirname,'..'), source=path.join(root,'index.html');
@@ -30,10 +30,10 @@ async function waitFor(check) {
     let watcher;
     try {
         await cdp('Page.reload',{ignoreCache:true});
-        await waitFor(()=>evaluate('typeof dr7Reload==="function" && typeof dr7IsBusy==="function"'));
+        await waitFor(()=>evaluate('typeof scctlmFotoReload==="function" && typeof scctlmFotoIsBusy==="function"'));
         const before=await evaluate('performance.timing.navigationStart');
         await evaluate('document.querySelector(".reload-panel").click()');
-        await waitFor(()=>evaluate('performance.timing.navigationStart>'+before+' && typeof dr7IsBusy==="function"'));
+        await waitFor(()=>evaluate('performance.timing.navigationStart>'+before+' && typeof scctlmFotoIsBusy==="function"'));
         console.log('PASS: manual panel reload');
         watcher=spawn(process.execPath,[path.join(root,'install/watch-plugin.js')],{cwd:root,stdio:['ignore','pipe','pipe'],windowsHide:true});
         watcher.stdout.on('data',chunk=>process.stdout.write(chunk));

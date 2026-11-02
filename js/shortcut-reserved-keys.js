@@ -36,7 +36,7 @@
         try {
             return clean(JSON.parse(root.localStorage.getItem(STORAGE_KEY) || '[]'));
         } catch (e) {
-            console.warn('DR7: danh sách phím đã đánh dấu hỏng hoặc không đọc được, bỏ qua', e);
+            console.warn('SCCTLM_Foto: danh sách phím đã đánh dấu hỏng hoặc không đọc được, bỏ qua', e);
             return [];
         }
     }
@@ -45,7 +45,7 @@
         try {
             root.localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
         } catch (e) {
-            console.warn('DR7: không lưu được danh sách phím đã đánh dấu', e);
+            console.warn('SCCTLM_Foto: không lưu được danh sách phím đã đánh dấu', e);
         }
     }
 
@@ -62,5 +62,5 @@
     };
 
     if (typeof module === 'object' && module.exports) module.exports = api;
-    else root.dr7ReservedKeys = api;
+    else root.scctlmFotoReservedKeys = api;
 }(typeof window !== 'undefined' ? window : globalThis));

@@ -91,8 +91,8 @@
     function write() {
         var size = Math.round(Number(sizeInput.value)), hard = Math.round(Number(hardInput.value));
         if (!isFinite(size) || !isFinite(hard)) return;
-        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.set(' + size + ',' + hard + '):"DR7_MISSING"', function (res) {
-            if (res !== 'ok') console.warn('DR7: không ghi được Size/Hardness cho cọ', res);
+        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.set(' + size + ',' + hard + '):"SCCTLM_MISSING"', function (res) {
+            if (res !== 'ok') console.warn('SCCTLM_Foto: không ghi được Size/Hardness cho cọ', res);
         });
     }
 
@@ -103,7 +103,7 @@
     }
 
     function refresh() {
-        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.get():"DR7_MISSING"', function (res) {
+        cs.evalScript('typeof $._ext_BRUSH=="object"?$._ext_BRUSH.get():"SCCTLM_MISSING"', function (res) {
             var m = /^(\d+)\|(\d+)$/.exec(res);
             if (!m) return;                                     // "none" hoặc chưa nạp lõi: giữ giá trị đang hiện
             if (document.activeElement === sizeInput || document.activeElement === hardInput) return;
@@ -113,7 +113,7 @@
         });
     }
 
-    window.dr7InitBrushControls = function () {
+    window.scctlmFotoInitBrushControls = function () {
         sizeInput = document.querySelector('.brush-size');
         hardInput = document.querySelector('.brush-hardness');
         sizeValue = document.querySelector('.brush-size-value');

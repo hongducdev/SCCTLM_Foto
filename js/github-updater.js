@@ -1,4 +1,4 @@
-/* DR7 updater: installs the latest GitHub Release of hongducdev/SCCTLM_Foto into the panel folder.
+/* SCCTLM_Foto updater: installs the latest GitHub Release of hongducdev/SCCTLM_Foto into the panel folder.
  * Pure logic (no DOM). The file list of a release comes from release-manifest.json, signed with the
  * maintainer's Ed25519 key (js/release-keys.js). Every download is hashed against that manifest and
  * finishes before the first write, and files go through js/update-staging-journal.js (staging folder + journal),
@@ -10,7 +10,7 @@
     var REPO = 'hongducdev/SCCTLM_Foto';
     var API = 'https://api.github.com/repos/' + REPO;
     var RAW = 'https://raw.githubusercontent.com/' + REPO + '/';
-    var RECORD = '.dr7-version.json';
+    var RECORD = '.scctlm-foto-version.json';
     var MANIFEST = 'CSXS/manifest.xml';
     var SIGNED_MANIFEST = 'release-manifest.json';
 
@@ -94,7 +94,7 @@
     // Hash of the installed file, or null when it cannot be read.
     function localHash(base, path) {
         var result = fs().readFile(base + '/' + path, window.cep.encoding.Base64);
-        return result.err ? Promise.resolve(null) : window.dr7Release.sha512(window.dr7Release.fromBase64(result.data));
+        return result.err ? Promise.resolve(null) : window.scctlmFotoRelease.sha512(window.scctlmFotoRelease.fromBase64(result.data));
     }
 
     // Splits the signed file list into files to download and files already identical on disk.
@@ -111,7 +111,7 @@
                     return null;
                 }
                 return localHash(base, path).then(function (hash) {
-                    if (hash === files[path]) current[path] = window.dr7Staging.stamp(base, path, hash); else changed.push(path);
+                    if (hash === files[path]) current[path] = window.scctlmFotoStaging.stamp(base, path, hash); else changed.push(path);
                 });
             });
         }, Promise.resolve()).then(function () { return { changed: changed, current: current }; });
@@ -122,7 +122,7 @@
         var raw = RAW + encodeURIComponent(tag) + '/', installed = installedVersion(base);
         return Promise.all([request(raw + SIGNED_MANIFEST, 'arraybuffer'), request(raw + SIGNED_MANIFEST + '.sig', 'arraybuffer')])
             .then(function (parts) {
-                var manifest = window.dr7Release.parse(parts[0], parts[1], window.dr7ReleaseKeys || {});
+                var manifest = window.scctlmFotoRelease.parse(parts[0], parts[1], window.scctlmFotoReleaseKeys || {});
                 if (manifest.version !== tag.replace(/^v/, '')) {
                     throw new Error('Chữ ký thuộc bản ' + manifest.version + ', không phải ' + tag + ' — đã huỷ.');
                 }
@@ -142,7 +142,7 @@
 
     // Writes every download to the staging folder and reads it back. The install is untouched until this is done.
     function stageAll(base, paths, downloads, hashes) {
-        var staging = window.dr7Staging;
+        var staging = window.scctlmFotoStaging;
         staging.clearStaging(base);
         return paths.reduce(function (chain, path) {
             return chain.then(function () {
@@ -168,7 +168,7 @@
                 return chain.then(function () {
                     return request(RAW + encodeURIComponent(tag) + '/' + path.split('/').map(encodeURIComponent).join('/'),
                         'arraybuffer').then(function (buffer) {
-                        return window.dr7Release.sha512(buffer).then(function (hash) {
+                        return window.scctlmFotoRelease.sha512(buffer).then(function (hash) {
                             if (hash !== manifest.files[path]) {
                                 throw new Error('File tải về không khớp chữ ký: ' + path + ' — đã huỷ, không thay đổi file nào.');
                             }
@@ -181,9 +181,9 @@
         }).then(function () {
             return stageAll(base, selection.changed, downloads, manifest.files);
         }).then(function () {
-            var staging = window.dr7Staging, changed = selection.changed;
+            var staging = window.scctlmFotoStaging, changed = selection.changed;
             var removed = Object.keys(record.files).filter(function (path) {
-                return !manifest.files[path] && window.dr7Release.isRuntimePath(path);
+                return !manifest.files[path] && window.scctlmFotoRelease.isRuntimePath(path);
             });
             var oldManifest = readText(base, MANIFEST);
             var files = {};                                   // moved files get stamped after the move; unchanged ones keep their entry
@@ -203,5 +203,5 @@
         });
     }
 
-    window.dr7Updater = { check: check, update: update, isNewer: isNewer, installedVersion: installedVersion };
+    window.scctlmFotoUpdater = { check: check, update: update, isNewer: isNewer, installedVersion: installedVersion };
 }());

@@ -4,7 +4,7 @@
 // core loads, and that the host refuses preset names outside /presets.
 // Run through evalFile so $.fileName resolves to this file:
 //   $ps = New-Object -ComObject Photoshop.Application
-//   $ps.DoJavaScript('$.evalFile(new File("D:/DR7/tests/photoshop-preset-audit.jsx"))', $null)
+//   $ps.DoJavaScript('$.evalFile(new File("D:/SCCTLM_Foto/tests/photoshop-preset-audit.jsx"))', $null)
 (function () {
     var original = app.documents.length ? app.activeDocument : null;
     var units = app.preferences.rulerUnits, dialogs = app.displayDialogs;
@@ -30,17 +30,17 @@
     }
     try {
         app.displayDialogs = DialogModes.NO;
-        $.dr7Base = File($.fileName).parent.parent.fsName.replace(/\\/g, '/');
-        $.evalFile($.dr7Base + '/loader.jsx');
-        if (!$.dr7Ready) throw new Error($.dr7LoadErrors.join('\n'));
-        if (typeof $.dr7Commands.APPLY_PRESET_XMP !== 'function') throw new Error('APPLY_PRESET_XMP not registered');
-        if (typeof $.dr7ApplyBundledXmp !== 'function') throw new Error('Missing $.dr7ApplyBundledXmp');
+        $.scctlmFotoBase = File($.fileName).parent.parent.fsName.replace(/\\/g, '/');
+        $.evalFile($.scctlmFotoBase + '/loader.jsx');
+        if (!$.scctlmFotoReady) throw new Error($.scctlmFotoLoadErrors.join('\n'));
+        if (typeof $.scctlmFotoCommands.APPLY_PRESET_XMP !== 'function') throw new Error('APPLY_PRESET_XMP not registered');
+        if (typeof $.scctlmFotoApplyBundledXmp !== 'function') throw new Error('Missing $.scctlmFotoApplyBundledXmp');
         report.push('PASS: core loaded, preset commands registered');
 
-        var presetFile = new File($.dr7Base + '/presets/MHK05451.xmp');
+        var presetFile = new File($.scctlmFotoBase + '/presets/MHK05451.xmp');
         if (!presetFile.exists) throw new Error('Missing sample preset: ' + presetFile.fsName);
 
-        scratch = app.documents.add(200, 200, 72, 'DR7 Preset Audit', NewDocumentMode.RGB);
+        scratch = app.documents.add(200, 200, 72, 'SCCTLM_Foto Preset Audit', NewDocumentMode.RGB);
         app.preferences.rulerUnits = Units.PIXELS;
         var colors = ['4a2f1d', '8fa3b1', 'd9c07a'];
         for (var i = 0; i < colors.length; i++) {
@@ -53,15 +53,15 @@
 
         // withDialog=false guarantees no Camera Raw window can open during the audit
         expectRecolour('APPLY_PRESET_XMP', 'Preset - MHK05451', function () {
-            $.dr7Commands.APPLY_PRESET_XMP(presetFile, false);
+            $.scctlmFotoCommands.APPLY_PRESET_XMP(presetFile, false);
         });
         // Exactly what a generated preset button sends through the panel bridge.
         expectRecolour('bundled preset button', 'Preset - MHK05451', function () {
-            $.dr7ApplyBundledXmp('MHK05451.xmp');
+            $.scctlmFotoApplyBundledXmp('MHK05451.xmp');
         });
 
         var layers = scratch.layers.length, refused = false;
-        try { $.dr7ApplyBundledXmp('../loader.jsx'); } catch (eName) { refused = /Invalid preset name/.test(eName); }
+        try { $.scctlmFotoApplyBundledXmp('../loader.jsx'); } catch (eName) { refused = /Invalid preset name/.test(eName); }
         if (!refused || scratch.layers.length !== layers) throw new Error('Preset name outside /presets was not refused');
         report.push('PASS: preset name outside /presets refused');
     } catch (error) {

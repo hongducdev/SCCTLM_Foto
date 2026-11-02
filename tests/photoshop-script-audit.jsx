@@ -14,11 +14,11 @@
     try {
         // Legacy handlers catch their own exceptions and alert; those must not count as PASS.
         $.global.alert = function (message) { notices.push(String(message)); };
-        scratch = app.documents.add(128, 128, 72, 'DR7 audit - disposable', NewDocumentMode.RGB);
-        $.dr7Base = File($.fileName).parent.parent.fsName.replace(/\\/g, '/');
-        $.evalFile($.dr7Base + '/loader.jsx');
-        if (!$.dr7Ready) throw new Error($.dr7LoadErrors.join('\n'));
-        var htmlFile = File($.dr7Base + '/index.html');
+        scratch = app.documents.add(128, 128, 72, 'SCCTLM_Foto audit - disposable', NewDocumentMode.RGB);
+        $.scctlmFotoBase = File($.fileName).parent.parent.fsName.replace(/\\/g, '/');
+        $.evalFile($.scctlmFotoBase + '/loader.jsx');
+        if (!$.scctlmFotoReady) throw new Error($.scctlmFotoLoadErrors.join('\n'));
+        var htmlFile = File($.scctlmFotoBase + '/index.html');
         htmlFile.open('r');
         var html = htmlFile.read();
         htmlFile.close();
@@ -28,7 +28,7 @@
             var key = match[1] + ':' + match[2];
             if (seen[key]) continue;
             seen[key] = true;
-            var fn = match[1] === 'doa' ? $.dr7Commands[match[2]] : $['_ext_' + match[2]].run;
+            var fn = match[1] === 'doa' ? $.scctlmFotoCommands[match[2]] : $['_ext_' + match[2]].run;
             if (typeof fn !== 'function') throw new Error('Missing: ' + key);
             count++;
         }
@@ -39,12 +39,12 @@
         report.push('INFO: new MHK effects tested separately in photoshop-replacements-audit.jsx');
         var commands = ['GGXS', 'TJSH', 'JMXS', 'TJYY', 'FSJH', 'MBPF', 'ZCZQ', 'DKACR'];
         for (var n = 0; n < commands.length; n++) {
-            scratch = app.documents.add(128, 128, 72, 'DR7 audit ' + commands[n], NewDocumentMode.RGB);
+            scratch = app.documents.add(128, 128, 72, 'SCCTLM_Foto audit ' + commands[n], NewDocumentMode.RGB);
             scratch.activeLayer = scratch.activeLayer.duplicate();
             scratch.selection.select([[16, 16], [112, 16], [112, 112], [16, 112]]);
             try {
                 notices = [];
-                $.dr7Commands[commands[n]]();
+                $.scctlmFotoCommands[commands[n]]();
                 if (notices.length) throw new Error(notices.join('; '));
                 report.push('PASS: ' + commands[n] + ', layers=' + scratch.layers.length);
             } catch (error) {

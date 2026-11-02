@@ -25,7 +25,7 @@ function git(root, args) {
     return execFileSync('git', args, { cwd: root, encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
 }
 
-// The code that runs inside the panel; `window.dr7Release.parse(manifest, sig, keys)` is the acceptance test.
+// The code that runs inside the panel; `window.scctlmFotoRelease.parse(manifest, sig, keys)` is the acceptance test.
 function browserRelease(root) {
     const window = { atob: s => Buffer.from(s, 'base64').toString('binary'), crypto: crypto.webcrypto,
         isSecureContext: true, TextDecoder, Uint8Array, Promise, Object, Error, JSON, String };
@@ -33,13 +33,13 @@ function browserRelease(root) {
     window.self = window;
     vm.runInNewContext(fs.readFileSync(path.join(root, 'js/vendor/tweetnacl.min.js'), 'utf8'), window);
     vm.runInNewContext(fs.readFileSync(path.join(root, 'js/release-manifest-verifier.js'), 'utf8'), window);
-    return window.dr7Release;
+    return window.scctlmFotoRelease;
 }
 
 function releaseKeys(root) {
     const window = {};
     vm.runInNewContext(fs.readFileSync(path.join(root, 'js/release-keys.js'), 'utf8'), { window });
-    return JSON.parse(JSON.stringify(window.dr7ReleaseKeys || {}));
+    return JSON.parse(JSON.stringify(window.scctlmFotoReleaseKeys || {}));
 }
 
 function sha512(data) { return crypto.createHash('sha512').update(data).digest('hex'); }

@@ -143,7 +143,7 @@
         }
     };
 
-    root.dr7ExifFrame = {
+    root.scctlmFotoExifFrame = {
         MAX_BORDER: MAX_BORDER, MAX_RADIUS: MAX_RADIUS, MIN_SCALE: MIN_SCALE, MAX_SCALE: MAX_SCALE, MAX_LINES: MAX_LINES, TEXT_MAX: TEXT_MAX,
         STYLES: STYLES, ALIGNS: ALIGNS, LOGO_POSITIONS: LOGO_POSITIONS, OUTPUTS: OUTPUTS, BACKGROUNDS: BACKGROUNDS,
         clean: clean, contrast: contrast, isFontName: isFontName, layout: layout, spec: validator

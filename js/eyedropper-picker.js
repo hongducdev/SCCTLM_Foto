@@ -17,7 +17,7 @@
     var active = null;                                  // { button, startHex, deadline, onColor }
 
     function call(expression, onResult) {
-        cs.evalScript('typeof $._ext_EYEDROPPER=="object"?' + expression + ':"DR7_MISSING"', onResult || function () {});
+        cs.evalScript('typeof $._ext_EYEDROPPER=="object"?' + expression + ':"SCCTLM_MISSING"', onResult || function () {});
     }
 
     function finish(restoreTool) {
@@ -43,10 +43,10 @@
         });
     }
 
-    window.dr7Eyedropper = function (button, onColor) {
+    window.scctlmFotoEyedropper = function (button, onColor) {
         if (active) { finish(true); return; }
         call('$._ext_EYEDROPPER.start()', function (res) {
-            if (!HEX.test(res)) { console.warn('DR7: không bật được công cụ Eyedropper', res); return; }
+            if (!HEX.test(res)) { console.warn('SCCTLM_Foto: không bật được công cụ Eyedropper', res); return; }
             active = { button: button, startHex: res, deadline: Date.now() + TIMEOUT_MS, onColor: onColor };
             button.classList.add('is-picking');
             timer = setInterval(poll, POLL_MS);

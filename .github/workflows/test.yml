@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Every tests/check-*.js must pass; check-live-reload.js prints SKIP without DR7_LIVE=1 (needs Photoshop).
+      # Every tests/check-*.js must pass; check-live-reload.js prints SKIP without SCCTLM_FOTO_LIVE=1 (needs Photoshop).
       - name: Run checks
         run: |
           status=0

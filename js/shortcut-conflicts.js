@@ -39,5 +39,5 @@
 
     var api = { PHOTOSHOP_KEYS: PHOTOSHOP_KEYS, find: find };
     if (typeof module === 'object' && module.exports) module.exports = api;
-    else root.dr7ShortcutConflicts = api;
+    else root.scctlmFotoShortcutConflicts = api;
 }(typeof window !== 'undefined' ? window : globalThis));

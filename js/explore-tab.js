@@ -2,7 +2,7 @@
 (function () {
     'use strict';
 
-    var feed = window.dr7ExploreFeed;
+    var feed = window.scctlmFotoExploreFeed;
     var videos = [];
     var topic = '';
 
@@ -51,7 +51,7 @@
             state.hidden = shown.length > 0;
             state.textContent = 'Không có bài nào khớp.';
         }
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     }
 
     function showData(data) {
@@ -63,7 +63,7 @@
     }
 
     function showError(error) {
-        window.console.warn('DR7 explore:', error);
+        window.console.warn('SCCTLM_Foto explore:', error);
         if (videos.length) return; // đang hiện bản lưu, giữ nguyên
         var state = $('.explore-state');
         state.hidden = false;
@@ -71,7 +71,7 @@
         var retry = el('button', 'explore-link', 'Thử lại');
         retry.onclick = refresh;
         state.appendChild(retry);
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     }
 
     function refresh() {
@@ -85,7 +85,7 @@
         playlist: feed && feed.PLAYLIST_URL
     };
 
-    window.dr7InitExplore = function () {
+    window.scctlmFotoInitExplore = function () {
         var root = document.querySelector('.explore');
         if (!root || !feed) return;
         root.addEventListener('click', function (event) {
@@ -102,7 +102,7 @@
                 var open = button.getAttribute('aria-expanded') !== 'true';
                 button.setAttribute('aria-expanded', open ? 'true' : 'false');
                 $('.explore-learn-body').hidden = !open;
-                if (window.dr7FitHeight) window.dr7FitHeight();
+                if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
             }
         });
         $('.explore-search').addEventListener('input', render);

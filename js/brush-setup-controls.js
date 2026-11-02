@@ -26,9 +26,9 @@
     }
 
     function refresh() {
-        cs.evalScript('typeof $._ext_BPP=="object"?$._ext_BPP.state():"DR7_MISSING"', function (res) {
+        cs.evalScript('typeof $._ext_BPP=="object"?$._ext_BPP.state():"SCCTLM_MISSING"', function (res) {
             if (!/^(setup|default|none)$/.test(res)) {
-                console.warn('DR7: không đọc được trạng thái Brush', res);
+                console.warn('SCCTLM_Foto: không đọc được trạng thái Brush', res);
                 return;
             }
             render(res);
@@ -37,23 +37,23 @@
 
     // Thông báo ngắn ở dòng trạng thái dưới tiêu đề panel, tự ẩn nếu chưa bị thông báo khác thay
     function flash(text) {
-        if (!window.dr7Status) return;
-        window.dr7Status(text);
+        if (!window.scctlmFotoStatus) return;
+        window.scctlmFotoStatus(text);
         clearTimeout(statusTimer);
         statusTimer = setTimeout(function () {
             var box = document.querySelector('.panel-status');
-            if (box && box.textContent === text) window.dr7Status('');
+            if (box && box.textContent === text) window.scctlmFotoStatus('');
         }, STATUS_MS);
     }
 
     function runCommand(name, successText) {
-        window.dr7RunCommand(name, function (res) {
-            if (res === 'DR7_OK') flash(successText);
+        window.scctlmFotoRunCommand(name, function (res) {
+            if (res === 'SCCTLM_OK') flash(successText);
             refresh();
         });
     }
 
-    window.dr7InitBrushSetup = function () {
+    window.scctlmFotoInitBrushSetup = function () {
         gear = document.querySelector('.brush-gear');
         dot = document.querySelector('.brush-status');
         if (!gear || !dot) return;

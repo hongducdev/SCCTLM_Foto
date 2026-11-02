@@ -1,17 +1,17 @@
 #target photoshop
 // Behaviour baseline for the clean-room rewrite (docs/clean-room/PROCESS.md).
-// Runs each command in $.dr7BaselineCommands on 3 synthetic RGB images, records the layer tree and the composite
+// Runs each command in $.scctlmFotoBaselineCommands on 3 synthetic RGB images, records the layer tree and the composite
 // histogram of the result, and writes JSON to tests/baselines/<name>.json. It calls commands by name only.
-// Set before running:  $.dr7BaselineCommands = ['WT'];  $.dr7BaselineName = 'wt.before';  (name is optional)
-// A name missing from $.dr7Commands is run as $._ext_<NAME>.run() (panel "ext" buttons such as DB and LS); those open a
-// modal dialog, so start the run through tests/drive-photoshop-dialog.ps1 to press Enter. $.dr7BaselineSamples = true also
+// Set before running:  $.scctlmFotoBaselineCommands = ['WT'];  $.scctlmFotoBaselineName = 'wt.before';  (name is optional)
+// A name missing from $.scctlmFotoCommands is run as $._ext_<NAME>.run() (panel "ext" buttons such as DB and LS); those open a
+// modal dialog, so start the run through tests/drive-photoshop-dialog.ps1 to press Enter. $.scctlmFotoBaselineSamples = true also
 // records a 16x16 grid of composite RGB values per image (compare with: compare-baselines.js --samples).
 //   $ps = New-Object -ComObject Photoshop.Application
-//   $ps.DoJavaScript('$.dr7BaselineCommands=["WT"]; $.dr7BaselineName="wt.before"; $.evalFile(new File("D:/DR7/tests/photoshop-baseline-record.jsx"))', $null)
+//   $ps.DoJavaScript('$.scctlmFotoBaselineCommands=["WT"]; $.scctlmFotoBaselineName="wt.before"; $.evalFile(new File("D:/SCCTLM_Foto/tests/photoshop-baseline-record.jsx"))', $null)
 (function () {
-    var COMMANDS = $.dr7BaselineCommands || [];
-    var NAME = $.dr7BaselineName || 'baseline';
-    var WITH_SAMPLES = !!$.dr7BaselineSamples;
+    var COMMANDS = $.scctlmFotoBaselineCommands || [];
+    var NAME = $.scctlmFotoBaselineName || 'baseline';
+    var WITH_SAMPLES = !!$.scctlmFotoBaselineSamples;
     var original = app.documents.length ? app.activeDocument : null;
     var units = app.preferences.rulerUnits, dialogs = app.displayDialogs;
     var foreground = app.foregroundColor, background = app.backgroundColor, tool = app.currentTool;
@@ -72,10 +72,10 @@
     try {
         app.displayDialogs = DialogModes.NO;
         app.preferences.rulerUnits = Units.PIXELS;
-        $.dr7Base = File($.fileName).parent.parent.fsName.replace(/\\/g, '/');
-        $.evalFile($.dr7Base + '/loader.jsx');
-        if (!$.dr7Ready) throw new Error($.dr7LoadErrors.join('\n'));
-        if (!COMMANDS.length) throw new Error('Set $.dr7BaselineCommands to the command names to record');
+        $.scctlmFotoBase = File($.fileName).parent.parent.fsName.replace(/\\/g, '/');
+        $.evalFile($.scctlmFotoBase + '/loader.jsx');
+        if (!$.scctlmFotoReady) throw new Error($.scctlmFotoLoadErrors.join('\n'));
+        if (!COMMANDS.length) throw new Error('Set $.scctlmFotoBaselineCommands to the command names to record');
         for (var c = 0; c < COMMANDS.length; c++) for (var m = 0; m < IMAGES.length; m++) {
             var entry = { command: COMMANDS[c], image: IMAGES[m].name };
             scratch = app.documents.add(128, 128, 72, 'baseline ' + COMMANDS[c] + ' ' + IMAGES[m].name, NewDocumentMode.RGB);
@@ -83,7 +83,7 @@
                 scratch.bitsPerChannel = BitsPerChannelType.EIGHT;
                 IMAGES[m].draw(scratch);
                 scratch.selection.select([[16, 16], [112, 16], [112, 112], [16, 112]]);
-                var run = $.dr7Commands[COMMANDS[c]], ext = $['_ext_' + COMMANDS[c]];
+                var run = $.scctlmFotoCommands[COMMANDS[c]], ext = $['_ext_' + COMMANDS[c]];
                 if (typeof run != 'function' && ext && typeof ext.run == 'function') run = function () { ext.run(); };
                 if (typeof run != 'function') throw new Error('Not a registered command');
                 run();
@@ -96,7 +96,7 @@
             scratch = null;
             results.push(entry);
         }
-        var folder = new Folder($.dr7Base + '/tests/baselines');
+        var folder = new Folder($.scctlmFotoBase + '/tests/baselines');
         if (!folder.exists) folder.create();
         var out = new File(folder.fsName + '/' + NAME + '.json');
         out.encoding = 'UTF-8'; out.open('w'); out.write(toJson({ format: 1, name: NAME, results: results })); out.close();

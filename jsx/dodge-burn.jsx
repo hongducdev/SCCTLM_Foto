@@ -5,7 +5,7 @@
  */
 $._ext_DB = {
     // ---- TUNABLE SETTINGS ---------------------------------------------------------------------------------
-    HISTORY_NAME: 'DR7 Dodge & Burn',
+    HISTORY_NAME: 'SCCTLM_Foto Dodge & Burn',
     MODE_MESSAGE: 'Xin l\u1ED7i, script ch\u1EC9 ch\u1EA1y \u1EDF ch\u1EBF \u0111\u1ED9 m\u00E0u RGB. Mu\u1ED1n \u0111\u1ED5i ch\u1EBF \u0111\u1ED9 m\u00E0u, v\u00E0o Image/Mode/RGB Color.',
     MODE_TITLE: 'Th\u00F4ng b\u00E1o',
     DODGE_NAME: 'Dodge [l\u00E0m s\u00E1ng]',

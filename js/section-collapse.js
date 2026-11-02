@@ -7,7 +7,7 @@
         var collapsed = !group.classList.contains('is-collapsed');
         group.classList.toggle('is-collapsed', collapsed);
         title.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-        if (window.dr7FitHeight) window.dr7FitHeight();
+        if (window.scctlmFotoFitHeight) window.scctlmFotoFitHeight();
     }
 
     function titleOf(event) {

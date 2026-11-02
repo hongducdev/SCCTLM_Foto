@@ -62,7 +62,7 @@ async function sync() {
     const removed = [...previous.keys()].filter(name => !next.has(name));
     if (!changed.length && !removed.length && !reloadPending) { previous = next; return; }
     // Also pause copying while a running handler might still read its resources.
-    const allowed = await evaluate('typeof dr7IsBusy === "function" && !dr7IsBusy()');
+    const allowed = await evaluate('typeof scctlmFotoIsBusy === "function" && !scctlmFotoIsBusy()');
     if (!allowed) { status('Waiting for the current Photoshop command to finish...'); return; }
     for (const [name,item] of changed) {
         const destination = path.join(target,name);
@@ -72,11 +72,11 @@ async function sync() {
     // Only files tracked from this source session are removed; no broad mirror/delete.
     for (const name of removed) fs.rmSync(path.join(target,name), { force: true });
     // The GitHub updater's record no longer matches the copied files; a later update re-checks all.
-    fs.rmSync(path.join(target, '.dr7-version.json'), { force: true });
-    fs.rmSync(path.join(target, '.dr7-update.json'), { force: true });          // a half-finished GitHub update must not overwrite what was just copied
-    fs.rmSync(path.join(target, '.dr7-update'), { recursive: true, force: true });
+    fs.rmSync(path.join(target, '.scctlm-foto-version.json'), { force: true });
+    fs.rmSync(path.join(target, '.scctlm-foto-update.json'), { force: true });          // a half-finished GitHub update must not overwrite what was just copied
+    fs.rmSync(path.join(target, '.scctlm-foto-update'), { recursive: true, force: true });
     previous = next; reloadPending = true;
-    const reloaded = await evaluate('dr7Reload()');
+    const reloaded = await evaluate('scctlmFotoReload()');
     if (!reloaded) { status('Changes copied; waiting to reload after the current command.'); return; }
     reloadPending = false;
     status('Synced ' + changed.length + ' files, removed ' + removed.length + '; SCCTLM_Foto reloaded.');

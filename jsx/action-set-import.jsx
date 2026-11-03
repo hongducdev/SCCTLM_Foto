@@ -103,12 +103,19 @@
     $.scctlmFotoPlayBundledAction = function (spec) {
         var want = parseSpec(spec);
         $.scctlmFotoEnsureBundledAction(spec);
+        if (want.action === 'YouTube Rim Light' && typeof $._ext_RIMCOLOR === 'object') {
+            var problem = $._ext_RIMCOLOR.targetProblem();
+            if (problem) throw new Error(problem);
+        }
+        var rim = want.action === 'YouTube Rim Light' && typeof $._ext_RIMCOLOR === 'object';
+        var rimSource = rim ? $._ext_RIMCOLOR.source() : null;
         var ref = new ActionReference();
         ref.putName(charIDToTypeID('Actn'), want.action);
         ref.putName(charIDToTypeID('ASet'), want.set);
         var desc = new ActionDescriptor();
         desc.putReference(charIDToTypeID('null'), ref);
         executeAction(charIDToTypeID('Ply '), desc, DialogModes.NO);
+        if (rim) $._ext_RIMCOLOR.finish(rimSource);
         return 'SCCTLM_OK';
     };
 }());

@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.3.13 — Rim Light không còn nhảy sang layer khác
+
+- **Lỗi:** tạo Rim Light lần 2, lần 3 trong cùng file làm hiệu ứng rơi vào nhóm Rim Light cũ (Photoshop chọn layer `smudge` và mask `Rim Light` theo tên, mà tên đã trùng).
+- **`Thumbnail_action.atn`:** *YouTube Rim Light* chọn `smudge` bằng thứ tự layer (một layer dưới `Color`) và nạp vùng chọn từ kênh tạm `rimsel` (lưu ở đầu Action, xoá ngay sau khi dùng) thay vì mask theo tên. Đã chạy thử 3 lần liên tiếp trên 3 layer, cả ba nhóm cho kết quả giống nhau. Máy đã nạp bộ cũ: xoá bộ **Thumbnail action** trong bảng Actions để panel nạp bản mới.
+- **Hộp thoại "The command “Delete” is not currently available":** Action bắt đầu từ vùng trong suốt của lớp đang chọn, nên lớp trống, nhóm, lớp điều chỉnh, lớp nền hoặc lớp nằm trong chính nhóm Rim Light làm Photoshop dừng giữa chừng. Nút **Tạo Rim Light** giờ kiểm tra lớp đang chọn trước (`$._ext_RIMCOLOR.targetProblem()`) và báo bằng tiếng Việt cần chọn lớp nào, không chạy Action dở. Phím tắt gán cho Action chạy thẳng trong Photoshop nên không có bước kiểm tra này.
+- **Thu gọn, đặt tên và đánh dấu màu:** sau khi nút **Tạo Rim Light** chạy xong, nhóm mới được thu gọn trong bảng Layers, đổi tên thành `Rim Light for <tên layer>` và gắn màu nhãn trùng màu nhãn của layer nguồn. Layer nguồn chưa có màu thì nhóm lấy màu xoay vòng đỏ, cam, vàng, lục, lam, tím (`$._ext_RIMCOLOR.finish()`). Panel nhận cả nhóm tên `Rim Light` lẫn `Rim Light for ...`. Phím tắt chạy thẳng Action nên không có bước này.
+- **`jsx/rim-light-color.jsx`:** đổi màu và Cường độ nhắm nhóm Rim Light chứa layer đang chọn, không còn luôn lấy nhóm đầu tiên theo tên.
+
 ## v0.3.12 — Làm da chạy được trên Smart Object
 
 - **Smart Object:** Glow, Detail và các bộ lọc Camera Raw trong nhóm Da giờ chạy trên layer Smart Object thay vì dừng báo lỗi.

@@ -28,6 +28,7 @@
                 if (scratch.activeLayer.name.indexOf('MHK') !== 0) throw new Error('Wrong output layer');
                 var bounds = scratch.activeLayer.bounds;
                 if (bounds[2].as('px') <= bounds[0].as('px')) throw new Error('Empty output layer');
+                if ((name === 'CGYSB' || name === 'PP_DETAIL') && scratch.activeLayer.kind !== LayerKind.SMARTOBJECT) throw new Error('Not a Smart Object');
                 report.push('PASS: '+name+' RGB/'+(depth ? 16 : 8));
             } catch (error) { report.push('FAIL: '+name+' RGB/'+(depth ? 16 : 8)+': '+error+' line='+error.line); }
             finally { scratch.close(SaveOptions.DONOTSAVECHANGES); scratch = null; }

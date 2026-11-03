@@ -64,6 +64,8 @@
     function effect(name, kind) {
         var layer = stamp(name);
         try {
+            // Smart Object keeps the blur / high-pass editable as a Smart Filter instead of baking it into the stamp
+            if (typeof $.scctlmFotoToSmartObject === 'function') { layer = $.scctlmFotoToSmartObject(); layer.name = 'MHK - '+name; }
             if (kind === 'glow') { layer.applyGaussianBlur(8); layer.blendMode = BlendMode.SCREEN; layer.opacity = 25; }
             if (kind === 'detail') { layer.applyHighPass(2); layer.blendMode = BlendMode.OVERLAY; layer.opacity = 40; }
         } catch (error) { layer.remove(); throw error; }

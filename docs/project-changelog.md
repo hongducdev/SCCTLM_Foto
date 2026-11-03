@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.3.12 — Làm da chạy được trên Smart Object
+
+- **Smart Object:** Glow, Detail và các bộ lọc Camera Raw trong nhóm Da giờ chạy trên layer Smart Object thay vì dừng báo lỗi.
+- **Nội bộ:** tách script Son môi, Má hồng, Giảm đỏ thành các module bước (`jsx/skin-*-part-N.jsx`); thêm `tests/check-jsx-no-cep.js` chặn API CEP lọt vào lõi JSX và `tests/run-photoshop-smoke.ps1` để chạy kiểm tra nhanh trong Photoshop.
+
 ## v0.3.11 — Cài đặt tự động trên macOS, báo lỗi dễ hiểu, nút Chẩn đoán
 
 - **Cài đặt tự động trên macOS:** `install/Cai-dat-SCCTLM_Foto.command` bật `PlayerDebugMode`, chép panel vào thư mục CEP và hỏi đổi tên bản cũ; `install/Go-cai-dat-SCCTLM_Foto.command` để gỡ. Chạy bằng `bash install/Cai-dat-SCCTLM_Foto.command`.

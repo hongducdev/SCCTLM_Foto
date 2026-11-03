@@ -51,6 +51,7 @@ Photoshop CC 2015 trở lên · Windows 10/11 (64-bit) hoặc macOS 10.13+ · �
 **macOS:** đóng Photoshop → mở Terminal, chạy `bash install/Cai-dat-SCCTLM_Foto.command` (hoặc nhấp đúp file đó trong Finder; nếu macOS chặn thì chuột phải → **Open**) → mở Photoshop → **Window > Extensions > SCCTLM_Foto**.
 
 > ⚠️ Panel chưa ký số nên script bật `PlayerDebugMode` — cho phép **mọi** extension CEP chưa ký chạy trên tài khoản đó. Tắt lại khi gỡ cài đặt.
+> Panel không đóng gói ZXP: ZXP đã ký sẽ hỏng chữ ký khi nút cập nhật ⤓ ghi đè file, nên bản phát hành cài bằng script; bản cập nhật trong panel đã được kiểm chữ ký Ed25519 trước khi cài. Gặp lỗi cài đặt thì bấm **Chẩn đoán** ở cuối panel.
 
 <details>
 <summary>🍎 Cài thủ công</summary>

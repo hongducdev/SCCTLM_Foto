@@ -64,7 +64,7 @@ SCCTLM_Foto/
 ├── jsx/
 │   ├── 4.jsxbin                 # Hộp thoại Chữ / Logo (WM, không còn nút trên panel)
 │   ├── main.jsx                 # cTID/sTID, $.scctlmFotoSkinStep (1 bước undo, chỉ RGB; ảnh khác RGB ném `SCCTLM_NOT_RGB` để panel báo, không dùng `alert`) và bảng lệnh Da ($.scctlmFotoBuildSkinCommands)
-│   ├── skin-*.jsx               # Mỗi lệnh Da một file: GGXS (highlight), TJSH (blusher), JMXS (mascara), TJYY (eyeshadow), FSJH (giảm đỏ), MBPF (trắng da), ZCZQ (môi), DKACR (Camera Raw); tự đăng ký vào $.scctlmFotoSkinFns
+│   ├── skin-*.jsx               # Mỗi lệnh Da một file: GGXS (highlight), TJSH (blusher), JMXS (mascara), TJYY (eyeshadow), FSJH (giảm đỏ), MBPF (trắng da), ZCZQ (môi), DKACR (Camera Raw); tự đăng ký vào $.scctlmFotoSkinFns; ZCZQ, TJSH, FSJH tách thêm `skin-<tên>-part-N.jsx` (các step Action, chạy lần lượt, mỗi file dưới 200 dòng)
 │   ├── mhk-replacements.jsx     # Hạt phim, Hào Quang, Hạt thô, Chấm, Chi tiết
 │   ├── Photoshop.jsx            # Tiện ích Crash Bug Fix (chạy khi mở panel)
 │   ├── preset-lut.jsx           # Áp Preset Camera Raw (.xmp)
@@ -109,7 +109,7 @@ SCCTLM_Foto/
 │   ├── Hot-reload-SCCTLM_Foto.bat       # Khởi động bộ theo dõi Hot Reload
 │   └── watch-plugin.js          # Theo dõi file và nạp lại panel bằng Node.js
 ├── scripts/                     # Công cụ người phát hành: release-keygen / release-sign / release-verify + build-watermark-templates.py (chuyển pack 徕卡一瞬 thành js/wm-templates-data.js và img/wm) + install-watermark-fonts.ps1 (cài font MiSans / LG1056 / Oxanium từ `fonts/` cho người dùng hiện tại)
-├── tests/                       # Kiểm thử tự động: script, updater, hot reload, bộ màu, artboard, Khám phá
+├── tests/                       # Kiểm thử tự động: script, updater, hot reload, bộ màu, artboard, Khám phá, lõi jsx không dính CEP, smoke test Photoshop (`run-photoshop-smoke.ps1`, chạy tay)
 ├── docs/                        # Hướng dẫn thiết kế và nhật ký phát triển
 └── README.md
 ```

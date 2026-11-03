@@ -20,6 +20,7 @@ Chưa có tín hiệu nào xảy ra thì không viết mã UXP (YAGNI).
 - Logic xử lý ảnh nằm trong `jsx/` (ExtendScript); UI nằm trong `js/` và `index.html`.
 - Không thêm API CEP (`cep.fs`, `CSInterface`) vào lõi ảnh trong `jsx/`. Nhờ vậy khi chuyển chỉ
   phải viết lại UI và lớp cầu nối (`loader.jsx`, `js/`), không phải viết lại phần lõi.
+  `tests/check-jsx-no-cep.js` (chạy trong CI) chặn `CSInterface`, `cep.*`, `__adobe_cep__` trong `jsx/` và `loader.jsx`.
 
 ### Kiểm tra khi Photoshop ra bản lớn
 
@@ -30,3 +31,6 @@ ghi kết quả vào bảng dưới.
 | Ngày | Photoshop | `$.scctlmFotoLoadErrors` | `$.scctlmFotoLoadTotalMs` | Ghi chú |
 |---|---|---|---|---|
 | 2026-11-03 | 23.2.0 (Windows 10 64-bit) | không có | 125 ms | Đọc từ nút Chẩn đoán; chậm nhất `4.jsxbin` 67 ms |
+
+Trước khi ghi bảng trên, chạy `pwsh tests/run-photoshop-smoke.ps1` (Photoshop đang mở, không có hộp thoại modal): nó chạy
+`tests/photoshop-script-audit.jsx` qua COM trên ảnh tạm và thoát mã khác 0 nếu có dòng `FAIL`.

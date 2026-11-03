@@ -92,9 +92,39 @@
         return { file: f[0], set: f[1], action: f[2] };
     }
 
+    // Step counts of earlier bundled versions that are known to misbehave. An action with one of these counts is a stale
+    // copy loaded by an older panel (an edited copy has another count and is kept): the whole set is reloaded.
+    var STALE_STEPS = { 'YouTube Rim Light': [27] };
+
+    function stepCount(setName, actionName) {
+        var ref = new ActionReference();
+        ref.putName(charIDToTypeID('Actn'), actionName);
+        ref.putName(charIDToTypeID('ASet'), setName);
+        return executeActionGet(ref).getInteger(stringIDToTypeID('numberOfChildren'));
+    }
+
+    function isStale(want) {
+        var known = STALE_STEPS[want.action];
+        if (!known) return false;
+        var steps = stepCount(want.set, want.action);
+        for (var i = 0; i < known.length; i += 1) {
+            if (known[i] === steps) return true;
+        }
+        return false;
+    }
+
     $.scctlmFotoEnsureBundledAction = function (spec) {
         var want = parseSpec(spec);
-        if ($.scctlmFotoShortcutSetup.exists(want.set, want.action)) return 'SCCTLM_EXISTS';
+        if ($.scctlmFotoShortcutSetup.exists(want.set, want.action)) {
+            if (!isStale(want)) return 'SCCTLM_EXISTS';
+            var old = new ActionReference();
+            old.putName(charIDToTypeID('ASet'), want.set);
+            var del = new ActionDescriptor();
+            del.putReference(charIDToTypeID('null'), old);
+            executeAction(charIDToTypeID('Dlt '), del, DialogModes.NO);
+            $.scctlmFotoImportBundledAtn(want.file);
+            return 'SCCTLM_OK';
+        }
         if ($.scctlmFotoShortcutSetup.exists(want.set, null)) throw new Error('Set "' + want.set + '" has no action "' + want.action + '"');
         $.scctlmFotoImportBundledAtn(want.file);
         return 'SCCTLM_OK';
@@ -108,6 +138,7 @@
             if (problem) throw new Error(problem);
         }
         var rim = want.action === 'YouTube Rim Light' && typeof $._ext_RIMCOLOR === 'object';
+        if (rim) $._ext_RIMCOLOR.prepare();
         var rimSource = rim ? $._ext_RIMCOLOR.source() : null;
         var ref = new ActionReference();
         ref.putName(charIDToTypeID('Actn'), want.action);

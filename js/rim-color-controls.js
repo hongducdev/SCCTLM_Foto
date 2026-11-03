@@ -63,7 +63,7 @@
     function refresh() {
         if (pending || (window.scctlmFotoIsBusy && window.scctlmFotoIsBusy())) return;
         pending = true;
-        cs.evalScript('typeof $._ext_RIMCOLOR=="object"?$._ext_RIMCOLOR.available():"0"', function (res) {
+        cs.evalScript('typeof $._ext_RIMCOLOR=="object"?($._ext_RIMCOLOR.adopt(),$._ext_RIMCOLOR.available()):"0"', function (res) {
             pending = false;
             setExists(res === '1');
         });

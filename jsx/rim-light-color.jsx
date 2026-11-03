@@ -38,7 +38,26 @@ $._ext_RIMCOLOR = {
     // Taken before the Action runs: name and label color of the layer the Rim Light is made for
     source: function () {
         var layer = app.activeDocument.activeLayer;
-        return { name: layer.name, color: this.labelColor(layer.id) };
+        return { id: layer.id, name: layer.name, color: this.labelColor(layer.id) };
+    },
+
+    isShape: function (layer) {
+        var kind = layer.kind;
+        if (kind !== LayerKind.SOLIDFILL && kind !== LayerKind.GRADIENTFILL && kind !== LayerKind.PATTERNFILL) return false;
+        var ref = new ActionReference();
+        ref.putIdentifier(charIDToTypeID('Lyr '), layer.id);
+        return executeActionGet(ref).getBoolean(stringIDToTypeID('hasVectorMask'));
+    },
+
+    // The Action needs pixels (it loads the layer's transparency): a Shape layer is duplicated and the copy rasterized,
+    // so the vector original stays editable. The copy becomes the active layer.
+    prepare: function () {
+        var layer = app.activeDocument.activeLayer;
+        if (!this.isShape(layer)) return;
+        var copy = layer.duplicate();
+        copy.name = layer.name + ' (raster)';
+        copy.rasterize(RasterizeType.ENTIRELAYER);
+        app.activeDocument.activeLayer = copy;
     },
 
     // "" when the active layer can take a Rim Light, else the sentence to show. The Action starts from the
@@ -48,7 +67,7 @@ $._ext_RIMCOLOR = {
         if (layer.typename !== 'ArtLayer' || layer.isBackgroundLayer) {
             return 'H\u00E3y ch\u1ECDn l\u1EDBp c\u00F3 h\u00ECnh c\u1EA7n l\u00E0m Rim Light (l\u1EDBp \u1EA3nh, Smart Object ho\u1EB7c ch\u1EEF), kh\u00F4ng ph\u1EA3i nh\u00F3m hay l\u1EDBp n\u1EC1n.';
         }
-        if (layer.kind !== LayerKind.NORMAL && layer.kind !== LayerKind.SMARTOBJECT && layer.kind !== LayerKind.TEXT) {
+        if (layer.kind !== LayerKind.NORMAL && layer.kind !== LayerKind.SMARTOBJECT && layer.kind !== LayerKind.TEXT && !this.isShape(layer)) {
             return 'L\u1EDBp \u0111i\u1EC1u ch\u1EC9nh kh\u00F4ng c\u00F3 h\u00ECnh \u0111\u1EC3 l\u00E0m Rim Light. H\u00E3y ch\u1ECDn l\u1EDBp \u1EA3nh, Smart Object ho\u1EB7c ch\u1EEF.';
         }
         w = layer.bounds[2].as('px') - layer.bounds[0].as('px');
@@ -62,15 +81,7 @@ $._ext_RIMCOLOR = {
 
     LABELS: ['Rd  ', 'Orng', 'Ylw ', 'Grn ', 'Bl  ', 'Vlt '],
 
-    // After the Action: name the new group "Rim Light for <layer>", collapse it, and label it with the source layer's
-    // color, or a color that cycles per Rim Light when the source has none
-    finish: function (source) {
-        var doc = app.activeDocument, group = this.findGroup(), id = group.id, count = 0, i;
-        for (i = 0; i < doc.layerSets.length; i += 1) {
-            if (this.isGroup(doc.layerSets[i])) count += 1;
-        }
-        group.name = this.GROUP + ' for ' + source.name;
-        var label = source.color !== 'None' ? source.color : this.LABELS[Math.max(0, count - 1) % this.LABELS.length];
+    setLabel: function (id, label) {
         var ref = new ActionReference();
         ref.putIdentifier(charIDToTypeID('Lyr '), id);
         var color = new ActionDescriptor();
@@ -79,6 +90,19 @@ $._ext_RIMCOLOR = {
         desc.putReference(charIDToTypeID('null'), ref);
         desc.putObject(charIDToTypeID('T   '), charIDToTypeID('Lyr '), color);
         executeAction(charIDToTypeID('setd'), desc, DialogModes.NO);
+    },
+
+    // After the Action: name the new group "Rim Light for <layer>", collapse it, and label it with the source layer's
+    // color, or a color that cycles per Rim Light when the source has none (the source layer then gets that color too)
+    finish: function (source, target) {
+        var doc = app.activeDocument, group = target || this.findGroup(), id = group.id, count = 0, i;
+        for (i = 0; i < doc.layerSets.length; i += 1) {
+            if (this.isGroup(doc.layerSets[i])) count += 1;
+        }
+        group.name = this.GROUP + ' for ' + source.name;
+        var label = source.color !== 'None' ? source.color : this.LABELS[Math.max(0, count - 1) % this.LABELS.length];
+        this.setLabel(id, label);
+        if (source.color === 'None') this.setLabel(source.id, label);
 
         var prop = new ActionReference();
         prop.putProperty(charIDToTypeID('Prpr'), stringIDToTypeID('layerSectionExpanded'));
@@ -87,6 +111,24 @@ $._ext_RIMCOLOR = {
         collapse.putReference(charIDToTypeID('null'), prop);
         collapse.putBoolean(charIDToTypeID('T   '), false);
         executeAction(charIDToTypeID('setd'), collapse, DialogModes.NO);
+    },
+
+    // The Action played from its F-key skips the panel, so its group is still named exactly "Rim Light". The Action
+    // puts the group right above the layer it was made for: finish those groups from the layer below them.
+    adopt: function () {
+        var doc = app.activeDocument, i, below, pending = [];
+        for (i = 0; i < doc.layers.length - 1; i += 1) {
+            if (doc.layers[i].typename === 'LayerSet' && doc.layers[i].name === this.GROUP) pending.push(doc.layers[i]);
+        }
+        for (i = 0; i < pending.length; i += 1) {
+            below = null;
+            for (var j = 0; j < doc.layers.length; j += 1) {
+                if (doc.layers[j].id === pending[i].id) { below = doc.layers[j + 1]; break; }
+            }
+            if (!below || below.typename === 'LayerSet') continue;
+            this.finish({ id: below.id, name: below.name, color: this.labelColor(below.id) }, pending[i]);
+        }
+        return String(pending.length);
     },
 
     findLayer: function () {

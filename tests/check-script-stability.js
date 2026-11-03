@@ -280,8 +280,10 @@ const atnHost = {
     },
     ActionReference: function () { this.names = {}; this.putName = (cls, name) => { this.names[cls] = name; }; },
     ActionDescriptor: function () { this.putReference = (key, ref) => { this.ref = ref; }; },
-    charIDToTypeID: id => id,
+    charIDToTypeID: id => id, stringIDToTypeID: id => id,
     DialogModes: { NO: 3 },
+    steps: 30,
+    executeActionGet: () => ({ getInteger: () => atnHost.steps }),
     executeAction: (event, desc) => atnHost.played.push([event, desc.ref.names.ASet, desc.ref.names.Actn]),
     File: function (file) {
         this.name = path.basename(file); this.fsName = file; this.exists = fs.existsSync(file);
@@ -312,6 +314,30 @@ assert.match(calls[sent + 1].code, /documents\.length/, 'playing needs an open d
 atnHost.actionPresent = true;
 assert.equal(vm.runInNewContext(calls[sent + 1].code, Object.assign(atnHost, { app: Object.assign(atnHost.app, { documents: [{}] }) })), 'SCCTLM_OK');
 assert.deepEqual(atnHost.played, [['Ply ', 'Thumbnail action', 'Stroke Brush Path']]);
+// A Rim Light action left by an older panel (27 steps) is replaced by reloading the set; a current or edited one is kept.
+{
+    const rimSpec = specOf('Thumbnail_action.atn', 'Thumbnail action', 'YouTube Rim Light');
+    const rimEnsure = '$.scctlmFotoEnsureBundledAction(' + JSON.stringify(rimSpec) + ')';
+    const playedBefore = atnHost.played.length, loadedBefore = atnHost.loaded.length;
+    atnHost.setPresent = true; atnHost.actionPresent = true;
+    atnHost.steps = 30;
+    assert.equal(vm.runInNewContext(rimEnsure, atnHost), 'SCCTLM_EXISTS', 'a current Rim Light action must be kept');
+    atnHost.steps = 31;
+    assert.equal(vm.runInNewContext(rimEnsure, atnHost), 'SCCTLM_EXISTS', 'an edited Rim Light action must be kept');
+    assert.equal(atnHost.loaded.length, loadedBefore);
+    atnHost.steps = 27;
+    atnHost.setPresent = true;
+    const real = atnHost.$.scctlmFotoShortcutSetup.exists;
+    let removed = false;
+    atnHost.$.scctlmFotoShortcutSetup.exists = (set, action) => action === null ? !removed : !removed;
+    atnHost.executeAction = (event, desc) => { atnHost.played.push([event, desc.ref.names.ASet, desc.ref.names.Actn]); if (event === 'Dlt ') removed = true; };
+    assert.equal(vm.runInNewContext(rimEnsure, atnHost), 'SCCTLM_OK', 'a stale Rim Light action must be replaced');
+    assert.deepEqual(atnHost.played.slice(playedBefore), [['Dlt ', 'Thumbnail action', undefined]], 'the stale set must be deleted before loading');
+    assert.equal(atnHost.loaded.length, loadedBefore + 1, 'the bundled set must be loaded again');
+    atnHost.$.scctlmFotoShortcutSetup.exists = real;
+    atnHost.steps = 30;
+    atnHost.played.length = playedBefore;
+}
 calls[sent + 1].callback('SCCTLM_OK');
 assert.throws(() => vm.runInNewContext('$.scctlmFotoImportBundledAtn("../x.atn")', atnHost),
     /Invalid action file name/, 'the host must re-check the file name');

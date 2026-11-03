@@ -1,6 +1,8 @@
 # Changelog
 
-## Chưa phát hành — Báo lỗi dễ hiểu, kiểm tra chế độ màu, nút Chẩn đoán
+## v0.3.11 — Cài đặt tự động trên macOS, báo lỗi dễ hiểu, nút Chẩn đoán
+
+- **Cài đặt tự động trên macOS:** `install/Cai-dat-SCCTLM_Foto.command` bật `PlayerDebugMode`, chép panel vào thư mục CEP và hỏi đổi tên bản cũ; `install/Go-cai-dat-SCCTLM_Foto.command` để gỡ. Chạy bằng `bash install/Cai-dat-SCCTLM_Foto.command`.
 
 - **Lỗi bằng tiếng Việt, không phải đoạn mã:** mọi lỗi hiện cho người dùng (lệnh Photoshop, nạp lõi, cập nhật, mạng, đo/gỡ watermark, tải Khám phá, đặt cọ) đi qua `js/error-messages.js` và hiện thành câu kèm việc cần làm. Chuỗi thô (`SCCTLM_ERROR`, `File:`, `Line:`…) không còn hiện ra. `tests/check-no-raw-errors.js` quét `js/` và `jsx/` để chặn lỗi quay lại.
 - **Ảnh không phải RGB:** các lệnh Da (Son môi, Highlight, Lông mi, Phủ phấn, Bóng mắt, Trắng da, Giảm đỏ) và nhóm Làm da/Trắng răng/Tẩy lông/Đánh khối/Tùy chỉnh/Hàng loạt/Làm mịn/Màu tổng/Màu da/Làm nét báo ngay "Ảnh đang ở chế độ màu X…, vào Image > Mode > RGB Color" trong panel thay vì hộp thoại Photoshop chặn script. Danh sách lệnh cần RGB nằm ở `js/color-mode-guard.js`; Hạt phim, Hào quang, Hạt thô, Chấm tự từ chối ảnh không phải RGB (đã chạy thử trên ảnh Gray/CMYK/Lab, không để lại layer dở) và cũng ra cùng kiểu thông báo.

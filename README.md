@@ -48,10 +48,12 @@ Photoshop CC 2015 trở lên · Windows 10/11 (64-bit) hoặc macOS 10.13+ · �
 
 **Windows:** đóng Photoshop → chạy `install\Cai-dat-SCCTLM_Foto.bat` → mở Photoshop → **Window > Extensions > SCCTLM_Foto**.
 
+**macOS:** đóng Photoshop → mở Terminal, chạy `bash install/Cai-dat-SCCTLM_Foto.command` (hoặc nhấp đúp file đó trong Finder; nếu macOS chặn thì chuột phải → **Open**) → mở Photoshop → **Window > Extensions > SCCTLM_Foto**.
+
 > ⚠️ Panel chưa ký số nên script bật `PlayerDebugMode` — cho phép **mọi** extension CEP chưa ký chạy trên tài khoản đó. Tắt lại khi gỡ cài đặt.
 
 <details>
-<summary>🍎 macOS / cài thủ công</summary>
+<summary>🍎 Cài thủ công</summary>
 
 1. Bật `PlayerDebugMode`:
    - Windows: nhấp đúp `install\Fix-CEP-SCCTLM_Foto.reg`.
@@ -65,13 +67,13 @@ Photoshop CC 2015 trở lên · Windows 10/11 (64-bit) hoặc macOS 10.13+ · �
 
 </details>
 
-**Gỡ cài đặt:** Windows chạy `install\Go-cai-dat-SCCTLM_Foto.bat` (hỏi trước khi xoá và tắt `PlayerDebugMode`). macOS xoá thư mục ở bước 2; chỉ tắt `PlayerDebugMode` (`defaults delete com.adobe.CSXS.$n PlayerDebugMode`) khi không còn extension chưa ký nào khác.
+**Gỡ cài đặt:** Windows chạy `install\Go-cai-dat-SCCTLM_Foto.bat`, macOS chạy `bash install/Go-cai-dat-SCCTLM_Foto.command` (cả hai hỏi trước khi xoá và tắt `PlayerDebugMode`).
 
 ## 🛠️ Xử lý sự cố
 
 | Triệu chứng | Cách xử lý |
 |---|---|
-| Panel không có trong **Window > Extensions** | Nhấp đúp `install\Fix-CEP-SCCTLM_Foto.reg`, khởi động lại Photoshop. |
+| Panel không có trong **Window > Extensions** | Windows: nhấp đúp `install\Fix-CEP-SCCTLM_Foto.reg`. macOS: chạy lại `bash install/Cai-dat-SCCTLM_Foto.command`. Rồi khởi động lại Photoshop. |
 | Panel báo *"Ảnh chưa ở chế độ màu RGB"* | Vào `Image > Mode > RGB Color` rồi bấm lại. |
 | Panel báo lỗi nhưng chưa rõ cách xử lý, hoặc plugin không khởi động | Bấm **Chẩn đoán** ở cuối panel → **Sao chép báo cáo** rồi gửi cho SCCTLM. Báo cáo không chứa tên người dùng Windows hay ảnh của bạn. |
 | Không thấy màu Rim Light | Bấm **Tạo Rim Light** trên ảnh đang mở; phần màu chỉ hiện khi có nhóm `Rim Light` > lớp `Color`. |

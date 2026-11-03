@@ -103,6 +103,8 @@ SCCTLM_Foto/
 ├── install/
 │   ├── Cai-dat-SCCTLM_Foto.bat          # Cài đặt tự động
 │   ├── Go-cai-dat-SCCTLM_Foto.bat       # Gỡ cài đặt, tắt PlayerDebugMode (hỏi trước)
+│   ├── Cai-dat-SCCTLM_Foto.command      # Cài đặt tự động trên macOS (defaults + rsync)
+│   ├── Go-cai-dat-SCCTLM_Foto.command   # Gỡ cài đặt trên macOS (hỏi trước)
 │   ├── Fix-CEP-SCCTLM_Foto.reg          # Bật PlayerDebugMode
 │   ├── Hot-reload-SCCTLM_Foto.bat       # Khởi động bộ theo dõi Hot Reload
 │   └── watch-plugin.js          # Theo dõi file và nạp lại panel bằng Node.js

@@ -77,17 +77,17 @@
     <h2 id="how-h" class="title">Ba bước là xong</h2>
     <ol class="grid3 steps">
       <li class="card card-col"><span class="num" aria-hidden="true">1</span><h3>Tải về</h3><p>Lấy bản mới nhất ở GitHub Releases.</p></li>
-      <li class="card card-col"><span class="num" aria-hidden="true">2</span><h3>Cài đặt</h3><p>Đóng Photoshop, chạy <code>install\Cai-dat-SCCTLM_Foto.bat</code>.</p></li>
+      <li class="card card-col"><span class="num" aria-hidden="true">2</span><h3>Cài đặt</h3><p>Đóng Photoshop, chạy <code>install\Cai-dat-SCCTLM_Foto.bat</code> (Windows) hoặc <code>bash install/Cai-dat-SCCTLM_Foto.command</code> (macOS).</p></li>
       <li class="card card-col"><span class="num" aria-hidden="true">3</span><h3>Retouch</h3><p>Mở Photoshop, vào Window › Extensions › SCCTLM_Foto.</p></li>
     </ol>
-    <p class="note">Cần Photoshop CC 2015 trở lên, Windows 10/11 64-bit hoặc macOS 10.13+, ảnh ở chế độ RGB. Cài thủ công trên macOS có trong <a href="https://github.com/hongducdev/SCCTLM_Foto#-cài-đặt">hướng dẫn trên GitHub</a>.</p>
+    <p class="note">Cần Photoshop CC 2015 trở lên, Windows 10/11 64-bit hoặc macOS 10.13+, ảnh ở chế độ RGB. Cài thủ công có trong <a href="https://github.com/hongducdev/SCCTLM_Foto#-cài-đặt">hướng dẫn trên GitHub</a>.</p>
   </section>
 
   <section class="box" id="hoi-dap" aria-labelledby="faq-h">
     <h2 id="faq-h" class="title">Hỏi đáp</h2>
     <div class="faq">
       <details name="faq" class="card"><summary>Cài trên Mac bị lỗi?</summary><p>Với Mac chip Apple Silicon, hãy bật Rosetta: chuột phải Photoshop trong Applications › Get Info › tick <em>Open using Rosetta</em>, rồi mở lại Photoshop. Chưa có Rosetta thì chạy <code>softwareupdate --install-rosetta --agree-to-license</code>.</p></details>
-      <details name="faq" open class="card"><summary>Panel không có trong Window › Extensions?</summary><p>Nhấp đúp <code>install\Fix-CEP-SCCTLM_Foto.reg</code> rồi khởi động lại Photoshop.</p></details>
+      <details name="faq" open class="card"><summary>Panel không có trong Window › Extensions?</summary><p>Windows: nhấp đúp <code>install\Fix-CEP-SCCTLM_Foto.reg</code>. macOS: chạy lại <code>bash install/Cai-dat-SCCTLM_Foto.command</code>. Sau đó khởi động lại Photoshop.</p></details>
       <details name="faq" class="card"><summary>Bấm nút mà không có gì xảy ra?</summary><p>Mở ảnh và chuyển sang Image › Mode › RGB Color. Panel chỉ chạy trên ảnh RGB.</p></details>
       <details name="faq" class="card"><summary>Panel chưa ký số, có an toàn không?</summary><p>Script cài đặt bật <code>PlayerDebugMode</code>, cho phép mọi extension CEP chưa ký chạy trên tài khoản đó. Hãy tắt lại khi gỡ cài đặt. Bản cập nhật luôn được kiểm chữ ký Ed25519 trước khi cài.</p></details>
       <details name="faq" class="card"><summary>Ảnh của tôi có bị gửi đi đâu không?</summary><p>Không. Panel chạy cục bộ, chỉ kết nối GitHub để cập nhật và YouTube cho tab Khám phá.</p></details>

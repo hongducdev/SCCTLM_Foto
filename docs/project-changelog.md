@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.14 — Rim Light chạy được trên Shape layer và tự thay Action cũ
+
+- **Bộ Action cũ trên máy người dùng:** panel chỉ nạp bộ **Thumbnail action** khi Photoshop chưa có, nên máy đã nạp bản cũ vẫn chạy *YouTube Rim Light* 27 bước: Rim Light lần 2 dựng từ layer sai, nhóm mới không được đặt tên, nhóm cũ bị đổi tên và tô màu nhầm. Panel giờ đếm số bước của Action; đúng 27 bước (bản cũ) thì xoá bộ cũ, nạp lại từ `presets/` và dựng lại phím tắt. Action đã chỉnh sửa tay (số bước khác) được giữ nguyên.
+- **Shape layer (vector):** trước đây bị chặn bằng câu báo lớp điều chỉnh, và nếu bỏ chặn thì Action dừng ở Gaussian Blur vì vùng chọn rỗng. Nút **Tạo Rim Light** giờ nhân bản Shape, rasterize bản sao (`<tên> (raster)`) rồi chạy trên bản sao; layer vector gốc giữ nguyên. Layer Fill thường vẫn bị từ chối. Đã chạy thử 17 Shape, 17 text, 16 layer ảnh trong cùng một file, đều tạo đúng nhóm.
+- **Đánh dấu màu:** layer nguồn chưa có màu nhãn nay nhận cùng màu với nhóm Rim Light vừa tạo.
+- **Phím tắt:** nhóm tạo bằng phím gán cho Action (vẫn tên `Rim Light`) được panel tự đặt tên, thu gọn và gắn màu sau vài giây (`$._ext_RIMCOLOR.adopt()`). Shape layer vẫn cần nút **Tạo Rim Light**.
+
 ## v0.3.13 — Rim Light không còn nhảy sang layer khác
 
 - **Lỗi:** tạo Rim Light lần 2, lần 3 trong cùng file làm hiệu ứng rơi vào nhóm Rim Light cũ (Photoshop chọn layer `smudge` và mask `Rim Light` theo tên, mà tên đã trùng).

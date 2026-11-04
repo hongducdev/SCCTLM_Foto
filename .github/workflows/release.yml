@@ -45,7 +45,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            echo "Release $GITHUB_REF_NAME already exists, leaving it as is."
+            gh release upload "$GITHUB_REF_NAME" "SCCTLM_Foto-${GITHUB_REF_NAME}.zip" --clobber
           else
             gh release create "$GITHUB_REF_NAME" "SCCTLM_Foto-${GITHUB_REF_NAME}.zip" --verify-tag --title "SCCTLM_Foto ${GITHUB_REF_NAME#v}" --notes-file notes.md
           fi

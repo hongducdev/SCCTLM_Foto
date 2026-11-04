@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.3.15 — Mở ảnh RAW để dùng preset màu
+
+- **Vấn đề:** mở RAW trong Photoshop bật hộp thoại Camera Raw dạng modal, chưa có document nên panel không chạy được preset màu.
+- **Nút Mở ảnh RAW** (nhóm Màu & Preset, `jsx/raw-open.jsx`): chọn file RAW rồi mở thẳng thành document 16-bit sRGB bằng `CameraRAWOpenOptions`, không hiện hộp thoại. Sau đó dùng preset màu và Mix như ảnh thường. Chỉnh sửa lưu cạnh file (sidecar `.xmp`) vẫn được đọc (`SELECTEDIMAGE`).
+- **Chạy thử trên Photoshop 23.2 với `TUG06269.ARW` (bản sao tạm):** mở không modal; `fuji/001` đổi độ sáng trung bình 103.49 → 116.32, Mix `fuji/001:60,fuji/002:40` tạo đủ 2 nhóm. Sidecar chỉ có Exposure +2 làm độ sáng tăng 103.49 → 183.21, xác nhận Camera Raw đọc sidecar.
+- **Giới hạn:** preset vẫn chạy như bộ lọc trên ảnh đã render, nên nhiệt độ màu Kelvin của preset bị bỏ qua giống ảnh JPG (`sanitizeAcrXmp`). Áp preset ngay ở bước chuyển đổi RAW cần sidecar (đã thử được, chưa làm).
+
 ## v0.3.14 — Rim Light chạy được trên Shape layer và tự thay Action cũ
 
 - **Bộ Action cũ trên máy người dùng:** panel chỉ nạp bộ **Thumbnail action** khi Photoshop chưa có, nên máy đã nạp bản cũ vẫn chạy *YouTube Rim Light* 27 bước: Rim Light lần 2 dựng từ layer sai, nhóm mới không được đặt tên, nhóm cũ bị đổi tên và tô màu nhầm. Panel giờ đếm số bước của Action; đúng 27 bước (bản cũ) thì xoá bộ cũ, nạp lại từ `presets/` và dựng lại phím tắt. Action đã chỉnh sửa tay (số bước khác) được giữ nguyên.

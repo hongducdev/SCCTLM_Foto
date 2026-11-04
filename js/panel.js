@@ -100,10 +100,10 @@
         // name đã qua kiểm tra; riêng danh sách phím tắt (nhiều dòng, tên Action tuỳ ý) không được
         // chèn thô vào mã ExtendScript hay thông báo → dùng nhãn cố định
         var label = kind === 'shortcut' ? 'Phím tắt Action' : kind === 'play' || kind === 'ensure' ? 'Action' : kind === 'artboard' ? 'Artboard' : kind === 'frame' || kind === 'wm' ? 'Watermark' : name;
-        // Only WM (its own batch dialog), BPP/BPPRESET (brush setup) and BUGFIX run without an open image;
+        // Only WM (its own batch dialog), BPP/BPPRESET (brush setup), OPENRAW (opens the image) and BUGFIX run without an open image;
         // BA processes every open document, so it needs at least one.
         var code = '(function(){var d=app.displayDialogs,u=app.preferences.rulerUnits;' +
-            'try{' + (kind !== 'shortcut' && kind !== 'ensure' && kind !== 'artboard' && !/^(WM|BPP|BPPRESET|BUGFIX)$/.test(name) ?
+            'try{' + (kind !== 'shortcut' && kind !== 'ensure' && kind !== 'artboard' && !/^(WM|BPP|BPPRESET|OPENRAW|BUGFIX)$/.test(name) ?
                 'if(!app.documents.length)return "SCCTLM_NO_DOCUMENT";' : '') +
             (window.scctlmFotoColorMode && window.scctlmFotoColorMode.needsRgb(kind, name) ? window.scctlmFotoColorMode.preflightCode(kind, name) : '') +
             'if(typeof ' + target + '!=="function")throw new Error("Missing command: ' + label + '");' +

@@ -68,6 +68,7 @@ SCCTLM_Foto/
 │   ├── mhk-replacements.jsx     # Hạt phim, Hào Quang, Hạt thô, Chấm, Chi tiết
 │   ├── Photoshop.jsx            # Tiện ích Crash Bug Fix (chạy khi mở panel)
 │   ├── preset-lut.jsx           # Áp Preset Camera Raw (.xmp)
+│   ├── raw-open.jsx             # $._ext_OPENRAW: mở ảnh RAW không qua hộp thoại Camera Raw (16-bit sRGB), nút "Mở ảnh RAW" trong Màu & Preset
 │   ├── color-mix.jsx            # Áp màu MHK (Look LUT) và Mix màu: $.scctlmFotoApplyColorMix
 │   ├── artboard-create.jsx      # Tạo artboard: $._ext_ARTBOARD
 │   ├── exif-frame.jsx           # Khung ảnh: $._ext_EXIFFRAME (đọc EXIF và font, nới canvas, vẽ chữ)

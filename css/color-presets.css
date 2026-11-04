@@ -1,6 +1,16 @@
 /* Nhóm Màu & Preset: thẻ bộ màu (icon + tên), danh sách màu nhỏ và giỏ Mix */
 .color-presets { margin-bottom: var(--panel-gap); font-family: "Segoe UI", Tahoma, sans-serif; }
 .color-presets:empty { display: none; }
+.cp-open-raw {
+    display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; min-height: 36px; margin: 0 0 var(--panel-gap); padding: 6px 2px;
+    border: 0; border-radius: 18px; background: transparent; box-shadow: inset 0 0 0 1px var(--edge); color: #ffffff;
+    font: 500 11px/16px "Segoe UI", Tahoma, sans-serif; white-space: nowrap; cursor: pointer;
+    transition: transform 160ms cubic-bezier(.2, .8, .2, 1), background 160ms, box-shadow 160ms, color 160ms;
+}
+.cp-open-raw svg { flex: none; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; transition: transform 200ms cubic-bezier(.3, 1.4, .5, 1); }
+.cp-open-raw:hover { background: var(--muted); box-shadow: inset 0 0 0 1px var(--muted-2); }
+.cp-open-raw:hover svg { transform: scale(1.1); }
+.cp-open-raw:active { transform: scale(.98); }
 .cp-groups { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
 .cp-group {
     position: relative; display: block; width: 100%; min-width: 0; height: auto; margin: 0; padding: 0; border: 0;

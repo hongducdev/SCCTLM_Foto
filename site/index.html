@@ -5,21 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SCCTLM_Foto — Panel retouch cho Photoshop</title>
 <meta name="description" content="SCCTLM_Foto là panel retouch cho Adobe Photoshop, giao diện 100% tiếng Việt: làm da, son môi, rim light, artboard album và watermark EXIF trong một panel.">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#faf3e0">
 <meta property="og:title" content="SCCTLM_Foto — Panel retouch cho Photoshop">
 <meta property="og:description" content="Retouch chân dung, ảnh cưới, thời trang và thumbnail ngay trong Photoshop. Giao diện 100% tiếng Việt.">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
 <a class="skip" href="#main">Bỏ qua điều hướng</a>
+<div class="progress" aria-hidden="true"></div>
 <div class="wrap">
 
-<header class="box bar" id="top">
+<header class="bar" id="top">
   <a class="brand" href="#top">
     <img class="logo" src="assets/logo.svg" width="64" height="64" alt="">
     <span><strong>SCCTLM_Foto</strong><small>Sáng chơi chữ · Tối làm màu</small></span>
@@ -33,101 +35,116 @@
 </header>
 
 <main id="main">
-  <section class="box hero" aria-labelledby="hero-h">
-    <h1 id="hero-h"><svg class="bolt" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Retouch một nút. Không phá ảnh gốc.</h1>
-    <p class="sub">Panel Adobe Photoshop 100% tiếng Việt cho chân dung, ảnh cưới, thời trang và thumbnail. Mỗi thao tác tạo layer và mask riêng.</p>
-    <div class="actions">
-      <a class="btn" href="https://github.com/hongducdev/SCCTLM_Foto/releases/latest" data-release-link>Tải bản mới nhất<span data-release-version></span></a>
-      <a class="btn btn-ghost" href="#cai-dat">Cách cài đặt</a>
+  <section class="hero" aria-labelledby="hero-h">
+    <div class="hero-copy">
+      <p class="eyebrow rise" style="--i:0"><svg class="bolt" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg>Panel Adobe Photoshop · 100% tiếng Việt</p>
+      <h1 id="hero-h"><span class="line"><span style="--i:1">Tối ưu <em class="hl">hậu kỳ.</em></span></span><span class="line"><span style="--i:2">Thỏa sức sáng tạo.</span></span></h1>
+      <p class="sub rise" style="--i:3">Tối ưu hậu kỳ cho designer Việt: bấm là mịn, bấm là sáng, bấm là xong. Không thích thì Ctrl+Z, vì mọi thứ đều nằm ở layer riêng.</p>
+      <div class="actions rise" style="--i:4">
+        <a class="btn" href="https://github.com/hongducdev/SCCTLM_Foto/releases/latest" data-release-link>Tải bản mới nhất<span data-release-version></span></a>
+        <a class="btn btn-ghost" href="#cai-dat">Cách cài đặt</a>
+      </div>
+      <ul class="stats rise" style="--i:5">
+        <li><strong data-count="10">10</strong><span>công cụ Retouch</span></li>
+        <li><strong data-count="165">165</strong><span>màu MHK</span></li>
+        <li><strong data-count="27">27</strong><span>mẫu Artboard</span></li>
+        <li><strong data-count="54">54</strong><span>mẫu Watermark</span></li>
+      </ul>
     </div>
 
-    <ul class="grid2">
-      <li class="card"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6c0 4 6 11 6 11s6-7 6-11a6 6 0 0 0-6-6z"/><circle cx="12" cy="9" r="2"/></svg></span><div><h2>Mười công cụ Retouch</h2><p>Làm da, Son môi, Trắng răng, Tẩy lông, Highlight, Lông mi, Phủ phấn, Đánh khối, Trắng da, Hạt phim.</p></div></li>
-      <li class="card"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 20 4-1 11-11a2.8 2.8 0 0 0-4-4L4 15z"/></svg></span><div><h2>Brush Lab</h2><p>Bật Shape Dynamics và Pen Pressure bằng một nút, chỉnh cỡ, độ cứng, màu cọ ngay trên panel.</p></div></li>
-      <li class="card"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 14A8 8 0 1 1 10 4a6 6 0 0 0 10 10z"/></svg></span><div><h2>Rim Light</h2><p>Một nút tạo Rim Light, rồi chọn màu bằng hex, hút màu hoặc 8 màu mẫu.</p></div></li>
-      <li class="card"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="m21 16-5-5-8 8"/></svg></span><div><h2>Watermark EXIF</h2><p>Đọc EXIF của ảnh đang mở rồi thêm watermark kiểu Xiaomi Leica, hoặc tự tạo mẫu riêng.</p></div></li>
-    </ul>
-
-    <figure class="stage">
-      <div class="window">
-        <div class="window-bar" aria-hidden="true"><i></i><i></i><i></i><span>Photoshop · Window › Extensions › SCCTLM_Foto</span></div>
-        <div class="window-body">
-          <img src="assets/panel-retouch.webp" width="600" height="640" alt="Nhóm nút Retouch của SCCTLM_Foto: Làm da, Son môi, Trắng răng, Highlight">
-          <img src="assets/panel-brush.webp" width="600" height="680" alt="Nhóm Brush Lab với thanh chỉnh cỡ, độ cứng và bảng màu cọ">
-          <img src="assets/panel-rim.webp" width="600" height="300" alt="Nhóm Rim Light và Màu và Preset">
-        </div>
-      </div>
+    <figure class="hero-art">
+      <i class="shape s-circle" aria-hidden="true"></i>
+      <i class="shape s-cross" aria-hidden="true"></i>
+      <i class="shape s-star" aria-hidden="true"></i>
+      <img class="shot shot-1" src="assets/panel-retouch.webp" width="600" height="640" alt="Nhóm nút Retouch của SCCTLM_Foto: Làm da, Son môi, Trắng răng, Highlight">
+      <img class="shot shot-2" src="assets/panel-brush.webp" width="600" height="680" alt="Nhóm Brush Lab với thanh chỉnh cỡ, độ cứng và bảng màu cọ">
+      <img class="shot shot-3" src="assets/panel-rim.webp" width="600" height="300" alt="Nhóm Rim Light và Màu và Preset">
       <figcaption class="sr">Ảnh chụp panel SCCTLM_Foto thật, chạy ở độ rộng 300px như trong Photoshop.</figcaption>
     </figure>
   </section>
 
-  <section class="box" id="tinh-nang" aria-labelledby="features-h">
-    <h2 id="features-h" class="title">Mọi thứ cho một bức ảnh</h2>
-    <p class="sub">Làm da, son môi, rim light, artboard album và watermark: tất cả trong một panel.</p>
-    <ul class="grid3">
-      <li class="card card-col"><h3>Không phá ảnh gốc</h3><p>Mỗi thao tác tạo layer và mask riêng, chạy trên RGB 8/16-bit.</p></li>
-      <li class="card card-col"><h3>165 màu MHK</h3><p>6 bộ màu bấm để áp, hoặc Mix tối đa 4 màu. File .xmp trong presets/ tự thành nút.</p></li>
-      <li class="card card-col"><h3>27 mẫu Artboard</h3><p>Album Facebook MHK, khổ YouTube hoặc khổ tuỳ chỉnh, kèm guide vùng an toàn.</p></li>
-      <li class="card card-col"><h3>54 mẫu Watermark</h3><p>Mẫu gốc Xiaomi Leica chỉnh được tên máy, địa chỉ, ISO, logo, bố cục và nền.</p></li>
-      <li class="card card-col"><h3>Phím tắt Action</h3><p>Gán F2–F12, kèm Shift hoặc Ctrl, cho Tạo Brush và Tạo Rim Light.</p></li>
-      <li class="card card-col"><h3>Cập nhật một chạm</h3><p>Tải bản mới từ GitHub và kiểm chữ ký Ed25519 trước khi cài.</p></li>
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Làm da</span><span>Son môi</span><span>Trắng răng</span><span>Tẩy lông</span><span>Highlight</span><span>Lông mi</span><span>Phủ phấn</span><span>Đánh khối</span><span>Trắng da</span><span>Hạt phim</span>
+      <span>Làm da</span><span>Son môi</span><span>Trắng răng</span><span>Tẩy lông</span><span>Highlight</span><span>Lông mi</span><span>Phủ phấn</span><span>Đánh khối</span><span>Trắng da</span><span>Hạt phim</span>
+    </div>
+  </div>
+
+  <section class="sec" id="tinh-nang" aria-labelledby="features-h">
+    <h2 id="features-h" class="title reveal">Mọi thứ cho một bức ảnh</h2>
+    <p class="sub reveal">Làm da, son môi, rim light, artboard album và watermark: tất cả trong một panel.</p>
+
+    <ul class="grid2">
+      <li class="card reveal"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m21.64 3.64-1.28-1.28a1.21 1.21 0 0 0-1.72 0L2.36 18.64a1.21 1.21 0 0 0 0 1.72l1.28 1.28a1.2 1.2 0 0 0 1.72 0L21.64 5.36a1.2 1.2 0 0 0 0-1.72"/><path d="m14 7 3 3"/><path d="M5 6v4"/><path d="M19 14v4"/><path d="M10 2v2"/><path d="M7 8H3"/><path d="M21 16h-4"/><path d="M11 3H9"/></svg></span><div><h3>Mười công cụ Retouch</h3><p>Làm da, Son môi, Trắng răng, Tẩy lông, Highlight, Lông mi, Phủ phấn, Đánh khối, Trắng da, Hạt phim.</p></div></li>
+      <li class="card reveal"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08"/><path d="M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z"/></svg></span><div><h3>Brush Lab</h3><p>Bật Shape Dynamics và Pen Pressure bằng một nút, chỉnh cỡ, độ cứng, màu cọ ngay trên panel.</p></div></li>
+      <li class="card reveal"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span><div><h3>Rim Light</h3><p>Một nút tạo Rim Light, rồi chọn màu bằng hex, hút màu hoặc 8 màu mẫu.</p></div></li>
+      <li class="card reveal"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span><div><h3>Watermark EXIF</h3><p>Đọc EXIF của ảnh đang mở rồi thêm watermark kiểu Xiaomi Leica, hoặc tự tạo mẫu riêng.</p></div></li>
+    </ul>
+
+    <ul class="grid3 mini">
+      <li class="card card-col reveal"><h3>Không phá ảnh gốc</h3><p>Mỗi thao tác tạo layer và mask riêng, chạy trên RGB 8/16-bit.</p></li>
+      <li class="card card-col reveal"><h3>165 màu MHK</h3><p>6 bộ màu bấm để áp, hoặc Mix tối đa 4 màu. File .xmp trong presets/ tự thành nút.</p></li>
+      <li class="card card-col reveal"><h3>27 mẫu Artboard</h3><p>Album Facebook MHK, khổ YouTube hoặc khổ tuỳ chỉnh, kèm guide vùng an toàn.</p></li>
+      <li class="card card-col reveal"><h3>54 mẫu Watermark</h3><p>Mẫu gốc Xiaomi Leica chỉnh được tên máy, địa chỉ, ISO, logo, bố cục và nền.</p></li>
+      <li class="card card-col reveal"><h3>Phím tắt Action</h3><p>Gán F2–F12, kèm Shift hoặc Ctrl, cho Tạo Brush và Tạo Rim Light.</p></li>
+      <li class="card card-col reveal"><h3>Cập nhật một chạm</h3><p>Tải bản mới từ GitHub và kiểm chữ ký Ed25519 trước khi cài.</p></li>
     </ul>
   </section>
 
-  <section class="box" id="video-huong-dan" aria-labelledby="video-h">
-    <h2 id="video-h" class="title">Video hướng dẫn</h2>
-    <p class="sub">Xem cách cài đặt và dùng SCCTLM_Foto từng bước trong Photoshop.</p>
-    <div class="video">
+  <section class="sec dark" id="video-huong-dan" aria-labelledby="video-h">
+    <h2 id="video-h" class="title reveal">Video hướng dẫn</h2>
+    <p class="sub reveal">Xem cách cài đặt và dùng SCCTLM_Foto từng bước trong Photoshop.</p>
+    <div class="video reveal">
       <iframe src="https://www.youtube-nocookie.com/embed/11Pcrt4Jx90" title="Video hướng dẫn SCCTLM_Foto" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     </div>
     <p class="note">Không xem được? <a href="https://www.youtube.com/watch?v=11Pcrt4Jx90">Mở trên YouTube</a>.</p>
   </section>
 
-  <section class="box" id="cai-dat" aria-labelledby="how-h">
-    <h2 id="how-h" class="title">Ba bước là xong</h2>
+  <section class="sec" id="cai-dat" aria-labelledby="how-h">
+    <h2 id="how-h" class="title reveal">Ba bước là xong</h2>
     <ol class="grid3 steps">
-      <li class="card card-col"><span class="num" aria-hidden="true">1</span><h3>Tải về</h3><p>Lấy bản mới nhất ở GitHub Releases.</p></li>
-      <li class="card card-col"><span class="num" aria-hidden="true">2</span><h3>Cài đặt</h3><p>Đóng Photoshop, chạy <code>install\Cai-dat-SCCTLM_Foto.bat</code> (Windows) hoặc <code>bash install/Cai-dat-SCCTLM_Foto.command</code> (macOS).</p></li>
-      <li class="card card-col"><span class="num" aria-hidden="true">3</span><h3>Retouch</h3><p>Mở Photoshop, vào Window › Extensions › SCCTLM_Foto.</p></li>
+      <li class="card card-col reveal"><span class="num" aria-hidden="true">1</span><h3>Tải về</h3><p>Lấy bản mới nhất ở GitHub Releases.</p></li>
+      <li class="card card-col reveal"><span class="num" aria-hidden="true">2</span><h3>Cài đặt</h3><p>Đóng Photoshop, rồi chạy file cài đặt:</p><div class="cmds"><div class="cmd"><b>Windows</b><code>install\Cai-dat-SCCTLM_Foto.bat</code></div><div class="cmd"><b>macOS</b><code>bash install/Cai-dat-SCCTLM_Foto.command</code></div></div></li>
+      <li class="card card-col reveal"><span class="num" aria-hidden="true">3</span><h3>Retouch</h3><p>Mở Photoshop, vào Window › Extensions › SCCTLM_Foto.</p></li>
     </ol>
-    <p class="note">Cần Photoshop CC 2015 trở lên, Windows 10/11 64-bit hoặc macOS 10.13+, ảnh ở chế độ RGB. Cài thủ công có trong <a href="https://github.com/hongducdev/SCCTLM_Foto#-cài-đặt">hướng dẫn trên GitHub</a>.</p>
+    <p class="note reveal">Cần Photoshop CC 2015 trở lên, Windows 10/11 64-bit hoặc macOS 10.13+, ảnh ở chế độ RGB. Cài thủ công có trong <a href="https://github.com/hongducdev/SCCTLM_Foto#-cài-đặt">hướng dẫn trên GitHub</a>.</p>
   </section>
 
-  <section class="box" id="hoi-dap" aria-labelledby="faq-h">
-    <h2 id="faq-h" class="title">Hỏi đáp</h2>
+  <section class="sec" id="hoi-dap" aria-labelledby="faq-h">
+    <h2 id="faq-h" class="title reveal">Hỏi đáp</h2>
     <div class="faq">
-      <details name="faq" class="card"><summary>Cài trên Mac bị lỗi?</summary><p>Với Mac chip Apple Silicon, hãy bật Rosetta: chuột phải Photoshop trong Applications › Get Info › tick <em>Open using Rosetta</em>, rồi mở lại Photoshop. Chưa có Rosetta thì chạy <code>softwareupdate --install-rosetta --agree-to-license</code>.</p></details>
-      <details name="faq" open class="card"><summary>Panel không có trong Window › Extensions?</summary><p>Windows: nhấp đúp <code>install\Fix-CEP-SCCTLM_Foto.reg</code>. macOS: chạy lại <code>bash install/Cai-dat-SCCTLM_Foto.command</code>. Sau đó khởi động lại Photoshop.</p></details>
-      <details name="faq" class="card"><summary>Bấm nút mà không có gì xảy ra?</summary><p>Mở ảnh và chuyển sang Image › Mode › RGB Color. Panel chỉ chạy trên ảnh RGB.</p></details>
-      <details name="faq" class="card"><summary>Panel chưa ký số, có an toàn không?</summary><p>Script cài đặt bật <code>PlayerDebugMode</code>, cho phép mọi extension CEP chưa ký chạy trên tài khoản đó. Hãy tắt lại khi gỡ cài đặt. Bản cập nhật luôn được kiểm chữ ký Ed25519 trước khi cài.</p></details>
-      <details name="faq" class="card"><summary>Ảnh của tôi có bị gửi đi đâu không?</summary><p>Không. Panel chạy cục bộ, chỉ kết nối GitHub để cập nhật và YouTube cho tab Khám phá.</p></details>
-      <details name="faq" class="card"><summary>Photoshop hỏi “Remove the conflicting action shortcuts?”</summary><p>Chọn No để phím F2–F4 vẫn chạy Action của bạn.</p></details>
+      <details name="faq" class="card reveal"><summary>Cài trên Mac bị lỗi?</summary><p>Với Mac chip Apple Silicon, hãy bật Rosetta: chuột phải Photoshop trong Applications › Get Info › tick <em>Open using Rosetta</em>, rồi mở lại Photoshop. Chưa có Rosetta thì chạy <code>softwareupdate --install-rosetta --agree-to-license</code>.</p></details>
+      <details name="faq" open class="card reveal"><summary>Panel không có trong Window › Extensions?</summary><p>Windows: nhấp đúp <code>install\Fix-CEP-SCCTLM_Foto.reg</code>. macOS: chạy lại <code>bash install/Cai-dat-SCCTLM_Foto.command</code>. Sau đó khởi động lại Photoshop.</p></details>
+      <details name="faq" class="card reveal"><summary>Bấm nút mà không có gì xảy ra?</summary><p>Mở ảnh và chuyển sang Image › Mode › RGB Color. Panel chỉ chạy trên ảnh RGB.</p></details>
+      <details name="faq" class="card reveal"><summary>Panel chưa ký số, có an toàn không?</summary><p>Script cài đặt bật <code>PlayerDebugMode</code>, cho phép mọi extension CEP chưa ký chạy trên tài khoản đó. Hãy tắt lại khi gỡ cài đặt. Bản cập nhật luôn được kiểm chữ ký Ed25519 trước khi cài.</p></details>
+      <details name="faq" class="card reveal"><summary>Ảnh của tôi có bị gửi đi đâu không?</summary><p>Không. Panel chạy cục bộ, chỉ kết nối GitHub để cập nhật và YouTube cho tab Khám phá.</p></details>
+      <details name="faq" class="card reveal"><summary>Photoshop hỏi “Remove the conflicting action shortcuts?”</summary><p>Chọn No để phím F2–F4 vẫn chạy Action của bạn.</p></details>
     </div>
   </section>
 
-  <section class="box cta" aria-labelledby="cta-h">
-    <div>
+  <section class="sec cta" aria-labelledby="cta-h">
+    <div class="reveal">
       <h2 id="cta-h" class="title left">Retouch nhanh hơn, ngay hôm nay</h2>
       <p class="sub left">Miễn phí tải về. Chạy trên máy của bạn, không gửi ảnh đi đâu. Nếu panel giúp ích cho công việc, quét mã QR (TPBank hoặc Techcombank) để ủng hộ SCCTLM.</p>
-      <div class="actions left"><a class="btn" href="https://github.com/hongducdev/SCCTLM_Foto/releases/latest" data-release-link>Tải bản mới nhất<span data-release-version></span></a></div>
+      <div class="actions left"><a class="btn btn-dark" href="https://github.com/hongducdev/SCCTLM_Foto/releases/latest" data-release-link>Tải bản mới nhất<span data-release-version></span></a></div>
     </div>
     <div class="qrs">
-      <figure class="qr-card"><img class="qr" src="assets/support-qr.png" width="400" height="400" alt="Mã QR ủng hộ SCCTLM qua TPBank" loading="lazy"><figcaption><strong>TPBank</strong><span>TRAN THI THUONG</span><span class="acc">9897.6386.789</span></figcaption></figure>
-      <figure class="qr-card"><img class="qr" src="assets/support-qr-techcombank.png" width="400" height="400" alt="Mã QR ủng hộ SCCTLM qua Techcombank" loading="lazy"><figcaption><strong>Techcombank</strong><span>NGUYEN HONG DUC</span><span class="acc">3886.0510.2002</span></figcaption></figure>
+      <figure class="qr-card reveal"><img class="qr" src="assets/support-qr.png" width="400" height="400" alt="Mã QR ủng hộ SCCTLM qua TPBank" loading="lazy"><figcaption><strong>TPBank</strong><span>TRAN THI THUONG</span><span class="acc">9897.6386.789</span></figcaption></figure>
+      <figure class="qr-card reveal"><img class="qr" src="assets/support-qr-techcombank.png" width="400" height="400" alt="Mã QR ủng hộ SCCTLM qua Techcombank" loading="lazy"><figcaption><strong>Techcombank</strong><span>NGUYEN HONG DUC</span><span class="acc">3886.0510.2002</span></figcaption></figure>
     </div>
   </section>
 
-  <section class="box" id="nguoi-ung-ho" aria-labelledby="supporters-h">
-    <h2 id="supporters-h" class="title">Cảm ơn người đã ủng hộ</h2>
-    <p class="sub">Những người đã đồng hành cùng SCCTLM_Foto.</p>
+  <section class="sec" id="nguoi-ung-ho" aria-labelledby="supporters-h">
+    <h2 id="supporters-h" class="title reveal">Cảm ơn người đã ủng hộ</h2>
+    <p class="sub reveal">Những người đã đồng hành cùng SCCTLM_Foto.</p>
     <ul class="supporters">
-      <li><a class="supporter" href="https://www.facebook.com/NguyenThanhLam.02" target="_blank" rel="noopener"><img src="assets/supporters/nguyen-thanh-lam.png" width="100" height="100" alt="" loading="lazy"><span>Nguyễn Thành Lâm</span></a></li>
-      <li><a class="supporter" href="https://www.facebook.com/long.truong.7712" target="_blank" rel="noopener"><img src="assets/supporters/long-truong.jpg" width="100" height="100" alt="" loading="lazy"><span>Long Trương</span></a></li>
+      <li class="reveal"><a class="supporter" href="https://www.facebook.com/NguyenThanhLam.02" target="_blank" rel="noopener"><img src="assets/supporters/nguyen-thanh-lam.png" width="100" height="100" alt="" loading="lazy"><span>Nguyễn Thành Lâm</span></a></li>
+      <li class="reveal"><a class="supporter" href="https://www.facebook.com/long.truong.7712" target="_blank" rel="noopener"><img src="assets/supporters/long-truong.jpg" width="100" height="100" alt="" loading="lazy"><span>Long Trương</span></a></li>
     </ul>
   </section>
 </main>
 
-<footer class="box foot">
+<footer class="foot">
   <p>© 2026 hongducdev · Bản quyền theo <a href="https://github.com/hongducdev/SCCTLM_Foto/blob/main/LICENSE">LICENSE</a></p>
   <ul>
     <li><a href="https://github.com/hongducdev/SCCTLM_Foto">GitHub</a></li>

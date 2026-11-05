@@ -116,4 +116,36 @@ Nếu SCCTLM_Foto giúp ích cho công việc của bạn, hãy đồng hành c�
       <a href="https://www.facebook.com/long.truong.7712"><sub><b>Long Trương</b></sub></a>
     </td>
   </tr>
+  <tr>
+    <td align="center" width="140">
+      <a href="https://www.facebook.com/t.wamid/"><img src="site/assets/supporters/trung-le.jpg" alt="Trung Lê" width="72" height="72" /></a><br />
+      <a href="https://www.facebook.com/t.wamid/"><sub><b>Trung Lê</b></sub></a>
+    </td>
+    <td align="center" width="140">
+      <a href="https://www.facebook.com/iamSadgb/"><img src="site/assets/supporters/duong-gia-bao.jpg" alt="Dương Gia Bảo" width="72" height="72" /></a><br />
+      <a href="https://www.facebook.com/iamSadgb/"><sub><b>Dương Gia Bảo</b></sub></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="140">
+      <a href="https://www.facebook.com/tungtrene"><img src="site/assets/supporters/thanh-tung.jpg" alt="Thanh Tùng" width="72" height="72" /></a><br />
+      <a href="https://www.facebook.com/tungtrene"><sub><b>Thanh Tùng</b></sub></a>
+    </td>
+    <td align="center" width="140">
+      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Vu Dinh Hoang" width="72" height="72" /></a><br />
+      <a href="#"><sub><b>Vu Dinh Hoang</b></sub></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="140">
+      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Vu Hoang Thanh" width="72" height="72" /></a><br />
+      <a href="#"><sub><b>Vu Hoang Thanh</b></sub></a>
+    </td>
+    <td align="center" width="140">
+      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="EditLab" width="72" height="72" /></a><br />
+      <a href="#"><sub><b>EditLab</b></sub></a>
+    </td>
+  </tr>
 </table>
+
+Và xin gửi lời cảm ơn chân thành tới những người đã ủng hộ ẩn danh. Dù không để lại tên, sự đồng hành của bạn vẫn là động lực rất lớn để dự án tiếp tục phát triển. 💛

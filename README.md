@@ -25,6 +25,10 @@
 
 [![Xem video giới thiệu SCCTLM_Foto](https://img.youtube.com/vi/oNio__XQrMo/maxresdefault.jpg)](https://www.youtube.com/watch?v=oNio__XQrMo)
 
+### 📖 Video hướng dẫn
+
+[![Xem video hướng dẫn SCCTLM_Foto](https://img.youtube.com/vi/11Pcrt4Jx90/maxresdefault.jpg)](https://www.youtube.com/watch?v=11Pcrt4Jx90)
+
 </div>
 
 ## ✨ Tính năng

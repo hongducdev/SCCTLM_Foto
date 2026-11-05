@@ -146,6 +146,22 @@ Nếu SCCTLM_Foto giúp ích cho công việc của bạn, hãy đồng hành c�
       <a href="#"><sub><b>EditLab</b></sub></a>
     </td>
   </tr>
+  <tr>
+    <td align="center" width="140">
+      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Ngo Quang Xo" width="72" height="72" /></a><br />
+      <a href="#"><sub><b>Ngo Quang Xo</b></sub></a>
+    </td>
+    <td align="center" width="140">
+      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Nguyen Dinh Bac" width="72" height="72" /></a><br />
+      <a href="#"><sub><b>Nguyen Dinh Bac</b></sub></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="140">
+      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Pham Anh Thu" width="72" height="72" /></a><br />
+      <a href="#"><sub><b>Pham Anh Thu</b></sub></a>
+    </td>
+  </tr>
 </table>
 
 Và xin gửi lời cảm ơn chân thành tới những người đã ủng hộ ẩn danh. Dù không để lại tên, sự đồng hành của bạn vẫn là động lực rất lớn để dự án tiếp tục phát triển. 💛

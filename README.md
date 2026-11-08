@@ -34,6 +34,7 @@
 ## ✨ Tính năng
 
 - **Retouch** — Làm da, Son môi, Trắng răng, Tẩy lông, Highlight, Lông mi, Phủ phấn, Đánh khối, Trắng da, Hạt phim. Mọi thao tác tạo layer/mask riêng, không phá huỷ ảnh gốc; chạy trên RGB 8/16-bit.
+- **Trước / Sau** — nút trong tab Retouch ẩn hoặc hiện mọi layer retouch do panel tạo để so với ảnh gốc, mỗi lần bấm là một bước History. Layer bạn tự tạo hoặc tự ẩn không bị đổi; layer tạo ngoài panel (chạy Action thủ công) không được tính.
 - **Brush Lab** — bật Shape Dynamics + Pen Pressure bằng một nút; chỉnh Cỡ, Cứng, màu cọ và Độ sáng ngay trên panel.
 - **Rim Light** — nút **Tạo Rim Light**; khi ảnh có nhóm `Rim Light` > lớp `Color` thì chọn màu (hex, hút màu, 8 màu mẫu) và Độ sáng.
 - **Màu & Preset** — 6 bộ màu MHK (165 màu): bấm để áp, hoặc **Mix** tối đa 4 màu. File `.xmp` đặt vào `presets/` tự thành nút.

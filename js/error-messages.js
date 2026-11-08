@@ -39,6 +39,10 @@
             return pack('Ảnh chưa ở chế độ màu RGB', 'Chức năng này chỉ chạy trên ảnh RGB 8-bit hoặc 16-bit nên ' + what(c) + ' chưa chạy được.',
                 'Vào Image > Mode > RGB Color (và 8 Bits/Channel hoặc 16 Bits/Channel) trong Photoshop rồi bấm lại.');
         }],
+        [/SCCTLM_BA_EMPTY/, function () {
+            return pack('Chưa có kết quả để so sánh', 'Chưa có lớp retouch nào do panel tạo trên ảnh này để ẩn hoặc hiện.',
+                'Chạy một công cụ Retouch trước, rồi bấm Trước / Sau.');
+        }],
         [/Missing command/i, function (t, c) {
             return pack('Plugin thiếu thành phần', 'Không tìm thấy lệnh ' + what(c) + ' trong lõi plugin, có thể bản cài bị thiếu file.',
                 'Bấm nút ↻ để nạp lại. Nếu vẫn lỗi, cài lại bằng install\\Cai-dat-SCCTLM_Foto.bat.');

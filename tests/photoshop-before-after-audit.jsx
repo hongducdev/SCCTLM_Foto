@@ -1,0 +1,84 @@
+// Live check for jsx/before-after.jsx. Run inside Photoshop (File > Scripts > Browse, or COM DoJavaScriptFile).
+// Uses scratch documents only, closes them without saving and restores the user's active document.
+// Result: a multi-line report in $.scctlmFotoBAReport, ending with "AUDIT PASS" or "AUDIT FAIL".
+#target photoshop
+(function () {
+    var report = [], failed = 0;
+    function check(ok, text) { report.push((ok ? 'ok   ' : 'FAIL ') + text); if (!ok) failed += 1; }
+
+    var here = new File($.fileName).parent.parent;
+    $.evalFile(new File(here + '/jsx/before-after.jsx'));
+    var BA = $._ext_BEFOREAFTER;
+
+    function vis(layer) { return layer.visible; }
+    function scratch(bits) {
+        var doc = app.documents.add(200, 200, 72, 'BA audit ' + bits, NewDocumentMode.RGB, DocumentFill.WHITE);
+        doc.bitsPerChannel = bits === 16 ? BitsPerChannelType.SIXTEEN : BitsPerChannelType.EIGHT;
+        return doc;
+    }
+    // Stand-in for a retouch command: one plain layer plus one group that holds a layer
+    function fakeTool(doc, tag) {
+        var plain = doc.artLayers.add(); plain.name = tag + ' plain';
+        var group = doc.layerSets.add(); group.name = tag + ' group';
+        var inner = group.artLayers.add(); inner.name = tag + ' inner';
+        return { plain: plain, group: group, inner: inner };
+    }
+    function runTool(doc, tag) {
+        var ids = BA.before();
+        var made = fakeTool(doc, tag);
+        BA.after(ids);
+        return made;
+    }
+
+    var original = app.documents.length ? app.activeDocument : null;
+    var bits;
+    for (bits = 8; bits <= 16; bits += 8) {
+        var doc = scratch(bits);
+        var tag = bits + 'bit';
+        var mine = doc.artLayers.add(); mine.name = 'user layer';
+        var hidden = doc.artLayers.add(); hidden.name = 'user hidden'; hidden.visible = false;
+
+        // Nothing created by the panel yet: the toggle reports empty and changes nothing
+        var emptyRaised = false;
+        try { BA.run(); } catch (e) { emptyRaised = String(e).indexOf('SCCTLM_BA_EMPTY') !== -1; }
+        check(emptyRaised, tag + ': empty toggle raises SCCTLM_BA_EMPTY');
+
+        var first = runTool(doc, 'one');
+        var second = runTool(doc, 'two');
+        var st = BA.state();
+        check(st.owned.length === 4, tag + ': owned = 2 plain + 2 groups (children follow their group), got ' + st.owned.length);
+
+        BA.run();
+        check(!vis(first.plain) && !vis(first.group) && !vis(second.plain) && !vis(second.group), tag + ': Before hides every panel layer');
+        check(vis(mine) && !vis(hidden), tag + ': user layers keep their visibility on Before');
+        BA.run();
+        check(vis(first.plain) && vis(first.group) && vis(second.plain) && vis(second.group), tag + ': After shows them again');
+        check(vis(mine) && !vis(hidden), tag + ': user layers keep their visibility on After');
+
+        // One History step per toggle
+        var before = doc.historyStates.length;
+        BA.run();
+        var added = doc.historyStates.length - before;
+        check(added === 1, tag + ': toggle adds one History step, added ' + added);
+        BA.run();
+
+        // Running a tool while hidden brings everything back first
+        BA.run();
+        var third = runTool(doc, 'three');
+        check(vis(first.plain) && vis(second.group) && vis(third.plain), tag + ': a new tool restores layers hidden by Before');
+        check(BA.state().showing === true, tag + ': state is showing after a new tool');
+
+        // A layer deleted by the user is skipped without an error
+        first.plain.remove();
+        var ok = true;
+        try { BA.run(); BA.run(); } catch (e2) { ok = false; }
+        check(ok, tag + ': a deleted panel layer does not break the toggle');
+        check(BA.state().owned.length === 5, tag + ': deleted layer is dropped from owned, got ' + BA.state().owned.length);
+
+        doc.close(SaveOptions.DONOTSAVECHANGES);
+    }
+    if (original) { try { app.activeDocument = original; } catch (e3) { } }
+
+    report.push(failed === 0 ? 'AUDIT PASS' : 'AUDIT FAIL (' + failed + ')');
+    $.scctlmFotoBAReport = report.join('\n');
+}());

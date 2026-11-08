@@ -66,14 +66,14 @@
         BA.run();
         var third = runTool(doc, 'three');
         check(vis(first.plain) && vis(second.group) && vis(third.plain), tag + ': a new tool restores layers hidden by Before');
-        check(BA.state().showing === true, tag + ': state is showing after a new tool');
+        check(BA.stateName() === 'shown', tag + ': panel reports shown after a new tool');
 
         // A layer deleted by the user is skipped without an error
         first.plain.remove();
         var ok = true;
         try { BA.run(); BA.run(); } catch (e2) { ok = false; }
         check(ok, tag + ': a deleted panel layer does not break the toggle');
-        check(BA.state().owned.length === 6, tag + ': owned keeps the deleted id so Redo can bring the layer back, got ' + BA.state().owned.length);
+        check(BA.state().owned.length === 5, tag + ': a deleted layer is dropped from owned, got ' + BA.state().owned.length);
 
         // Layers made visible behind the panel's back (Undo with "layer visibility undoable", or the user): the next press hides
         BA.run();                                    // hide
@@ -87,7 +87,7 @@
         // A command that rebuilds the document shows hidden layers first
         BA.run();
         BA.ensureShown();
-        check(vis(second.plain) && vis(second.group) && BA.state().showing === true, tag + ': ensureShown restores hidden layers');
+        check(vis(second.plain) && vis(second.group) && BA.stateName() === 'shown', tag + ': ensureShown restores hidden layers');
 
         doc.close(SaveOptions.DONOTSAVECHANGES);
     }
@@ -105,6 +105,57 @@
     check(vis(toolA.plain) && vis(toolA.group), 'two documents: ensureShownAll restores the inactive document');
     docB.close(SaveOptions.DONOTSAVECHANGES);
     docA.close(SaveOptions.DONOTSAVECHANGES);
+
+    // Memory survives closing and reopening the file (owned ids live in the document XMP; hidden state is read from the layers)
+    var saved = scratch(8);
+    var toolS = runTool(saved, "saved");
+    var stS = BA.state();
+    var statesBefore = saved.historyStates.length;
+    stS.written = "";                                  // force a write
+    BA.persist(stS);
+    check(saved.historyStates.length === statesBefore, "persist: writing the metadata adds no History step");
+    BA.run();
+    var psd = new File(Folder.temp + "/scctlm-ba-audit.psd");
+    saved.saveAs(psd, new PhotoshopSaveOptions(), true);
+    saved.close(SaveOptions.DONOTSAVECHANGES);
+    $.scctlmFotoBA = {};                              // forget the session memory
+    var reopened = app.open(psd);
+    check(BA.stateName() === "hidden", "persist: reopened file is reported hidden");
+    BA.run();
+    var shownAgain = true, k;
+    for (k = 0; k < reopened.layers.length; k += 1) if (!reopened.layers[k].visible) shownAgain = false;
+    check(shownAgain, "persist: after reopening, the next press shows the panel layers");
+    // A stored id whose layer now has another name is ignored (ids can be reused by other layers)
+    var renamed = reopened.layers[0];
+    renamed.name = "someone else";
+    $.scctlmFotoBA = {};
+    check(BA.state().owned.length === 1, "persist: of two stored ids the renamed layer is ignored, the other kept");
+    check(BA.stateName() === "shown", "persist: so the button stays normal");
+    reopened.close(SaveOptions.DONOTSAVECHANGES);
+    psd.remove();
+
+    // An earlier Before's hidden layers stay remembered when the user turns one of them back on and presses again
+    var multi = scratch(8);
+    var t1 = runTool(multi, "m1");
+    var t2 = runTool(multi, "m2");
+    BA.run();                                          // hides both tools
+    t1.plain.visible = true;                           // the user looks at one layer alone
+    BA.run();                                          // hides it again, must still remember t2
+    BA.ensureShown();
+    check(vis(t2.plain) && vis(t2.group) && vis(t1.plain), "earlier Before: layers hidden by it come back even after the user showed another");
+    multi.close(SaveOptions.DONOTSAVECHANGES);
+
+    // A panel layer the user hid on purpose is never switched back on by commands that flatten or merge
+    var mine = scratch(8);
+    var toolM = runTool(mine, "mine");
+    toolM.plain.visible = false;
+    toolM.group.visible = false;
+    BA.ensureShown();
+    BA.ensureShownAll();
+    check(!vis(toolM.plain), "user-hidden panel layer: ensureShown / ensureShownAll leave it hidden");
+    BA.run();                                          // none visible -> shows them (user asked for the toggle)
+    check(vis(toolM.plain), "user-hidden panel layer: pressing the button shows it");
+    mine.close(SaveOptions.DONOTSAVECHANGES);
 
     // Document without a Background layer
     var bare = app.documents.add(100, 100, 72, 'BA audit bare', NewDocumentMode.RGB, DocumentFill.TRANSPARENT);

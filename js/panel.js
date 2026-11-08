@@ -135,6 +135,7 @@
                 } else if (res !== 'SCCTLM_OK' && res !== 'SCCTLM_CANCEL' && res !== 'SCCTLM_EXISTS') {
                     reportError(res, { source: 'command', label: buttonLabel(kind, name) });
                 }
+                if (window.scctlmFotoRefreshBeforeAfter) window.scctlmFotoRefreshBeforeAfter();
                 if (done) done(res);
             });
         } catch (e) {

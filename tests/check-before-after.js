@@ -102,7 +102,29 @@ assert.match(read('index.html'), /onclick="onClickButton\('BEFOREAFTER'\)"/);
 const source = read('jsx/before-after.jsx');
 const sandbox = { $: {}, charIDToTypeID: () => 0, stringIDToTypeID: () => 0 };
 vm.runInNewContext(source, sandbox);
-for (const fn of ['before', 'after', 'ensureShown', 'ensureShownAll', 'run', 'toggle']) assert.equal(typeof sandbox.$._ext_BEFOREAFTER[fn], 'function', fn);
+for (const fn of ['before', 'after', 'ensureShown', 'ensureShownAll', 'run', 'toggle', 'stateName']) assert.equal(typeof sandbox.$._ext_BEFOREAFTER[fn], 'function', fn);
 assert.doesNotMatch(read('js/color-mode-guard.js'), /BEFOREAFTER/, 'the toggle creates no layers and needs no RGB check');
+
+// The button shows when the panel layers are hidden, from what Photoshop reports
+{
+    const attrs = {};
+    const span = { textContent: 'Trước / Sau' };
+    const btn = { title: '', setAttribute: (k, v) => { attrs[k] = v; }, querySelector: () => span };
+    const sent = [];
+    const ui = { setTimeout: () => 0, document: { querySelector: () => btn }, CSInterface: function () { this.evalScript = (code, cb) => { sent.push(code); cb(sent.reply); }; } };
+    ui.window = ui;
+    vm.runInNewContext(read('js/before-after-state.js'), ui);
+    sent.reply = 'hidden';
+    ui.scctlmFotoRefreshBeforeAfter();
+    assert.match(sent[0], /stateName[(][)]/);
+    assert.equal(attrs['aria-pressed'], 'true');
+    assert.equal(span.textContent, 'Ảnh gốc');
+    sent.reply = 'shown';
+    ui.scctlmFotoRefreshBeforeAfter();
+    assert.equal(attrs['aria-pressed'], 'false');
+    assert.equal(span.textContent, 'Trước / Sau');
+}
+assert.match(read('index.html'), /before-after-state[.]js/, 'the state module must be loaded by the panel');
+assert.match(read('js/panel.js'), /scctlmFotoRefreshBeforeAfter/, 'the bridge refreshes the button after each command');
 
 console.log('check-before-after: OK');

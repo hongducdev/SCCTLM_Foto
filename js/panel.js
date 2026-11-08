@@ -81,6 +81,11 @@
     // Lệnh tạo layer retouch: Trước / Sau (jsx/before-after.jsx) ghi nhớ layer mới của các lệnh này.
     // Không tính Hàng loạt (BA, xử lý nhiều ảnh), Chữ / Logo, Brush, Mở RAW, BUGFIX và chính nút Trước / Sau.
     var TRACKED_EXT = /^(DS|WT|RE|DB|SE|LS|BTNPFSD2|TC|SH)$/;
+    // Lệnh dựng lại hoặc gộp ảnh (khung EXIF, watermark, artboard, Hàng loạt, Chữ / Logo) không ghi layer nhưng phải hiện lại
+    // layer đang ẩn bởi Trước / Sau, nếu không Flatten / Merge sẽ làm mất kết quả retouch.
+    function restoresHidden(kind, name) {
+        return kind === 'frame' || kind === 'wm' || kind === 'artboard' || (kind === 'ext' && (name === 'BA' || name === 'WM'));
+    }
     function tracksLayers(kind, name) {
         return kind === 'doa' || kind === 'preset' || kind === 'colormix' || kind === 'play' || (kind === 'ext' && TRACKED_EXT.test(name));
     }
@@ -114,6 +119,7 @@
                 'if(!app.documents.length)return "SCCTLM_NO_DOCUMENT";' : '') +
             (window.scctlmFotoColorMode && window.scctlmFotoColorMode.needsRgb(kind, name) ? window.scctlmFotoColorMode.preflightCode(kind, name) : '') +
             'if(typeof ' + target + '!=="function")throw new Error("Missing command: ' + label + '");' +
+            (restoresHidden(kind, name) ? 'try{$._ext_BEFOREAFTER.ensureShown();}catch(e){}' : '') +
             (tracksLayers(kind, name) ? 'var ba=null;try{ba=$._ext_BEFOREAFTER.before();}catch(e){}' : '') +
             'var r=' + target + '(' + args + ');' +
             (tracksLayers(kind, name) ? 'if(ba&&r!=="SCCTLM_EXISTS"){try{$._ext_BEFOREAFTER.after(ba);}catch(e){}}' : '') +

@@ -40,8 +40,8 @@
                 'Vào Image > Mode > RGB Color (và 8 Bits/Channel hoặc 16 Bits/Channel) trong Photoshop rồi bấm lại.');
         }],
         [/SCCTLM_BA_EMPTY/, function () {
-            return pack('Chưa có kết quả để so sánh', 'Chưa có lớp retouch nào do panel tạo trên ảnh này để ẩn hoặc hiện.',
-                'Chạy một công cụ Retouch trước, rồi bấm Trước / Sau.');
+            return pack('Chưa có kết quả để so sánh', 'Trong lần làm việc này, panel chưa tạo lớp nào trên ảnh này để ẩn hoặc hiện. Ảnh mở lại từ file sau khi đóng cũng không còn được nhớ.',
+                'Chạy một công cụ của panel trên ảnh này trước, rồi bấm Trước / Sau.');
         }],
         [/Missing command/i, function (t, c) {
             return pack('Plugin thiếu thành phần', 'Không tìm thấy lệnh ' + what(c) + ' trong lõi plugin, có thể bản cài bị thiếu file.',

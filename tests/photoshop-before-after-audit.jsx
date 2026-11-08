@@ -73,10 +73,33 @@
         var ok = true;
         try { BA.run(); BA.run(); } catch (e2) { ok = false; }
         check(ok, tag + ': a deleted panel layer does not break the toggle');
-        check(BA.state().owned.length === 5, tag + ': deleted layer is dropped from owned, got ' + BA.state().owned.length);
+        check(BA.state().owned.length === 6, tag + ': owned keeps the deleted id so Redo can bring the layer back, got ' + BA.state().owned.length);
+
+        // Layers made visible behind the panel's back (Undo with "layer visibility undoable", or the user): the next press hides
+        BA.run();                                    // hide
+        check(!vis(second.plain), tag + ': hidden before the outside change');
+        second.plain.visible = true; second.group.visible = true; first.group.visible = true; third.plain.visible = true; third.group.visible = true;
+        BA.run();
+        check(!vis(second.plain) && !vis(second.group), tag + ': press after an outside show hides again (state follows the document)');
+        BA.run();
+        check(vis(second.plain) && vis(second.group), tag + ': next press shows them');
+
+        // A command that rebuilds the document shows hidden layers first
+        BA.run();
+        BA.ensureShown();
+        check(vis(second.plain) && vis(second.group) && BA.state().showing === true, tag + ': ensureShown restores hidden layers');
 
         doc.close(SaveOptions.DONOTSAVECHANGES);
     }
+
+    // Document without a Background layer
+    var bare = app.documents.add(100, 100, 72, 'BA audit bare', NewDocumentMode.RGB, DocumentFill.TRANSPARENT);
+    var bareTool = runTool(bare, 'bare');
+    BA.run();
+    check(!vis(bareTool.plain) && !vis(bareTool.group), 'no Background: Before hides panel layers');
+    BA.run();
+    check(vis(bareTool.plain) && vis(bareTool.group), 'no Background: After shows them');
+    bare.close(SaveOptions.DONOTSAVECHANGES);
     if (original) { try { app.activeDocument = original; } catch (e3) { } }
 
     report.push(failed === 0 ? 'AUDIT PASS' : 'AUDIT FAIL (' + failed + ')');

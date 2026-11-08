@@ -33,8 +33,9 @@ function host(log, withModule) {
     for (const name of ['DB', 'BA', 'WM', 'BEFOREAFTER', 'BPP', 'OPENRAW']) h.$['_ext_' + name] = { run: () => { log.push('run ' + name); } };
     h.$.scctlmFotoCommands.GGXS = () => { log.push('run GGXS'); };
     if (withModule) {
-        h.$._ext_BEFOREAFTER.before = () => { log.push('before'); return [7]; };
-        h.$._ext_BEFOREAFTER.after = (ids) => { log.push('after ' + ids.join(',')); };
+        h.$._ext_BEFOREAFTER.before = () => { log.push('before'); return { doc: 1, ids: [7] }; };
+        h.$._ext_BEFOREAFTER.after = (prev) => { log.push('after ' + prev.ids.join(',')); };
+        h.$._ext_BEFOREAFTER.ensureShown = () => { log.push('ensureShown'); };
     }
     return h;
 }
@@ -58,10 +59,17 @@ for (const [label, fn, run] of [
 }
 
 // Commands that do not create retouch layers are not tracked, and neither is the toggle itself
-for (const name of ['BA', 'WM', 'BEFOREAFTER', 'BPP', 'OPENRAW']) {
+for (const name of ['BEFOREAFTER', 'BPP', 'OPENRAW']) {
     const log = [];
     runBridge(() => panel.onClickButton(name), log, true);
     assert.deepEqual(log, ['run ' + name], name + ' must run without before/after');
+}
+
+// Commands that rebuild or flatten the document show hidden layers first but record nothing
+for (const name of ['BA', 'WM']) {
+    const log = [];
+    runBridge(() => panel.onClickButton(name), log, true);
+    assert.deepEqual(log, ['ensureShown', 'run ' + name], name + ' must restore hidden layers before running');
 }
 
 // A missing Before / After module must never stop the retouch command
@@ -93,7 +101,7 @@ assert.match(read('index.html'), /onclick="onClickButton\('BEFOREAFTER'\)"/);
 const source = read('jsx/before-after.jsx');
 const sandbox = { $: {}, charIDToTypeID: () => 0, stringIDToTypeID: () => 0 };
 vm.runInNewContext(source, sandbox);
-for (const fn of ['before', 'after', 'run', 'toggle']) assert.equal(typeof sandbox.$._ext_BEFOREAFTER[fn], 'function', fn);
+for (const fn of ['before', 'after', 'ensureShown', 'run', 'toggle']) assert.equal(typeof sandbox.$._ext_BEFOREAFTER[fn], 'function', fn);
 assert.doesNotMatch(read('js/color-mode-guard.js'), /BEFOREAFTER/, 'the toggle creates no layers and needs no RGB check');
 
 console.log('check-before-after: OK');

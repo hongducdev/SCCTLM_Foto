@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.3.17 — Trước / Sau cho biết đang xem ảnh gốc và nhớ qua lần mở lại file
+
+- **Nút đổi thành đỏ "Ảnh gốc" khi layer retouch đang ẩn**, để không lưu nhầm ảnh chưa retouch. Trạng thái đọc thẳng từ Photoshop khi mở panel, sau mỗi lệnh, khi panel được focus và khi chuột đi vào panel; đổi ảnh hoặc Ctrl+Z ngay trong Photoshop có thể trễ đến lần đọc kế tiếp.
+- **Nhớ layer của panel qua lần đóng/mở file PSD:** danh sách layer do panel tạo được ghi vào metadata XMP của ảnh (không thêm bước History). Một id chỉ được tin khi layer mang id đó còn đúng tên đã lưu, nên id bị dùng lại sau khi flatten hoặc ở file khác không bị nhận nhầm. File xuất ra (JPG, TIFF) mang theo metadata này.
+- **Không bật lại layer bạn tự ẩn:** khung EXIF, watermark, artboard, Hàng loạt và Chữ / Logo chỉ hiện lại những layer do chính nút Trước / Sau ẩn; Hàng loạt và Chữ / Logo làm vậy cho mọi ảnh đang mở có layer bị ẩn. Bấm Trước / Sau khi bạn đã ẩn hết layer của panel thì hiện lại chúng.
+- **Nhớ đủ khi bạn bật lại một layer rồi bấm tiếp:** các layer lần Trước trước đó đã ẩn vẫn được nhớ, nên lệnh gộp ảnh vẫn hiện lại chúng.
+- **Nhẹ hơn:** trạng thái đọc theo từng layer của panel thay vì duyệt cả file; layer đã xoá rời khỏi danh sách.
+- **Giới hạn:** Ctrl+Z việc ẩn/hiện của nút này làm panel quên layer nào do nút ẩn, nên hãy bấm lại nút thay vì hoàn tác. Layer tạo ngoài panel (chạy Action thủ công) không được tính.
+- **Kiểm tra:** chạy thật trên Photoshop 23.2 (8-bit, 16-bit, hai ảnh mở cùng lúc, ảnh không có Background, lưu rồi mở lại PSD, layer tự ẩn, layer bị đổi tên) và trên panel thật (nút đỏ khi ẩn, về bình thường khi hiện).
+
 ## v0.3.16 — Nút Trước / Sau để so với ảnh gốc
 
 - **Nút Trước / Sau** (tab Retouch, `jsx/before-after.jsx`): ẩn hoặc hiện mọi layer retouch do panel tạo để so với ảnh gốc. Mỗi lần bấm là một bước History. Layer bạn tự tạo hoặc tự ẩn giữ nguyên.

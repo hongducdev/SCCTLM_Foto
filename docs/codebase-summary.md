@@ -78,6 +78,7 @@ SCCTLM_Foto/
 │   ├── brush-pen-pressure.jsx   # BPP / BPPRESET / trạng thái cọ; chạy được độc lập
 │   ├── action-set-import.jsx    # Nạp bộ Action .atn đóng gói khi thiếu, rồi chạy Action (bỏ qua nạp nếu đã có)
 │   ├── brush-size-hardness.jsx  # BRUSH: đọc / ghi Size + Hardness của cọ
+│   ├── before-after.jsx         # BEFOREAFTER: nhớ layer do panel tạo, ẩn/hiện để so với ảnh gốc
 │   ├── eyedropper-tool.jsx      # EYEDROPPER: bật/trả công cụ Eyedropper, đọc Foreground
 │   ├── rim-light-color.jsx      # RIMCOLOR: tô màu lớp Color, đọc/đặt cường độ nhóm Rim Light
 │   ├── action-shortcut-setup.jsx # Nạp phím: gắn thẳng vào bộ đóng gói, Action khác qua bộ "SCCTLM_Foto" (▶ Play)

@@ -78,6 +78,18 @@
         }
     };
 
+    // Lệnh tạo layer retouch: Trước / Sau (jsx/before-after.jsx) ghi nhớ layer mới của các lệnh này.
+    // Không tính Hàng loạt (BA, xử lý nhiều ảnh), Chữ / Logo, Brush, Mở RAW, BUGFIX và chính nút Trước / Sau.
+    var TRACKED_EXT = /^(DS|WT|RE|DB|SE|LS|BTNPFSD2|TC|SH)$/;
+    // Lệnh dựng lại hoặc gộp ảnh (khung EXIF, watermark, artboard, Hàng loạt, Chữ / Logo) không ghi layer nhưng phải hiện lại
+    // layer đang ẩn bởi Trước / Sau, nếu không Flatten / Merge sẽ làm mất kết quả retouch.
+    function restoresHidden(kind, name) {
+        return kind === 'frame' || kind === 'wm' || kind === 'artboard' || (kind === 'ext' && (name === 'BA' || name === 'WM'));
+    }
+    function tracksLayers(kind, name) {
+        return kind === 'doa' || kind === 'preset' || kind === 'colormix' || kind === 'play' || (kind === 'ext' && TRACKED_EXT.test(name));
+    }
+
     // done(res): tuỳ chọn, gọi sau khi Photoshop chạy xong (res = "SCCTLM_OK" / "SCCTLM_CANCEL" / lỗi)
     // arg: tuỳ chọn, màu "#rrggbb" truyền cho lệnh $._ext_<name>.run
     function run(kind, name, done, arg) {
@@ -107,7 +119,11 @@
                 'if(!app.documents.length)return "SCCTLM_NO_DOCUMENT";' : '') +
             (window.scctlmFotoColorMode && window.scctlmFotoColorMode.needsRgb(kind, name) ? window.scctlmFotoColorMode.preflightCode(kind, name) : '') +
             'if(typeof ' + target + '!=="function")throw new Error("Missing command: ' + label + '");' +
-            'var r=' + target + '(' + args + ');return r==="SCCTLM_EXISTS"?r:"SCCTLM_OK";}catch(e){if(e.number===8007)return "SCCTLM_CANCEL";' +
+            (restoresHidden(kind, name) ? 'if(app.documents.length&&$._ext_BEFOREAFTER)$._ext_BEFOREAFTER.' + (kind === 'ext' ? 'ensureShownAll' : 'ensureShown') + '();' : '') +
+            (tracksLayers(kind, name) ? 'var ba=null;try{ba=$._ext_BEFOREAFTER.before();}catch(e){}' : '') +
+            'var r=' + target + '(' + args + ');' +
+            (tracksLayers(kind, name) ? 'if(ba&&r!=="SCCTLM_EXISTS"){try{$._ext_BEFOREAFTER.after(ba);}catch(e){}}' : '') +
+            'return r==="SCCTLM_EXISTS"?r:"SCCTLM_OK";}catch(e){if(e.number===8007)return "SCCTLM_CANCEL";' +
             'return "SCCTLM_ERROR#"+e.number+": "+e+"\\nFile: "+e.fileName+"\\nLine: "+e.line;}' +
             'finally{app.displayDialogs=d;app.preferences.rulerUnits=u;}}())';
         try {

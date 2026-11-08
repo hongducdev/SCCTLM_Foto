@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.3.16 — Nút Trước / Sau để so với ảnh gốc
+
+- **Nút Trước / Sau** (tab Retouch, `jsx/before-after.jsx`): ẩn hoặc hiện mọi layer retouch do panel tạo để so với ảnh gốc. Mỗi lần bấm là một bước History. Layer bạn tự tạo hoặc tự ẩn giữ nguyên.
+- **Cách nhận biết layer của panel:** panel so danh sách layer trước và sau mỗi lệnh tạo layer (Retouch, Action, preset, Mix màu), nên cả layer do Action tạo với tên không biết trước cũng được tính. Hàng loạt, Chữ / Logo, Brush và Mở ảnh RAW không ghi lại layer.
+- **Không làm mất kết quả khi gộp ảnh:** khung EXIF, watermark, artboard, Hàng loạt và Chữ / Logo tự hiện lại layer đang ẩn trước khi chạy; Hàng loạt và Chữ / Logo làm vậy cho mọi ảnh đang mở, vì chúng gộp layer hiển thị.
+- **Chạy lại công cụ khi đang ở trạng thái Trước:** layer ẩn được hiện lại trước, ảnh không bao giờ nửa ẩn nửa hiện.
+- **Chưa có gì để so sánh:** hiện thông báo tiếng Việt thay vì lỗi.
+- **Giới hạn:** panel chỉ nhớ layer trong lần mở Photoshop hiện tại; ảnh đóng rồi mở lại từ file, hoặc layer tạo ngoài panel (chạy Action thủ công), không được tính. Photoshop mặc định không cho Undo hoàn tác việc ẩn/hiện layer, nên nút bấm lại là cách quay về.
+- **Kiểm tra:** chạy thật trên Photoshop 23.2 với ảnh 8-bit, 16-bit, ảnh không có Background và hai ảnh mở cùng lúc (`tests/photoshop-before-after-audit.jsx`), cùng lệnh thật `MLXG` và `mcwl` qua loader thật; `tests/check-before-after.js` kiểm đoạn bọc lệnh trong panel.
+
 ## v0.3.15 — Mở ảnh RAW để dùng preset màu
 
 - **Vấn đề:** mở RAW trong Photoshop bật hộp thoại Camera Raw dạng modal, chưa có document nên panel không chạy được preset màu.

@@ -36,6 +36,7 @@ function host(log, withModule) {
         h.$._ext_BEFOREAFTER.before = () => { log.push('before'); return { doc: 1, ids: [7] }; };
         h.$._ext_BEFOREAFTER.after = (prev) => { log.push('after ' + prev.ids.join(',')); };
         h.$._ext_BEFOREAFTER.ensureShown = () => { log.push('ensureShown'); };
+        h.$._ext_BEFOREAFTER.ensureShownAll = () => { log.push('ensureShownAll'); };
     }
     return h;
 }
@@ -69,7 +70,7 @@ for (const name of ['BEFOREAFTER', 'BPP', 'OPENRAW']) {
 for (const name of ['BA', 'WM']) {
     const log = [];
     runBridge(() => panel.onClickButton(name), log, true);
-    assert.deepEqual(log, ['ensureShown', 'run ' + name], name + ' must restore hidden layers before running');
+    assert.deepEqual(log, ['ensureShownAll', 'run ' + name], name + ' processes every open image, so it must restore all of them');
 }
 
 // A missing Before / After module must never stop the retouch command
@@ -101,7 +102,7 @@ assert.match(read('index.html'), /onclick="onClickButton\('BEFOREAFTER'\)"/);
 const source = read('jsx/before-after.jsx');
 const sandbox = { $: {}, charIDToTypeID: () => 0, stringIDToTypeID: () => 0 };
 vm.runInNewContext(source, sandbox);
-for (const fn of ['before', 'after', 'ensureShown', 'run', 'toggle']) assert.equal(typeof sandbox.$._ext_BEFOREAFTER[fn], 'function', fn);
+for (const fn of ['before', 'after', 'ensureShown', 'ensureShownAll', 'run', 'toggle']) assert.equal(typeof sandbox.$._ext_BEFOREAFTER[fn], 'function', fn);
 assert.doesNotMatch(read('js/color-mode-guard.js'), /BEFOREAFTER/, 'the toggle creates no layers and needs no RGB check');
 
 console.log('check-before-after: OK');

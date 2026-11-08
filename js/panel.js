@@ -119,7 +119,7 @@
                 'if(!app.documents.length)return "SCCTLM_NO_DOCUMENT";' : '') +
             (window.scctlmFotoColorMode && window.scctlmFotoColorMode.needsRgb(kind, name) ? window.scctlmFotoColorMode.preflightCode(kind, name) : '') +
             'if(typeof ' + target + '!=="function")throw new Error("Missing command: ' + label + '");' +
-            (restoresHidden(kind, name) ? 'try{$._ext_BEFOREAFTER.ensureShown();}catch(e){}' : '') +
+            (restoresHidden(kind, name) ? 'if(app.documents.length&&$._ext_BEFOREAFTER)$._ext_BEFOREAFTER.' + (kind === 'ext' ? 'ensureShownAll' : 'ensureShown') + '();' : '') +
             (tracksLayers(kind, name) ? 'var ba=null;try{ba=$._ext_BEFOREAFTER.before();}catch(e){}' : '') +
             'var r=' + target + '(' + args + ');' +
             (tracksLayers(kind, name) ? 'if(ba&&r!=="SCCTLM_EXISTS"){try{$._ext_BEFOREAFTER.after(ba);}catch(e){}}' : '') +

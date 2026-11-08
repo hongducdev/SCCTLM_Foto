@@ -92,6 +92,20 @@
         doc.close(SaveOptions.DONOTSAVECHANGES);
     }
 
+    // Batch-style commands touch every open document: ensureShownAll restores a hidden document that is not active
+    var docA = scratch(8), docB = scratch(8);
+    app.activeDocument = docA;
+    var toolA = runTool(docA, 'A');
+    BA.run();
+    check(!vis(toolA.plain), 'two documents: A hidden');
+    app.activeDocument = docB;
+    BA.ensureShownAll();
+    check(app.activeDocument === docB, 'two documents: active document is kept');
+    app.activeDocument = docA;
+    check(vis(toolA.plain) && vis(toolA.group), 'two documents: ensureShownAll restores the inactive document');
+    docB.close(SaveOptions.DONOTSAVECHANGES);
+    docA.close(SaveOptions.DONOTSAVECHANGES);
+
     // Document without a Background layer
     var bare = app.documents.add(100, 100, 72, 'BA audit bare', NewDocumentMode.RGB, DocumentFill.TRANSPARENT);
     var bareTool = runTool(bare, 'bare');

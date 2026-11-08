@@ -83,6 +83,19 @@ $._ext_BEFOREAFTER = {
         if (!st.showing) self.restore(st, self.snapshot());
     },
 
+    // Same for every open document, for commands that process all of them (batch, text / logo).
+    ensureShownAll: function () {
+        var self = $._ext_BEFOREAFTER, keep = app.activeDocument, i, st;
+        for (i = 0; i < app.documents.length; i += 1) {
+            st = $.scctlmFotoBA && $.scctlmFotoBA[String(app.documents[i].id)];
+            if (st && !st.showing) {
+                app.activeDocument = app.documents[i];
+                self.restore(st, self.snapshot());
+            }
+        }
+        app.activeDocument = keep;
+    },
+
     // Call before a layer-creating command: shows hidden layers, returns the document and its layer ids now.
     before: function () {
         var self = $._ext_BEFOREAFTER;

@@ -2,19 +2,53 @@
  * Before / After (panel button "Truoc / Sau"). Panel buttons call $._ext_BEFOREAFTER.run to hide or show the layers the panel created.
  * js/panel.js wraps every layer-creating command with before() / after(): the layers that appear during the command
  * are remembered per document, so the toggle never touches layers the user made or hid themselves.
- * State lives in $.scctlmFotoBA[documentId] for the Photoshop session: { owned: [layerId], hiddenByUs: [layerId], showing }.
+ * State lives in $.scctlmFotoBA[documentId] for the Photoshop session: { owned: [layerId], hiddenByUs: [layerId] }.
+ * The owned ids are also written into the document's XMP metadata (namespace NS), so the memory survives closing and
+ * reopening the file. Whether the layers are hidden is always read from the document, never from stored state.
  */
 $._ext_BEFOREAFTER = {
     HISTORY_NAME: 'SCCTLM_Foto Before/After',
     EMPTY: 'SCCTLM_BA_EMPTY',
+    NS: 'http://scctlm.vn/foto/before-after/1.0/',
 
     c: function (code) { return charIDToTypeID(code); },
     s: function (name) { return stringIDToTypeID(name); },
+    t: function (typeId) { return typeIDToStringID(typeId); },
+
+    // The XMP scripting library, or false when Photoshop does not offer it (persistence is then skipped).
+    xmpReady: function () {
+        try {
+            if (typeof XMPMeta === 'undefined' && ExternalObject.AdobeXMPScript === undefined) ExternalObject.AdobeXMPScript = new ExternalObject('lib:AdobeXMPScript');
+            return typeof XMPMeta !== 'undefined';
+        } catch (e) { return false; }
+    },
+
+    readOwned: function () {
+        var self = $._ext_BEFOREAFTER, out = [], i;
+        try {
+            if (!self.xmpReady()) return out;
+            var prop = new XMPMeta(app.activeDocument.xmpMetadata.rawData).getProperty(self.NS, 'ownedLayers');
+            var parts = prop ? String(prop.value).split(',') : [];
+            for (i = 0; i < parts.length; i += 1) if (/^\d+$/.test(parts[i])) out.push(parseInt(parts[i], 10));
+        } catch (e) { }
+        return out;
+    },
+
+    writeOwned: function (owned) {
+        var self = $._ext_BEFOREAFTER;
+        try {
+            if (!self.xmpReady()) return;
+            var doc = app.activeDocument, xmp = new XMPMeta(doc.xmpMetadata.rawData);
+            XMPMeta.registerNamespace(self.NS, 'scctlmba');
+            xmp.setProperty(self.NS, 'ownedLayers', owned.join(','));
+            doc.xmpMetadata.rawData = xmp.serialize();
+        } catch (e) { }
+    },
 
     state: function () {
         $.scctlmFotoBA = $.scctlmFotoBA || {};
         var key = String(app.activeDocument.id);
-        if (!$.scctlmFotoBA[key]) $.scctlmFotoBA[key] = { owned: [], hiddenByUs: [], showing: true };
+        if (!$.scctlmFotoBA[key]) $.scctlmFotoBA[key] = { owned: $._ext_BEFOREAFTER.readOwned(), hiddenByUs: [] };
         return $.scctlmFotoBA[key];
     },
 
@@ -55,8 +89,6 @@ $._ext_BEFOREAFTER = {
         return out;
     },
 
-    t: function (typeId) { return typeIDToStringID(typeId); },
-
     has: function (list, id) {
         var i;
         for (i = 0; i < list.length; i += 1) if (list[i] === id) return true;
@@ -76,24 +108,41 @@ $._ext_BEFOREAFTER = {
         executeAction(self.c(show ? 'Shw ' : 'Hd  '), desc, DialogModes.NO);
     },
 
-    // Show again the layers a previous Before left hidden. Commands that rebuild or flatten the document call this
-    // first, so hidden retouch is never merged away.
+    // Panel layers that exist now: the ones recorded for this document that are still in it.
+    alive: function (st, now) {
+        var self = $._ext_BEFOREAFTER, out = [], i;
+        for (i = 0; i < st.owned.length; i += 1) if (self.has(now.ids, st.owned[i])) out.push(st.owned[i]);
+        return out;
+    },
+
+    // The layers a Before hid, when the document is in the "before" state (panel layers exist and none is visible); else [].
+    // Read from the document, so it also works after Undo, a reopened file, or layers the user hid themselves.
+    hiddenSet: function (st, now) {
+        var self = $._ext_BEFOREAFTER, alive = self.alive(st, now), mine = [], i;
+        if (!alive.length) return [];
+        for (i = 0; i < alive.length; i += 1) if (now.visible[alive[i]]) return [];
+        for (i = 0; i < alive.length; i += 1) if (self.has(st.hiddenByUs, alive[i])) mine.push(alive[i]);
+        return mine.length ? mine : alive;
+    },
+
+    // Show again what a Before left hidden. Commands that rebuild or flatten the document call this first,
+    // so hidden retouch is never merged away.
     ensureShown: function () {
         var self = $._ext_BEFOREAFTER, st = self.state();
-        if (!st.showing) self.restore(st, self.snapshot());
+        if (!st.owned.length) return;
+        self.setVisible(self.hiddenSet(st, self.snapshot(true)), true);
+        st.hiddenByUs = [];
     },
 
     // Same for every open document, for commands that process all of them (batch, text / logo).
     ensureShownAll: function () {
-        var self = $._ext_BEFOREAFTER, keep = app.activeDocument, i, st;
-        for (i = 0; i < app.documents.length; i += 1) {
-            st = $.scctlmFotoBA && $.scctlmFotoBA[String(app.documents[i].id)];
-            if (st && !st.showing) {
+        var self = $._ext_BEFOREAFTER, keep = app.activeDocument, i;
+        try {
+            for (i = 0; i < app.documents.length; i += 1) {
                 app.activeDocument = app.documents[i];
-                self.restore(st, self.snapshot());
+                self.ensureShown();
             }
-        }
-        app.activeDocument = keep;
+        } finally { app.activeDocument = keep; }
     },
 
     // Call before a layer-creating command: shows hidden layers, returns the document and its layer ids now.
@@ -107,43 +156,40 @@ $._ext_BEFOREAFTER = {
     after: function (prev) {
         var self = $._ext_BEFOREAFTER;
         if (!app.documents.length || app.activeDocument.id !== prev.doc) return;   // the command left another document active
-        var st = self.state(), now = self.snapshot(), created = {}, i, id, idsBefore = prev.ids;
+        var st = self.state(), now = self.snapshot(), created = {}, i, id, idsBefore = prev.ids, added = false;
         var known = {};
         for (i = 0; i < idsBefore.length; i += 1) known[idsBefore[i]] = true;
         for (i = 0; i < now.ids.length; i += 1) if (!known[now.ids[i]]) created[now.ids[i]] = true;
         for (i = 0; i < now.ids.length; i += 1) {
             id = now.ids[i];
-            if (created[id] && !created[now.parent[id]] && !self.has(st.owned, id)) st.owned.push(id);
+            if (created[id] && !created[now.parent[id]] && !self.has(st.owned, id)) { st.owned.push(id); added = true; }
         }
-    },
-
-    // Show again the layers hidden by the last Before that still exist.
-    restore: function (st, now) {
-        var self = $._ext_BEFOREAFTER, still = [], i;
-        for (i = 0; i < st.hiddenByUs.length; i += 1) if (self.has(now.ids, st.hiddenByUs[i])) still.push(st.hiddenByUs[i]);
-        self.setVisible(still, true);
-        st.hiddenByUs = [];
-        st.showing = true;
+        if (added) self.writeOwned(st.owned);
     },
 
     // Runs in the global scope (suspendHistory): one History step per toggle.
-    // The panel's own state can disagree with the document after Undo / Redo, so it is checked against what is visible now.
+    // Whether the panel layers are hidden is decided from what is visible in the document right now.
     toggle: function () {
-        var self = $._ext_BEFOREAFTER, st = self.state(), now = self.snapshot(true), alive = [], i;
-        for (i = 0; i < st.owned.length; i += 1) if (self.has(now.ids, st.owned[i])) alive.push(st.owned[i]);
+        var self = $._ext_BEFOREAFTER, st = self.state(), now = self.snapshot(true), alive = self.alive(st, now), i;
         if (!alive.length) { $.scctlmFotoBAEmpty = true; return; }
-        if (!st.showing) {
-            var stillHidden = false;
-            for (i = 0; i < st.hiddenByUs.length; i += 1) if (self.has(now.ids, st.hiddenByUs[i]) && !now.visible[st.hiddenByUs[i]]) stillHidden = true;
-            if (stillHidden) { self.restore(st, now); return; }
-            st.hiddenByUs = [];
-            st.showing = true;
-        }
         var visible = [];
         for (i = 0; i < alive.length; i += 1) if (now.visible[alive[i]]) visible.push(alive[i]);
-        self.setVisible(visible, false);
-        st.hiddenByUs = visible;
-        st.showing = !visible.length;
+        if (visible.length) {
+            self.setVisible(visible, false);
+            st.hiddenByUs = visible;
+        } else {
+            self.setVisible(self.hiddenSet(st, now), true);
+            st.hiddenByUs = [];
+        }
+    },
+
+    // 'hidden' when the panel layers of the active document are all hidden, else 'shown'. The panel button reads this.
+    stateName: function () {
+        var self = $._ext_BEFOREAFTER;
+        if (!app.documents.length) return 'shown';
+        var st = self.state();
+        if (!st.owned.length) return 'shown';
+        return self.hiddenSet(st, self.snapshot(true)).length ? 'hidden' : 'shown';
     },
 
     run: function () {

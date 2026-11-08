@@ -421,6 +421,7 @@ button:active {
 }
 .group-retouch .action-grid > button:hover .tool-icon { transform: scale(1.1); }
 .group-retouch .action-grid > button:active { transform: scale(.98); }
+.group-retouch .action-grid > button[aria-pressed="true"] { background: var(--rose) !important; box-shadow: none !important; color: #fff !important; }
 .group-retouch > .btn-primary:active { transform: translateY(1px); }
 
 /* Preset names run longer than tool labels, so these rows get two wider columns */

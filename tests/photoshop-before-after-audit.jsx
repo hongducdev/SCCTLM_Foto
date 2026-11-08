@@ -66,7 +66,7 @@
         BA.run();
         var third = runTool(doc, 'three');
         check(vis(first.plain) && vis(second.group) && vis(third.plain), tag + ': a new tool restores layers hidden by Before');
-        check(BA.state().showing === true, tag + ': state is showing after a new tool');
+        check(BA.stateName() === 'shown', tag + ': panel reports shown after a new tool');
 
         // A layer deleted by the user is skipped without an error
         first.plain.remove();
@@ -87,7 +87,7 @@
         // A command that rebuilds the document shows hidden layers first
         BA.run();
         BA.ensureShown();
-        check(vis(second.plain) && vis(second.group) && BA.state().showing === true, tag + ': ensureShown restores hidden layers');
+        check(vis(second.plain) && vis(second.group) && BA.stateName() === 'shown', tag + ': ensureShown restores hidden layers');
 
         doc.close(SaveOptions.DONOTSAVECHANGES);
     }
@@ -105,6 +105,26 @@
     check(vis(toolA.plain) && vis(toolA.group), 'two documents: ensureShownAll restores the inactive document');
     docB.close(SaveOptions.DONOTSAVECHANGES);
     docA.close(SaveOptions.DONOTSAVECHANGES);
+
+    // Memory survives closing and reopening the file (owned ids live in the document XMP; hidden state is read from the layers)
+    var saved = scratch(8);
+    var toolS = runTool(saved, 'saved');
+    var statesBefore = saved.historyStates.length;
+    BA.writeOwned(BA.state().owned);
+    check(saved.historyStates.length === statesBefore, 'persist: writing the ids adds no History step');
+    BA.run();
+    var psd = new File(Folder.temp + '/scctlm-ba-audit.psd');
+    saved.saveAs(psd, new PhotoshopSaveOptions(), true);
+    saved.close(SaveOptions.DONOTSAVECHANGES);
+    $.scctlmFotoBA = {};                              // forget the session memory
+    var reopened = app.open(psd);
+    check(BA.stateName() === 'hidden', 'persist: reopened file is reported hidden');
+    BA.run();
+    var shownAgain = true, k;
+    for (k = 0; k < reopened.layers.length; k += 1) if (!reopened.layers[k].visible) shownAgain = false;
+    check(shownAgain, 'persist: after reopening, the next press shows the panel layers');
+    reopened.close(SaveOptions.DONOTSAVECHANGES);
+    psd.remove();
 
     // Document without a Background layer
     var bare = app.documents.add(100, 100, 72, 'BA audit bare', NewDocumentMode.RGB, DocumentFill.TRANSPARENT);

@@ -1,7 +1,8 @@
 /*
  * Nút Trước / Sau: cho người dùng biết đang xem ảnh gốc (layer của panel đang ẩn) để khỏi lưu nhầm ảnh chưa retouch.
- * Trạng thái được đọc từ Photoshop (jsx/before-after.jsx: stateName) sau mỗi lệnh của panel và khi panel được focus lại;
- * không lưu riêng trong panel nên không thể lệch với ảnh.
+ * Trạng thái được đọc từ Photoshop (jsx/before-after.jsx: stateName) khi panel mở, sau mỗi lệnh của panel, khi panel được
+ * focus lại và khi chuột đi vào panel (tối đa một lần mỗi 1,5 giây). Panel không lưu trạng thái riêng nên không lệch ảnh;
+ * chỉ có thể trễ đến lần đọc kế tiếp nếu người dùng đổi layer ngay trong Photoshop (Ctrl+Z, bảng Layers, đổi ảnh).
  */
 (function (root) {
     'use strict';
@@ -31,7 +32,19 @@
         } catch (e) { /* trạng thái chỉ là gợi ý, không làm hỏng panel */ }
     }
 
+    var last = 0;
+    function refreshThrottled() {
+        var now = Date.now();
+        if (now - last < 1500) return;
+        last = now;
+        refresh();
+    }
+
     root.scctlmFotoRefreshBeforeAfter = refresh;
-    if (root.addEventListener) root.addEventListener('focus', refresh);
+    if (root.addEventListener) {
+        root.addEventListener('focus', refresh);
+        root.addEventListener('mouseover', refreshThrottled);
+        root.setTimeout(refresh, 3000);                  // lõi ExtendScript nạp xong rồi mới đọc được trạng thái
+    }
     if (typeof module !== 'undefined' && module.exports) module.exports = { apply: apply, refresh: refresh };
 }(typeof window !== 'undefined' ? window : this));

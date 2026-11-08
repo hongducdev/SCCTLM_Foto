@@ -108,23 +108,43 @@
 
     // Memory survives closing and reopening the file (owned ids live in the document XMP; hidden state is read from the layers)
     var saved = scratch(8);
-    var toolS = runTool(saved, 'saved');
+    var toolS = runTool(saved, "saved");
+    var stS = BA.state();
     var statesBefore = saved.historyStates.length;
-    BA.writeOwned(BA.state().owned);
-    check(saved.historyStates.length === statesBefore, 'persist: writing the ids adds no History step');
+    stS.written = "";                                  // force a write
+    BA.persist(stS);
+    check(saved.historyStates.length === statesBefore, "persist: writing the metadata adds no History step");
     BA.run();
-    var psd = new File(Folder.temp + '/scctlm-ba-audit.psd');
+    var psd = new File(Folder.temp + "/scctlm-ba-audit.psd");
     saved.saveAs(psd, new PhotoshopSaveOptions(), true);
     saved.close(SaveOptions.DONOTSAVECHANGES);
     $.scctlmFotoBA = {};                              // forget the session memory
     var reopened = app.open(psd);
-    check(BA.stateName() === 'hidden', 'persist: reopened file is reported hidden');
+    check(BA.stateName() === "hidden", "persist: reopened file is reported hidden");
     BA.run();
     var shownAgain = true, k;
     for (k = 0; k < reopened.layers.length; k += 1) if (!reopened.layers[k].visible) shownAgain = false;
-    check(shownAgain, 'persist: after reopening, the next press shows the panel layers');
+    check(shownAgain, "persist: after reopening, the next press shows the panel layers");
+    // A stored id whose layer now has another name is ignored (ids can be reused by other layers)
+    var renamed = reopened.layers[0];
+    renamed.name = "someone else";
+    $.scctlmFotoBA = {};
+    check(BA.state().owned.length === 1, "persist: of two stored ids the renamed layer is ignored, the other kept");
+    check(BA.stateName() === "shown", "persist: so the button stays normal");
     reopened.close(SaveOptions.DONOTSAVECHANGES);
     psd.remove();
+
+    // A panel layer the user hid on purpose is never switched back on by commands that flatten or merge
+    var mine = scratch(8);
+    var toolM = runTool(mine, "mine");
+    toolM.plain.visible = false;
+    toolM.group.visible = false;
+    BA.ensureShown();
+    BA.ensureShownAll();
+    check(!vis(toolM.plain), "user-hidden panel layer: ensureShown / ensureShownAll leave it hidden");
+    BA.run();                                          // none visible -> shows them (user asked for the toggle)
+    check(vis(toolM.plain), "user-hidden panel layer: pressing the button shows it");
+    mine.close(SaveOptions.DONOTSAVECHANGES);
 
     // Document without a Background layer
     var bare = app.documents.add(100, 100, 72, 'BA audit bare', NewDocumentMode.RGB, DocumentFill.TRANSPARENT);

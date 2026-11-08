@@ -111,12 +111,12 @@ assert.doesNotMatch(read('js/color-mode-guard.js'), /BEFOREAFTER/, 'the toggle c
     const span = { textContent: 'Trước / Sau' };
     const btn = { title: '', setAttribute: (k, v) => { attrs[k] = v; }, querySelector: () => span };
     const sent = [];
-    const ui = { document: { querySelector: () => btn }, CSInterface: function () { this.evalScript = (code, cb) => { sent.push(code); cb(sent.reply); }; } };
+    const ui = { setTimeout: () => 0, document: { querySelector: () => btn }, CSInterface: function () { this.evalScript = (code, cb) => { sent.push(code); cb(sent.reply); }; } };
     ui.window = ui;
     vm.runInNewContext(read('js/before-after-state.js'), ui);
     sent.reply = 'hidden';
     ui.scctlmFotoRefreshBeforeAfter();
-    assert.match(sent[0], /stateName()/);
+    assert.match(sent[0], /stateName[(][)]/);
     assert.equal(attrs['aria-pressed'], 'true');
     assert.equal(span.textContent, 'Ảnh gốc');
     sent.reply = 'shown';

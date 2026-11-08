@@ -175,6 +175,11 @@ $._ext_BEFOREAFTER = {
             info = self.layerInfo(st.owned[i]);
             if (info) out.push({ id: st.owned[i], visible: info.visible });
         }
+        if (out.length !== st.owned.length) {
+            // a layer that is gone is dropped for good, so later reads stay cheap; Undo that brings it back is picked up by the next command
+            st.owned = [];
+            for (i = 0; i < out.length; i += 1) st.owned.push(out[i].id);
+        }
         return out;
     },
 
@@ -231,8 +236,11 @@ $._ext_BEFOREAFTER = {
         if (!alive.length) { $.scctlmFotoBAEmpty = true; return; }
         for (i = 0; i < alive.length; i += 1) if (alive[i].visible) visible.push(alive[i].id);
         if (visible.length) {
+            // keep the layers an earlier Before hid that are still hidden (the user may have turned one back on)
+            var keep = [];
+            for (i = 0; i < alive.length; i += 1) if (!alive[i].visible && self.has(st.hiddenByUs, alive[i].id)) keep.push(alive[i].id);
             self.setVisible(visible, false);
-            st.hiddenByUs = visible;
+            st.hiddenByUs = keep.concat(visible);
         } else {
             for (i = 0; i < alive.length; i += 1) if (self.has(st.hiddenByUs, alive[i].id)) back.push(alive[i].id);
             if (!back.length) for (i = 0; i < alive.length; i += 1) back.push(alive[i].id);

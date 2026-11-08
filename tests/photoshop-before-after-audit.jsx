@@ -73,7 +73,7 @@
         var ok = true;
         try { BA.run(); BA.run(); } catch (e2) { ok = false; }
         check(ok, tag + ': a deleted panel layer does not break the toggle');
-        check(BA.state().owned.length === 6, tag + ': owned keeps the deleted id so Redo can bring the layer back, got ' + BA.state().owned.length);
+        check(BA.state().owned.length === 5, tag + ': a deleted layer is dropped from owned, got ' + BA.state().owned.length);
 
         // Layers made visible behind the panel's back (Undo with "layer visibility undoable", or the user): the next press hides
         BA.run();                                    // hide
@@ -133,6 +133,17 @@
     check(BA.stateName() === "shown", "persist: so the button stays normal");
     reopened.close(SaveOptions.DONOTSAVECHANGES);
     psd.remove();
+
+    // An earlier Before's hidden layers stay remembered when the user turns one of them back on and presses again
+    var multi = scratch(8);
+    var t1 = runTool(multi, "m1");
+    var t2 = runTool(multi, "m2");
+    BA.run();                                          // hides both tools
+    t1.plain.visible = true;                           // the user looks at one layer alone
+    BA.run();                                          // hides it again, must still remember t2
+    BA.ensureShown();
+    check(vis(t2.plain) && vis(t2.group) && vis(t1.plain), "earlier Before: layers hidden by it come back even after the user showed another");
+    multi.close(SaveOptions.DONOTSAVECHANGES);
 
     // A panel layer the user hid on purpose is never switched back on by commands that flatten or merge
     var mine = scratch(8);

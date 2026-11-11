@@ -1,0 +1,13 @@
+{
+  "name": "scctlm-foto",
+  "private": true,
+  "description": "SCCTLM_Foto: panel retouch cho Photoshop (CEP). Không có dependency; package.json chỉ để chạy kiểm thử.",
+  "scripts": {
+    "test": "node tests/run-checks.js",
+    "release:sign": "node scripts/release-sign.js",
+    "release:verify": "node scripts/release-verify.js"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

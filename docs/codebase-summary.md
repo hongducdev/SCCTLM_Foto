@@ -4,7 +4,7 @@
 SCCTLM_Foto/
 ├── CSXS/
 │   └── manifest.xml             # Cấu hình CEP, menu hiển thị & kích thước panel
-├── .debug                       # Cổng Debugger Chromium (9004)
+├── .debug                       # Cổng Debugger Chromium (9004), chỉ cài trên máy dev
 ├── index.html                   # Giao diện HTML5 của panel
 ├── style.css                    # Định dạng cơ bản
 ├── loader.jsx                   # Trình nạp lõi ExtendScript
@@ -111,7 +111,8 @@ SCCTLM_Foto/
 │   ├── Hot-reload-SCCTLM_Foto.bat       # Khởi động bộ theo dõi Hot Reload
 │   └── watch-plugin.js          # Theo dõi file và nạp lại panel bằng Node.js
 ├── scripts/                     # Công cụ người phát hành: release-keygen / release-sign / release-verify + build-watermark-templates.py (chuyển pack 徕卡一瞬 thành js/wm-templates-data.js và img/wm) + install-watermark-fonts.ps1 (cài font MiSans / LG1056 / Oxanium từ `fonts/` cho người dùng hiện tại)
-├── tests/                       # Kiểm thử tự động: script, updater, hot reload, bộ màu, artboard, Khám phá, lõi jsx không dính CEP, smoke test Photoshop (`run-photoshop-smoke.ps1`, chạy tay)
+├── package.json                 # Không có dependency; `npm test` chạy tests/run-checks.js
+├── tests/                       # Kiểm thử tự động (`npm test` / tests/run-checks.js chạy mọi tests/check-*.js): script, updater, hot reload, bộ màu, artboard, Khám phá, lõi jsx không dính CEP, smoke test Photoshop (`run-photoshop-smoke.ps1`, chạy tay)
 ├── docs/                        # Hướng dẫn thiết kế và nhật ký phát triển
 └── README.md
 ```

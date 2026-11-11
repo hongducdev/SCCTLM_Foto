@@ -13,13 +13,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # Every tests/check-*.js must pass; check-live-reload.js prints SKIP without SCCTLM_FOTO_LIVE=1 (needs Photoshop).
+      # Every tests/check-*.js must pass (tests/run-checks.js); check-live-reload.js prints SKIP without SCCTLM_FOTO_LIVE=1 (needs Photoshop).
       - name: Run checks
-        run: |
-          status=0
-          for t in tests/check-*.js; do
-            echo "::group::$t"
-            node "$t" || { echo "::error::$t failed"; status=1; }
-            echo "::endgroup::"
-          done
-          exit $status
+        run: npm test

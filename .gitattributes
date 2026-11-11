@@ -1,2 +1,3 @@
 # Không cho git đổi line-ending: file phải giống y bản build trên đĩa
 * -text
+.debug export-ignore

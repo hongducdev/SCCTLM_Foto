@@ -7,13 +7,13 @@
 **Panel retouch cho Adobe Photoshop — giao diện 100% tiếng Việt**
 
 [![Release](https://img.shields.io/github/v/release/hongducdev/SCCTLM_Foto?style=flat-square&color=27b96a)](https://github.com/hongducdev/SCCTLM_Foto/releases/latest)
-![Photoshop](https://img.shields.io/badge/Photoshop-CC%202015%2B-31a8ff?style=flat-square&logo=adobephotoshop&logoColor=white)
+![Photoshop](https://img.shields.io/badge/Photoshop-2021%2B-31a8ff?style=flat-square&logo=adobephotoshop&logoColor=white)
 ![CEP](https://img.shields.io/badge/Adobe%20CEP-6.0%2B-7a5cd6?style=flat-square)
 ![Platform](https://img.shields.io/badge/Windows%20%7C%20macOS-lightgrey?style=flat-square)
 
 </div>
 
-**SCCTLM_Foto** (_Sáng chơi chữ · Tối làm màu_) là CEP Extension cho Photoshop, gom quy trình làm đẹp chân dung, ảnh cưới, thời trang và thumbnail vào một panel 4 tab: **Retouch**, **Artboard**, **Khám phá**, **Ủng hộ**.
+**SCCTLM_Foto** (_Sáng chơi chữ · Tối làm màu_) là CEP Extension cho Photoshop, gom quy trình làm đẹp chân dung, ảnh cưới, thời trang và thumbnail vào một panel 4 tab: **Retouch**, **Artboard**, **Watermark**, **Khám phá**, cùng mục **Ủng hộ** trên thanh tiêu đề.
 
 <div align="center">
 
@@ -34,7 +34,7 @@
 ## ✨ Tính năng
 
 - **Retouch** — Làm da, Son môi, Trắng răng, Tẩy lông, Highlight, Lông mi, Phủ phấn, Đánh khối, Trắng da, Hạt phim. Mọi thao tác tạo layer/mask riêng, không phá huỷ ảnh gốc; chạy trên RGB 8/16-bit.
-- **Trước / Sau** — nút trong tab Retouch ẩn hoặc hiện mọi layer retouch do panel tạo để so với ảnh gốc, mỗi lần bấm là một bước History. Khi các layer đang ẩn, nút đổi thành đỏ với nhãn **Ảnh gốc** để không lưu nhầm ảnh chưa retouch. Layer bạn tự tạo không bị đổi; layer chạy Action thủ công ngoài panel không được tính. Panel ghi nhớ layer của mình vào metadata XMP của ảnh nên đóng rồi mở lại file PSD vẫn so sánh được (định dạng không giữ layer như JPG thì không; file xuất ra mang theo metadata này). Nếu bạn tự ẩn layer của panel thì chỉ khi **ẩn hết** nút mới coi là **Ảnh gốc**, và các lệnh khung EXIF, watermark, artboard, Hàng loạt, Chữ / Logo chỉ hiện lại những layer do chính nút Trước / Sau ẩn (Hàng loạt và Chữ / Logo làm vậy cho mọi ảnh đang mở). Nút cập nhật trạng thái khi bạn bấm lệnh, quay lại panel hoặc rê chuột vào panel; đổi ảnh hay Ctrl+Z trong Photoshop có thể trễ đến lần đó. Hoàn tác (Ctrl+Z) việc ẩn/hiện layer của nút này làm panel không còn nhớ layer nào do nút ẩn, nên hãy bấm lại nút thay vì hoàn tác.
+- **Trước / Sau** — nút trong tab Retouch ẩn hoặc hiện mọi layer retouch do panel tạo để so với ảnh gốc, mỗi lần bấm là một bước History. Khi các layer đang ẩn, nút đổi thành đỏ với nhãn **Ảnh gốc** để không lưu nhầm ảnh chưa retouch. Layer bạn tự tạo không bị đổi; layer chạy Action thủ công ngoài panel không được tính. Panel ghi nhớ layer của mình vào metadata XMP của ảnh nên đóng rồi mở lại file PSD vẫn so sánh được (định dạng không giữ layer như JPG thì không; file xuất ra mang theo metadata này). Nếu bạn tự ẩn layer của panel thì chỉ khi **ẩn hết** nút mới coi là **Ảnh gốc**, và các lệnh khung EXIF, watermark, artboard, Hàng loạt, Chữ / Logo chỉ hiện lại những layer do chính nút Trước / Sau ẩn (Hàng loạt và Chữ / Logo làm vậy cho mọi ảnh đang mở). Nút tự cập nhật trạng thái khi bạn bấm lệnh, đổi ảnh, mở/đóng ảnh hay chọn bước History trong Photoshop; Photoshop không báo Ctrl+Z hay việc bấm con mắt ẩn/hiện layer, nên hai thao tác đó có thể trễ đến khi bạn quay lại hoặc rê chuột vào panel. Hoàn tác (Ctrl+Z) việc ẩn/hiện layer của nút này làm panel không còn nhớ layer nào do nút ẩn, nên hãy bấm lại nút thay vì hoàn tác.
 - **Brush Lab** — bật Shape Dynamics + Pen Pressure bằng một nút; chỉnh Cỡ, Cứng, màu cọ và Độ sáng ngay trên panel.
 - **Rim Light** — nút **Tạo Rim Light**; khi ảnh có nhóm `Rim Light` > lớp `Color` thì chọn màu (hex, hút màu, 8 màu mẫu) và Độ sáng.
 - **Màu & Preset** — 6 bộ màu MHK (165 màu): bấm để áp, hoặc **Mix** tối đa 4 màu. File `.xmp` đặt vào `presets/` tự thành nút.
@@ -47,7 +47,7 @@
 
 ## 💻 Yêu cầu
 
-Photoshop CC 2015 trở lên · Windows 10/11 (64-bit) hoặc macOS 10.13+ · ảnh chế độ RGB.
+Photoshop 2021 trở lên (đã kiểm thử trên Photoshop 2022, bản 23.2) · Windows 10/11 (64-bit) hoặc macOS 10.13+ · ảnh chế độ RGB. Bản Photoshop cũ hơn có thể mở được panel nhưng giao diện bị lệch.
 
 ## 🚀 Cài đặt
 
@@ -133,34 +133,34 @@ Nếu SCCTLM_Foto giúp ích cho công việc của bạn, hãy đồng hành c�
       <a href="https://www.facebook.com/tungtrene"><sub><b>Thanh Tùng</b></sub></a>
     </td>
     <td align="center" width="140">
-      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Vu Dinh Hoang" width="72" height="72" /></a><br />
-      <a href="#"><sub><b>Vu Dinh Hoang</b></sub></a>
+      <img src="site/assets/supporters/anonymous.svg" alt="Vu Dinh Hoang" width="72" height="72" /><br />
+      <sub><b>Vu Dinh Hoang</b></sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="140">
-      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Vu Hoang Thanh" width="72" height="72" /></a><br />
-      <a href="#"><sub><b>Vu Hoang Thanh</b></sub></a>
+      <img src="site/assets/supporters/anonymous.svg" alt="Vu Hoang Thanh" width="72" height="72" /><br />
+      <sub><b>Vu Hoang Thanh</b></sub>
     </td>
     <td align="center" width="140">
-      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="EditLab" width="72" height="72" /></a><br />
-      <a href="#"><sub><b>EditLab</b></sub></a>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="140">
-      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Ngo Quang Xo" width="72" height="72" /></a><br />
-      <a href="#"><sub><b>Ngo Quang Xo</b></sub></a>
-    </td>
-    <td align="center" width="140">
-      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Nguyen Dinh Bac" width="72" height="72" /></a><br />
-      <a href="#"><sub><b>Nguyen Dinh Bac</b></sub></a>
+      <img src="site/assets/supporters/anonymous.svg" alt="EditLab" width="72" height="72" /><br />
+      <sub><b>EditLab</b></sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="140">
-      <a href="#"><img src="site/assets/supporters/nguyen-thanh-lam.png" alt="Pham Anh Thu" width="72" height="72" /></a><br />
-      <a href="#"><sub><b>Pham Anh Thu</b></sub></a>
+      <img src="site/assets/supporters/anonymous.svg" alt="Ngo Quang Xo" width="72" height="72" /><br />
+      <sub><b>Ngo Quang Xo</b></sub>
+    </td>
+    <td align="center" width="140">
+      <img src="site/assets/supporters/anonymous.svg" alt="Nguyen Dinh Bac" width="72" height="72" /><br />
+      <sub><b>Nguyen Dinh Bac</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="140">
+      <img src="site/assets/supporters/anonymous.svg" alt="Pham Anh Thu" width="72" height="72" /><br />
+      <sub><b>Pham Anh Thu</b></sub>
     </td>
   </tr>
 </table>

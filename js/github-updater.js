@@ -16,14 +16,21 @@
 
     function fs() { return window.cep.fs; }
 
-    function request(url, type) {
+    var CACHE_KEY = 'scctlm.foto.release';
+
+    // etag: optional; a 304 reply (not counted against GitHub's rate limit) resolves to null.
+    // meta: optional object that receives the reply's ETag.
+    function request(url, type, etag, meta) {
         return new Promise(function (resolve, reject) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', url);
             if (type) xhr.responseType = type;
+            if (etag) xhr.setRequestHeader('If-None-Match', etag);
             xhr.timeout = 30000;
             xhr.onload = function () {
-                if (xhr.status === 200) resolve(type ? xhr.response : xhr.responseText);
+                if (meta && xhr.getResponseHeader) meta.etag = xhr.getResponseHeader('ETag') || '';
+                if (xhr.status === 304 && etag) resolve(null);
+                else if (xhr.status === 200) resolve(type ? xhr.response : xhr.responseText);
                 else if (xhr.status === 403 || xhr.status === 429) reject(Object.assign(  // unauthenticated limit: 60 calls/hour per IP
                     new Error('GitHub tạm giới hạn lượt kiểm tra từ mạng này, hãy thử lại sau ít phút.'), { status: xhr.status }));
                 else reject(Object.assign(new Error('GitHub ' + xhr.status + ': ' + url), { status: xhr.status }));
@@ -77,16 +84,42 @@
         return window.btoa(chunks.join(''));
     }
 
+    // Last answer from GitHub: { at, etag, latest }. Browser storage can be missing or blocked; then nothing is cached.
+    function readCache() {
+        try {
+            var cache = JSON.parse(window.localStorage.getItem(CACHE_KEY));
+            return cache && typeof cache.at === 'number' && 'latest' in cache ? cache : null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function writeCache(cache) {
+        try { window.localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); } catch (e) { /* no cache, just more requests */ }
+    }
+
+    // maxAge (ms, optional): reuse an answer younger than this without asking GitHub. The silent check on every panel open
+    // passes a few hours so offices behind one IP stay under the 60 calls/hour limit; the update button passes nothing.
     // -> { current, latest: { tag, name, notes, url } | null, available }
-    function check(base) {
-        var current = installedVersion(base);
-        return request(API + '/releases/latest').then(function (text) {
+    function check(base, maxAge) {
+        var current = installedVersion(base), cache = readCache(), now = new Date().getTime(), meta = {};
+        function answer(latest) { return { current: current, latest: latest, available: !!latest && isNewer(latest.tag, current) }; }
+        if (cache && maxAge > 0 && now - cache.at >= 0 && now - cache.at < maxAge) return Promise.resolve(answer(cache.latest));
+        return request(API + '/releases/latest', '', cache && cache.etag, meta).then(function (text) {
+            if (text === null) {                              // 304: GitHub says the cached answer is still current
+                writeCache({ at: now, etag: cache.etag, latest: cache.latest });
+                return answer(cache.latest);
+            }
             var release = JSON.parse(text);
             var latest = { tag: release.tag_name, name: release.name || release.tag_name,
                 notes: release.body || '', url: release.html_url };
-            return { current: current, latest: latest, available: isNewer(latest.tag, current) };
+            writeCache({ at: now, etag: meta.etag || '', latest: latest });
+            return answer(latest);
         }, function (error) {
-            if (error.status === 404) return { current: current, latest: null, available: false };
+            if (error.status === 404) {
+                writeCache({ at: now, etag: '', latest: null });
+                return answer(null);
+            }
             throw error;
         });
     }

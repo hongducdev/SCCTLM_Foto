@@ -1,5 +1,14 @@
 # Changelog
 
+## Chưa phát hành — Cài gọn hơn, đóng cổng gỡ lỗi, kiểm tra cập nhật nhẹ hơn
+
+- **Không còn cài cổng gỡ lỗi 9004 cho người dùng:** `.debug` chỉ được chép khi cài từ git checkout (máy dev); bản zip phát hành không chứa nó (`.gitattributes`), bộ cài xoá nó khỏi bản cài cũ, và panel tự xoá nó trên máy không phải máy dev (có hiệu lực từ lần mở Photoshop sau).
+- **Bộ cài chỉ chép file panel cần:** `index.html`, `style.css`, `loader.jsx`, `CSXS/ js/ jsx/ css/ img/ presets/` cùng `LICENSE` và `NOTICE.md`; dọn `tests/`, `docs/`, `.github/`, `README.md` do bản cài cũ chép vào.
+- **Kiểm tra cập nhật im lặng nhớ kết quả 6 giờ** và hỏi lại GitHub bằng `If-None-Match`, nên nhiều máy chung một mạng không chạm giới hạn 60 lượt/giờ. Nút ⤓ vẫn luôn hỏi GitHub.
+- **Nút Trước / Sau tự cập nhật** khi đổi ảnh, tạo/mở/đóng ảnh hay chọn bước History trong Photoshop, thay vì chờ panel được focus hoặc rê chuột. Kiểm thật trên Photoshop 23.2: mỗi thay đổi đúng một lần đọc trạng thái. Photoshop không báo Ctrl+Z, Ctrl+Shift+Z hay ẩn/hiện layer (đã thử cả đăng ký undoEvent, Shw, Hd), nên hai việc đó vẫn cập nhật khi quay lại panel.
+- **Yêu cầu Photoshop ghi đúng thực tế:** Photoshop 2021 trở lên (đã kiểm thử 23.2); CSS của panel cần Chromium mới hơn bản có trong Photoshop CC 2015.
+- **Nội bộ:** `index.html` có `<!DOCTYPE html>` (đo 758 phần tử ở cả 5 tab, vị trí và kích thước không đổi); bảng lệnh trong `js/panel.js` thay cho chuỗi toán tử ba ngôi (23 trường hợp sinh mã ExtendScript giống hệt); `npm test` chạy mọi `tests/check-*.js`.
+
 ## v0.3.17 — Trước / Sau cho biết đang xem ảnh gốc và nhớ qua lần mở lại file
 
 - **Nút đổi thành đỏ "Ảnh gốc" khi layer retouch đang ẩn**, để không lưu nhầm ảnh chưa retouch. Trạng thái đọc thẳng từ Photoshop khi mở panel, sau mỗi lệnh, khi panel được focus và khi chuột đi vào panel; đổi ảnh hoặc Ctrl+Z ngay trong Photoshop có thể trễ đến lần đọc kế tiếp.

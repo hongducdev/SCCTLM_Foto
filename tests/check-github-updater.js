@@ -19,7 +19,7 @@ const otherPem = crypto.generateKeyPairSync('ed25519').privateKey.export({ type:
 const KEYS = { k1: publicKeyBase64(pem) };
 
 function setup(routes, disk, stamps = {}, faults = {}) {
-    const requests = [];
+    const requests = [], sentHeaders = [];
     const files = new Map(Object.entries(disk).map(([k, v]) => [BASE + '/' + k, Buffer.from(v)]));
     const mtimes = new Map([...files.keys()].map(k => [k, stamps[k.slice(BASE.length + 1)] || MTIME]));
     const dirs = new Set([BASE]);
@@ -30,10 +30,14 @@ function setup(routes, disk, stamps = {}, faults = {}) {
     const hashedReads = [];
     let clock = 5000;
     function XMLHttpRequest() {}
-    XMLHttpRequest.prototype.open = function (method, url) { this.url = url; };
+    XMLHttpRequest.prototype.open = function (method, url) { this.url = url; this.headers = {}; };
+    XMLHttpRequest.prototype.setRequestHeader = function (name, value) { this.headers[name] = value; };
+    XMLHttpRequest.prototype.getResponseHeader = function (name) { return name === 'ETag' && this.etag ? this.etag : null; };
     XMLHttpRequest.prototype.send = function () {
         requests.push(this.url);
-        const route = routes[this.url];
+        sentHeaders.push(this.headers);
+        let route = routes[this.url];
+        if (route && route.etag) { this.etag = route.etag; route = route.body; }
         setImmediate(() => {
             if (route === 'network') return this.onerror();
             if (route && route.status) { this.status = route.status; this.responseText = ''; return this.onload(); }
@@ -82,6 +86,7 @@ function setup(routes, disk, stamps = {}, faults = {}) {
     const window = { XMLHttpRequest, cep, btoa: s => Buffer.from(s, 'binary').toString('base64'),
         atob: s => Buffer.from(s, 'base64').toString('binary'), crypto: crypto.webcrypto, isSecureContext: true,
         Promise, TextDecoder, JSON, Object, Uint8Array, String, encodeURIComponent, Error };
+    if (faults.storage) window.localStorage = faults.storage;
     window.window = window;
     window.self = window;
     vm.runInNewContext(source('vendor/tweetnacl.min.js'), window);
@@ -89,7 +94,7 @@ function setup(routes, disk, stamps = {}, faults = {}) {
     vm.runInNewContext(source('release-manifest-verifier.js'), window);
     vm.runInNewContext(source('update-staging-journal.js'), window);
     vm.runInNewContext(source('github-updater.js'), window);
-    return { updater: window.scctlmFotoUpdater, staging: window.scctlmFotoStaging, requests, files, mtimes, dirs, writes, hashedReads, read: p => files.get(BASE + '/' + p) };
+    return { updater: window.scctlmFotoUpdater, staging: window.scctlmFotoStaging, requests, sentHeaders, files, mtimes, dirs, writes, hashedReads, read: p => files.get(BASE + '/' + p) };
 }
 
 // Objects from the vm realm have foreign prototypes; compare their JSON shape.
@@ -121,6 +126,29 @@ const stampOf = data => ({ sha512: sha512(data), mtime: MTIME });
     assert.equal((await t.updater.check(BASE)).available, false, 'same version must not offer an update');
     assert.equal(t.updater.isNewer('v1.10.0', '1.9.9'), true, 'versions compare numerically');
     assert.equal(t.updater.isNewer('nightly', '1.0.0'), false, 'non-semver tags are ignored');
+
+    // Silent checks reuse GitHub's answer for maxAge; older answers are revalidated with If-None-Match (a 304 is free).
+    const store = new Map(), storage = { getItem: k => (store.has(k) ? store.get(k) : null), setItem: (k, v) => store.set(k, String(v)) };
+    const latestRoute = { [API + '/releases/latest']: { body: release, etag: 'W/"abc"' } };
+    t = setup(latestRoute, { 'CSXS/manifest.xml': manifest('1.0.0') }, {}, { storage });
+    assert.equal((await t.updater.check(BASE, 3600000)).latest.tag, 'v1.1.0', 'first check asks GitHub');
+    assert.equal(t.requests.length, 1);
+    assert.equal(t.sentHeaders[0]['If-None-Match'], undefined, 'nothing cached yet, so no ETag');
+    result = await t.updater.check(BASE, 3600000);
+    assert.equal(t.requests.length, 1, 'a fresh cached answer needs no request');
+    assert.equal(result.available, true);
+    assert.equal(result.latest.tag, 'v1.1.0');
+    await t.updater.check(BASE);
+    assert.equal(t.requests.length, 2, 'the update button (no maxAge) always asks GitHub');
+    assert.equal(t.sentHeaders[1]['If-None-Match'], 'W/"abc"', 'and revalidates with the cached ETag');
+    t = setup({ [API + '/releases/latest']: { status: 304 } }, { 'CSXS/manifest.xml': manifest('1.1.0') }, {}, { storage });
+    result = await t.updater.check(BASE);
+    assert.equal(result.latest.tag, 'v1.1.0', '304 keeps the cached release');
+    assert.equal(result.available, false, 'availability is recomputed against the installed version');
+    store.set('scctlm.foto.release', '{broken');
+    t = setup(latestRoute, { 'CSXS/manifest.xml': manifest('1.0.0') }, {}, { storage });
+    assert.equal((await t.updater.check(BASE, 3600000)).available, true, 'a corrupt cache is ignored');
+    assert.equal(t.requests.length, 1);
 
     // update() from a 0.1.9-style record (git sha strings): files already identical are hashed once, not downloaded.
     const content = { 'index.html': '<html>new</html>', 'CSXS/manifest.xml': manifest('1.1.0'), 'jsx/main.jsx': 'keep',

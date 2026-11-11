@@ -124,6 +124,45 @@ assert.doesNotMatch(read('js/color-mode-guard.js'), /BEFOREAFTER/, 'the toggle c
     assert.equal(attrs['aria-pressed'], 'false');
     assert.equal(span.textContent, 'Trước / Sau');
 }
+// Photoshop reports document switches, history selection, Undo/Redo and layer show/hide; a burst becomes one read
+{
+    const listeners = {}, dispatched = [], sent = [], timers = [];
+    let busy = false;
+    const btn = { title: '', setAttribute() {}, querySelector: () => ({}) };
+    const ui = {
+        document: { querySelector: () => btn },
+        setTimeout: (fn) => timers.push(fn), clearTimeout: () => { timers.length = 0; },
+        scctlmFotoIsBusy: () => busy,
+        CSEvent: function (type, scope) { this.type = type; this.scope = scope; },
+        CSInterface: function () {
+            this.getExtensionID = () => 'com.scctlm.foto.panel';
+            this.addEventListener = (type, fn) => { listeners[type] = fn; };
+            this.dispatchEvent = (event) => dispatched.push(event);
+            this.evalScript = (code, cb) => { sent.push(code); cb('shown'); };
+        }
+    };
+    ui.window = ui;
+    vm.runInNewContext(read('js/before-after-state.js'), ui);
+    assert.equal(typeof listeners.documentAfterActivate, 'function', 'listens for document switches');
+    assert.equal(typeof listeners['com.adobe.PhotoshopJSONCallback' + 'com.scctlm.foto.panel'], 'function', 'listens for registered events');
+    assert.equal(dispatched.length, 1);
+    assert.equal(dispatched[0].type, 'com.adobe.PhotoshopRegisterEvent');
+    assert.equal(dispatched[0].extensionId, 'com.scctlm.foto.panel');
+    // charIDToTypeID('slct') = 1936483188: the only registered event Photoshop 23.2 was seen to report (History selection)
+    assert.equal(dispatched[0].data, '1936483188', 'select (History step) is registered');
+    sent.length = 0;
+    listeners.documentAfterActivate();
+    listeners['com.adobe.PhotoshopJSONCallbackcom.scctlm.foto.panel']();
+    listeners['com.adobe.PhotoshopJSONCallbackcom.scctlm.foto.panel']();
+    assert.equal(timers.length, 1, 'a burst of events schedules one read');
+    timers.shift()();
+    assert.equal(sent.length, 1, 'one read after the burst');
+    assert.match(sent[0], /stateName/);
+    busy = true;
+    listeners.documentAfterActivate();
+    timers.shift()();
+    assert.equal(sent.length, 1, 'no read while a panel command runs; it refreshes when it finishes');
+}
 assert.match(read('index.html'), /before-after-state[.]js/, 'the state module must be loaded by the panel');
 assert.match(read('js/panel.js'), /scctlmFotoRefreshBeforeAfter/, 'the bridge refreshes the button after each command');
 

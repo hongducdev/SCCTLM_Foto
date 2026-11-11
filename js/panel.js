@@ -90,12 +90,35 @@
         return kind === 'doa' || kind === 'preset' || kind === 'colormix' || kind === 'play' || (kind === 'ext' && TRACKED_EXT.test(name));
     }
 
+    // Mỗi loại lệnh: valid() kiểm tên/spec, target là hàm ExtendScript được gọi, label là tên hiện trong thông báo lỗi.
+    // passName: truyền chính name (đã kiểm) làm tham số; không thì chỉ truyền arg màu (nếu có).
+    // anyDocument: chạy được khi chưa mở ảnh.
+    var IDENT = /^[A-Za-z_][A-Za-z0-9_]*$/;
+    var COMMANDS = {
+        doa: { valid: function (name) { return IDENT.test(name); },
+            target: function (name) { return '$.scctlmFotoCommands[' + JSON.stringify(name) + ']'; } },
+        ext: { valid: function (name) { return IDENT.test(name); },
+            target: function (name) { return '$._ext_' + name + '.run'; } },
+        preset: { valid: function (name) { return PRESET_FILE.test(name); }, target: '$.scctlmFotoApplyBundledXmp', passName: true },
+        colormix: { valid: function (name) { return COLOR_MIX.test(name); }, target: '$.scctlmFotoApplyColorMix', passName: true },
+        play: { valid: function (name) { return BUNDLED_ACTION.test(name); }, target: '$.scctlmFotoPlayBundledAction', passName: true, label: 'Action' },
+        ensure: { valid: function (name) { return BUNDLED_ACTION.test(name); }, target: '$.scctlmFotoEnsureBundledAction', passName: true, label: 'Action', anyDocument: true },
+        // name đã qua kiểm tra; riêng danh sách phím tắt (nhiều dòng, tên Action tuỳ ý) không được
+        // chèn thô vào mã ExtendScript hay thông báo → dùng nhãn cố định
+        shortcut: { valid: function (name) { return SHORTCUT_LIST.test(name); }, target: '$.scctlmFotoShortcutSetup.install', passName: true, label: 'Phím tắt Action', anyDocument: true },
+        artboard: { valid: function (name) { return window.scctlmFotoArtboard.spec.test(name); }, target: '$._ext_ARTBOARD.run', passName: true, label: 'Artboard', anyDocument: true },
+        frame: { valid: function (name) { return window.scctlmFotoExifFrame.spec.test(name); }, target: '$._ext_EXIFFRAME.run', passName: true, label: 'Watermark' },
+        wm: { valid: function (name) { return window.scctlmFotoWmSpec.plan.test(name); }, target: '$._ext_WMDRAW.run', passName: true, label: 'Watermark' }
+    };
+    // Only WM (its own batch dialog), BPP/BPPRESET (brush setup), OPENRAW (opens the image) and BUGFIX run without an open image;
+    // BA processes every open document, so it needs at least one.
+    var NO_DOCUMENT_NAMES = /^(WM|BPP|BPPRESET|OPENRAW|BUGFIX)$/;
+
     // done(res): tuỳ chọn, gọi sau khi Photoshop chạy xong (res = "SCCTLM_OK" / "SCCTLM_CANCEL" / lỗi)
     // arg: tuỳ chọn, màu "#rrggbb" truyền cho lệnh $._ext_<name>.run
     function run(kind, name, done, arg) {
-        var valid = kind === 'preset' ? PRESET_FILE : (kind === 'play' || kind === 'ensure') ? BUNDLED_ACTION : kind === 'colormix' ? COLOR_MIX : kind === 'shortcut' ? SHORTCUT_LIST :
-            kind === 'artboard' ? window.scctlmFotoArtboard.spec : kind === 'frame' ? window.scctlmFotoExifFrame.spec : kind === 'wm' ? window.scctlmFotoWmSpec.plan : /^[A-Za-z_][A-Za-z0-9_]*$/;
-        if (!valid.test(name) || (arg !== undefined && !HEX_COLOR.test(arg))) { if (done) done('SCCTLM_INVALID'); return; }
+        var command = COMMANDS.hasOwnProperty(kind) ? COMMANDS[kind] : null;
+        if (!command || !command.valid(name) || (arg !== undefined && !HEX_COLOR.test(arg))) { if (done) done('SCCTLM_INVALID'); return; }
         if (!ready) {
             notify('Photoshop chưa sẵn sàng', 'Lõi Photoshop chưa sẵn sàng. Hãy đóng và mở lại panel.');
             if (done) done('SCCTLM_NOT_READY');
@@ -104,18 +127,11 @@
         if (busy) { if (done) done('SCCTLM_BUSY'); return; }
         busy = true;
         document.body.classList.add('is-busy');
-        var target = kind === 'doa' ? '$.scctlmFotoCommands[' + JSON.stringify(name) + ']' :
-            kind === 'preset' ? '$.scctlmFotoApplyBundledXmp' : kind === 'colormix' ? '$.scctlmFotoApplyColorMix' : kind === 'play' ? '$.scctlmFotoPlayBundledAction' : kind === 'ensure' ? '$.scctlmFotoEnsureBundledAction' :
-            kind === 'shortcut' ? '$.scctlmFotoShortcutSetup.install' : kind === 'artboard' ? '$._ext_ARTBOARD.run' : kind === 'frame' ? '$._ext_EXIFFRAME.run' : kind === 'wm' ? '$._ext_WMDRAW.run' : '$._ext_' + name + '.run';
-        var args = kind === 'preset' || kind === 'play' || kind === 'ensure' || kind === 'colormix' || kind === 'shortcut' || kind === 'artboard' || kind === 'frame' || kind === 'wm' ? JSON.stringify(name) :
-            arg !== undefined ? JSON.stringify(arg) : '';
-        // name đã qua kiểm tra; riêng danh sách phím tắt (nhiều dòng, tên Action tuỳ ý) không được
-        // chèn thô vào mã ExtendScript hay thông báo → dùng nhãn cố định
-        var label = kind === 'shortcut' ? 'Phím tắt Action' : kind === 'play' || kind === 'ensure' ? 'Action' : kind === 'artboard' ? 'Artboard' : kind === 'frame' || kind === 'wm' ? 'Watermark' : name;
-        // Only WM (its own batch dialog), BPP/BPPRESET (brush setup), OPENRAW (opens the image) and BUGFIX run without an open image;
-        // BA processes every open document, so it needs at least one.
+        var target = typeof command.target === 'function' ? command.target(name) : command.target;
+        var args = command.passName ? JSON.stringify(name) : arg !== undefined ? JSON.stringify(arg) : '';
+        var label = command.label || name;
         var code = '(function(){var d=app.displayDialogs,u=app.preferences.rulerUnits;' +
-            'try{' + (kind !== 'shortcut' && kind !== 'ensure' && kind !== 'artboard' && !/^(WM|BPP|BPPRESET|OPENRAW|BUGFIX)$/.test(name) ?
+            'try{' + (!command.anyDocument && !NO_DOCUMENT_NAMES.test(name) ?
                 'if(!app.documents.length)return "SCCTLM_NO_DOCUMENT";' : '') +
             (window.scctlmFotoColorMode && window.scctlmFotoColorMode.needsRgb(kind, name) ? window.scctlmFotoColorMode.preflightCode(kind, name) : '') +
             'if(typeof ' + target + '!=="function")throw new Error("Missing command: ' + label + '");' +
@@ -226,8 +242,9 @@
         button.title = result.available ? 'Có bản mới ' + result.latest.tag + ' — bấm để cập nhật' :
             'Kiểm tra cập nhật từ GitHub';
     }
-    function checkRelease() {
-        return window.scctlmFotoUpdater.check(base).then(function (result) { showRelease(result); return result; });
+    var SILENT_CHECK_MAX_AGE = 6 * 60 * 60 * 1000;                 // panel open / reload reuses GitHub's answer for 6 hours
+    function checkRelease(maxAge) {
+        return window.scctlmFotoUpdater.check(base, maxAge).then(function (result) { showRelease(result); return result; });
     }
     window.scctlmFotoUpdate = function () {
         var button = document.querySelector('.update-button');
@@ -279,7 +296,7 @@
         // Silent check: an offline panel simply shows no badge.
         if (window.scctlmFotoUpdater && base && window.cep) {
             showRelease({ current: window.scctlmFotoUpdater.installedVersion(base), latest: null, available: false });
-            checkRelease().catch(function (error) { window.console.warn('SCCTLM_Foto update check:', error); });
+            checkRelease(SILENT_CHECK_MAX_AGE).catch(function (error) { window.console.warn('SCCTLM_Foto update check:', error); });
         }
     };
 
@@ -308,6 +325,8 @@
         catch (error) { recovered = { status: 'failed', message: error }; }
         if (recovered.reload) { window.location.reload(); return; }   // the journal is gone now, so this reloads once
         if (recovered.message) status(errorLine(recovered.message, { source: 'update' }), true);
+        try { if (window.scctlmFotoDropDebugPort) window.scctlmFotoDropDebugPort(base); }
+        catch (error) { window.console.warn('SCCTLM_Foto .debug:', error); }
         cs.evalScript('try{$.scctlmFotoBase = ' + JSON.stringify(base) + '; var f=new File($.scctlmFotoBase + "/loader.jsx");' +
             'if(!f.exists){"SCCTLM_ERROR: thiếu file loader.jsx trong thư mục panel. Hãy cài lại bằng install/Cai-dat-SCCTLM_Foto.bat";}' +
             'else{$.evalFile(f);$.scctlmFotoReady ? "SCCTLM_READY" : $.scctlmFotoLoadErrors.join("\\n");}}' +

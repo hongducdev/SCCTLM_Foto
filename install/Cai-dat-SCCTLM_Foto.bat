@@ -48,8 +48,16 @@ if "%SCCTLM_FOTO_SKIP_REG%"=="1" (
 
 rem ---------- 2. Copy plugin ----------
 echo [2/3] Copy plugin ...
-robocopy "%SRC%" "%SCCTLM_FOTO_TARGET%" /E /XD _dev .git install scripts site /XF .gitignore .gitattributes /NFL /NDL /NJH /NJS /R:1 /W:1 >nul
-if errorlevel 8 (
+rem Chi chep file panel can khi chay (cung danh sach voi RUNTIME trong js\release-manifest-verifier.js) + giay phep.
+rem Khong chep .debug cho nguoi dung: no mo cong go loi 9004 vao panel.
+set "COPYFAIL="
+robocopy "%SRC%" "%SCCTLM_FOTO_TARGET%" index.html style.css loader.jsx LICENSE NOTICE.md /NFL /NDL /NJH /NJS /R:1 /W:1 >nul
+if errorlevel 8 set "COPYFAIL=1"
+for %%F in (CSXS js jsx css img presets) do (
+    robocopy "%SRC%\%%F" "%SCCTLM_FOTO_TARGET%\%%F" /E /NFL /NDL /NJH /NJS /R:1 /W:1 >nul
+    if errorlevel 8 set "COPYFAIL=1"
+)
+if defined COPYFAIL (
     echo       [x] Copy that bai. Dong Photoshop het roi thu lai.
     echo.
     pause
@@ -68,7 +76,20 @@ if exist "%SCCTLM_FOTO_TARGET%\.scctlm-foto-update.json" del /q "%SCCTLM_FOTO_TA
 if exist "%SCCTLM_FOTO_TARGET%\.scctlm-foto-update" rmdir /s /q "%SCCTLM_FOTO_TARGET%\.scctlm-foto-update" >nul 2>&1
 echo       [ok] Da copy vao %SCCTLM_FOTO_TARGET%
 rem Cai tu git checkout (may dev): nut Nap lai tren panel tu chep code moi tu thu muc nguon.
-if exist "%SRC%\.git" ((echo %SRC%)>"%SCCTLM_FOTO_TARGET%\.scctlm-foto-dev-source") else del /q "%SCCTLM_FOTO_TARGET%\.scctlm-foto-dev-source" >nul 2>&1
+rem Khong dung khoi ( ... ): duong dan nhu "SCCTLM_Foto (1)" co dau ) se dong khoi som.
+if exist "%SRC%\.git" >"%SCCTLM_FOTO_TARGET%\.scctlm-foto-dev-source" echo(%SRC%
+if not exist "%SRC%\.git" del /q "%SCCTLM_FOTO_TARGET%\.scctlm-foto-dev-source" >nul 2>&1
+rem Cong go loi 9004 (.debug) chi danh cho may dev; ban cai cu cua nguoi dung co file nay thi xoa.
+if /i not "%SRC%"=="%SCCTLM_FOTO_TARGET%" (
+    if exist "%SRC%\.git" (
+        copy /y "%SRC%\.debug" "%SCCTLM_FOTO_TARGET%\.debug" >nul 2>&1
+    ) else (
+        del /q "%SCCTLM_FOTO_TARGET%\.debug" >nul 2>&1
+    )
+    rem Ban cai cu chep ca tai lieu va kiem thu; panel khong dung chung.
+    for %%D in (tests docs .github) do if exist "%SCCTLM_FOTO_TARGET%\%%D" rmdir /s /q "%SCCTLM_FOTO_TARGET%\%%D" >nul 2>&1
+    for %%X in (README.md DESIGN.md .gitignore .gitattributes) do if exist "%SCCTLM_FOTO_TARGET%\%%X" del /q "%SCCTLM_FOTO_TARGET%\%%X" >nul 2>&1
+)
 
 rem ---------- 3. Ban cu con cai se xung dot ----------
 echo [3/3] Kiem tra ban cu ...

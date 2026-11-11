@@ -66,6 +66,16 @@
         return count;
     }
 
+    // .debug mở cổng gỡ lỗi Chromium 9004 vào panel (có cep.fs và evalScript), nên chỉ để trên máy dev.
+    // Bản cài cũ của người dùng còn file này: xoá đi, Photoshop đóng cổng từ lần khởi động sau.
+    // Máy dev: có bản ghi nguồn (kể cả trỏ về chính nó khi cài vào chỗ) hoặc panel chạy thẳng từ git checkout (junction/symlink).
+    window.scctlmFotoDropDebugPort = function (base) {
+        if (!fs() || !base) return false;
+        if (!fs().stat(base + '/' + SOURCE_RECORD).err || !fs().stat(base + '/.git').err) return false;
+        if (fs().stat(base + '/.debug').err) return false;
+        return !fs().deleteFile(base + '/.debug').err;
+    };
+
     // Trả về số file đã chép (0 nếu không cấu hình nguồn). Ném lỗi nếu chép thất bại.
     window.scctlmFotoSyncDevSource = function (base) {
         if (!fs() || !base) return 0;

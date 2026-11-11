@@ -58,10 +58,16 @@ fi
 
 echo "[2/3] Chép plugin ..."
 mkdir -p "$TARGET" || { echo "      [x] Không tạo được $TARGET"; pause_and_exit 1; }
-if ! rsync -a \
-    --exclude '/_dev' --exclude '/.git' --exclude '/install' --exclude '/scripts' --exclude '/site' \
-    --exclude '.gitignore' --exclude '.gitattributes' --exclude '.DS_Store' \
-    "$SRC/" "$TARGET/"; then
+# Chỉ chép file panel cần khi chạy (cùng danh sách với RUNTIME trong js/release-manifest-verifier.js) + giấy phép.
+# Không chép .debug cho người dùng: nó mở cổng gỡ lỗi 9004 vào panel.
+copy_failed=0
+for f in index.html style.css loader.jsx LICENSE NOTICE.md; do
+    cp -p "$SRC/$f" "$TARGET/$f" || copy_failed=1
+done
+for d in CSXS js jsx css img presets; do
+    rsync -a --exclude '.DS_Store' "$SRC/$d/" "$TARGET/$d/" || copy_failed=1
+done
+if [ "$copy_failed" -eq 1 ]; then
     echo "      [x] Chép thất bại. Đóng Photoshop hết rồi thử lại."
     pause_and_exit 1
 fi
@@ -73,10 +79,21 @@ fi
 rm -f "$TARGET/.scctlm-foto-version.json" "$TARGET/.scctlm-foto-update.json"
 rm -rf "$TARGET/.scctlm-foto-update"
 # Cài từ git checkout (máy dev): nút ↻ trên panel tự chép code mới từ thư mục nguồn.
-if [ -d "$SRC/.git" ]; then
+if [ -e "$SRC/.git" ]; then
     printf '%s\n' "$SRC" > "$TARGET/.scctlm-foto-dev-source"
 else
     rm -f "$TARGET/.scctlm-foto-dev-source"
+fi
+# Cổng gỡ lỗi 9004 (.debug) chỉ dành cho máy dev; bản cài cũ của người dùng có file này thì xoá.
+if [ "$SRC" != "$TARGET" ]; then
+    if [ -e "$SRC/.git" ]; then
+        cp -p "$SRC/.debug" "$TARGET/.debug"
+    else
+        rm -f "$TARGET/.debug"
+    fi
+    # Bản cài cũ chép cả tài liệu và kiểm thử; panel không dùng chúng.
+    rm -rf "$TARGET/tests" "$TARGET/docs" "$TARGET/.github"
+    rm -f "$TARGET/README.md" "$TARGET/DESIGN.md" "$TARGET/.gitignore" "$TARGET/.gitattributes"
 fi
 xattr -dr com.apple.quarantine "$TARGET" >/dev/null 2>&1
 echo "      [ok] Đã chép vào $TARGET"

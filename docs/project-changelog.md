@@ -1,6 +1,6 @@
 # Changelog
 
-## Chưa phát hành — Cài gọn hơn, đóng cổng gỡ lỗi, kiểm tra cập nhật nhẹ hơn
+## v0.3.18 — Cài gọn hơn, đóng cổng gỡ lỗi, kiểm tra cập nhật nhẹ hơn
 
 - **Không còn cài cổng gỡ lỗi 9004 cho người dùng:** `.debug` chỉ được chép khi cài từ git checkout (máy dev); bản zip phát hành không chứa nó (`.gitattributes`), bộ cài xoá nó khỏi bản cài cũ, và panel tự xoá nó trên máy không phải máy dev (có hiệu lực từ lần mở Photoshop sau).
 - **Bộ cài chỉ chép file panel cần:** `index.html`, `style.css`, `loader.jsx`, `CSXS/ js/ jsx/ css/ img/ presets/` cùng `LICENSE` và `NOTICE.md`; dọn `tests/`, `docs/`, `.github/`, `README.md` do bản cài cũ chép vào.
